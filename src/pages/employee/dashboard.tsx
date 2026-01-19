@@ -1,27 +1,47 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from "react-router-dom";
+import { getMyRequests } from "../../services/request.service";
+import { useEffect, useState } from "react";
 
 const EmployeeDashboard = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const [requests, setRequests] = useState<any[]>([]);
+  const pending = requests.filter((r) => r.status === "pending").length;
+  const approved = requests.filter((r) => r.status === "accepted").length;
+  const rejected = requests.filter((r) => r.status === "rejected").length;
 
   const logout = () => {
-    localStorage.clear()
-    navigate('/')
-  }
-   const goToProfile = () => {
-    navigate('/profile')
-  }
+    localStorage.clear();
+    navigate("/");
+  };
+  const goToProfile = () => {
+    navigate("/profile");
+  };
+  useEffect(() => {
+    const fetchRequests = async () => {
+      try {
+        const res = await getMyRequests();
+        setRequests(res.data);
+      } catch (err) {
+        console.error("Failed to fetch requests");
+      }
+    };
+
+    fetchRequests();
+  }, []);
+
   return (
     <div className="min-h-screen bg-slate-100">
-      {/* ================= HEADER ================= */}
       <div className="relative">
         <div className="rounded-b-[40px] bg-gradient-to-r from-teal-400 h-[300px] via-cyan-400 to-emerald-300 px-10 py-12 text-white">
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-3xl font-semibold">Hello Anjali,</h1>
-              <p className="opacity-90">Welcome to the Employee Referral Portal</p>
+              <p className="opacity-90">
+                Welcome to the Employee Referral Portal
+              </p>
             </div>
 
-             <div className="flex gap-3">
+            <div className="flex gap-3">
               <button
                 onClick={goToProfile}
                 className="px-4 py-2 rounded-full bg-white/20 hover:bg-white/30 text-sm"
@@ -55,15 +75,13 @@ const EmployeeDashboard = () => {
 
         {/* ================= BASE CARDS STRIP ================= */}
         <div className=" z-10 -mt-10 px-10">
-  <div className="bg-white rounded-3xl shadow-xl grid grid-cols-2 md:grid-cols-5 overflow-hidden">
-    <BaseCard title="New Referrals" count="12" />
-    <BaseCard title="Pending" count="8" />
-    <BaseCard title="Approved" count="25" />
-    <BaseCard title="Rejected" count="5" />
-    <BaseCard title="Total" count="42" />
-  </div>
-</div>
-
+          <div className="bg-white rounded-3xl shadow-xl grid grid-cols-2 md:grid-cols-5 overflow-hidden">
+            <BaseCard title="Pending" count={pending.toString()} />
+            <BaseCard title="Approved" count={approved.toString()} />
+            <BaseCard title="Rejected" count={rejected.toString()} />
+            <BaseCard title="Total" count={requests.length.toString()} />
+          </div>
+        </div>
       </div>
 
       {/* ================= STUDENT CARDS ================= */}
@@ -71,41 +89,33 @@ const EmployeeDashboard = () => {
         <h2 className="text-xl font-semibold mb-6">My Referrals</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <StudentCard
-            name="Rahul Sharma"
-            role="Frontend Developer"
-            email="rahul@gmail.com"
-            status="Pending"
-          />
+          
+  {requests.map((req) => (
+    <StudentCard
+      key={req._id}
+      name={req.sender.name}
+      email={req.sender.email}
+      role={req.sender.interestedIn || 'N/A'}
+      status={
+        req.status === 'pending'
+          ? 'Pending'
+          : req.status === 'accepted'
+          ? 'Approved'
+          : 'Rejected'
+      }
+    />
+  ))}
+</div>
 
-          <StudentCard
-            name="Neha Verma"
-            role="Backend Developer"
-            email="neha@gmail.com"
-            status="Rejected"
-          />
-
-          <StudentCard
-            name="Amit Singh"
-            role="Full Stack Developer"
-            email="amit@gmail.com"
-            status="Approved"
-          />
         </div>
       </div>
-    </div>
-  )
-}
+    
+  );
+};
 
-/* ================= COMPONENTS ================= */
 
-const BaseCard = ({
-  title,
-  count,
-}: {
-  title: string
-  count: string
-}) => (
+
+const BaseCard = ({ title, count }: { title: string; count: string }) => (
   <div
     className="
       bg-white
@@ -120,8 +130,7 @@ const BaseCard = ({
     <p className="text-2xl font-bold text-indigo-600">{count}</p>
     <p className="text-sm text-gray-600 mt-1">{title}</p>
   </div>
-)
-
+);
 
 const StudentCard = ({
   name,
@@ -129,17 +138,17 @@ const StudentCard = ({
   email,
   status,
 }: {
-  name: string
-  role: string
-  email: string
-  status: 'Pending' | 'Approved' | 'Rejected'
+  name: string;
+  role: string;
+  email: string;
+  status: "Pending" | "Approved" | "Rejected";
 }) => {
   const statusStyle =
-    status === 'Approved'
-      ? 'bg-green-100 text-green-600'
-      : status === 'Rejected'
-      ? 'bg-red-100 text-red-600'
-      : 'bg-yellow-100 text-yellow-600'
+    status === "Approved"
+      ? "bg-green-100 text-green-600"
+      : status === "Rejected"
+        ? "bg-red-100 text-red-600"
+        : "bg-yellow-100 text-yellow-600";
 
   return (
     <div className="bg-white rounded-2xl shadow hover:shadow-xl transition p-6">
@@ -157,7 +166,7 @@ const StudentCard = ({
         {status}
       </span>
     </div>
-  )
-}
+  );
+};
 
-export default EmployeeDashboard
+export default EmployeeDashboard;
