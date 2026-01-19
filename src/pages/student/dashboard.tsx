@@ -1,18 +1,14 @@
-import { useState } from 'react'
+
 import { useNavigate } from 'react-router-dom'
 import Companies from './companies'
 
 
 
 const StudentDashboard = () => {
-  const [showForm, setShowForm] = useState(false)
-  const [selectedEmployee, setSelectedEmployee] = useState<string | null>(null)
+
   const navigate = useNavigate()
 
-  const openForm = (employeeName: string) => {
-    setSelectedEmployee(employeeName)
-    setShowForm(true)
-  }
+  
   const logout = () => {
     localStorage.clear()
     navigate('/')
