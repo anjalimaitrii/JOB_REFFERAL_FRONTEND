@@ -6,6 +6,7 @@ import StudentDashboard from "./pages/student/dashboard";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import EmployeeDashboard from "./pages/employee/dashboard";
 import Profile from "./pages/profile/ProfilePage";
+import Companies from "./pages/student/companies";
 
 
 
@@ -39,7 +40,7 @@ function App() {
         />
 
         
-
+{/* 
           <Route
         path="/student/dashboard"
         element={
@@ -47,7 +48,20 @@ function App() {
             <StudentDashboard />
           </ProtectedRoute>
         }
+      /> */}
+      
+        
+
+          <Route
+        path="/employee/companies"
+        element={
+          <ProtectedRoute allowedRole="employee">
+            <Companies />
+          </ProtectedRoute>
+        }
       />
+
+    
         
         <Route path="*" element={<h2>NO ROUTE MATCHED</h2>} />
       </Routes>

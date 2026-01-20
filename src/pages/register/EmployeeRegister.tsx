@@ -6,6 +6,7 @@ import { useEffect } from "react";
 type Company = {
   _id: string;
   name: string;
+  jobs: { _id: string; title: string }[];
 };
 
 function EmployeeRegister() {
@@ -79,6 +80,7 @@ function EmployeeRegister() {
       alert("Registration failed");
     }
   };
+  const selectedCompany = companies.find((c) => c._id === form.company);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-sky-200 via-sky-100 to-white">
@@ -133,12 +135,32 @@ function EmployeeRegister() {
                 ))}
               </select>
 
-              <input
+              <select
+                name="designation"
+                value={form.designation}
+                onChange={(e) =>
+                  setForm({ ...form, designation: e.target.value })
+                }
+                disabled={!form.company} 
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              >
+                <option value="">
+                  {form.company ? "Select Job Role" : "Select company first"}
+                </option>
+
+                {selectedCompany?.jobs.map((job) => (
+                  <option key={job._id} value={job._id}>
+                    {job.title}
+                  </option>
+                ))}
+              </select>
+
+              {/* <input
                 name="designation"
                 placeholder="Job Title (Software Engineer)"
                 onChange={handleChange}
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-              />
+              /> */}
             </>
           )}
 

@@ -18,7 +18,6 @@ const StudentDashboard = () => {
   }
   return (
     <div className="min-h-screen bg-slate-100">
-      {/* ================= HEADER ================= */}
       <div className="rounded-b-[40px] bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-400 px-10 py-12 text-white">
         <h1 className="text-3xl font-semibold">Hello Student 👋</h1>
         <p className="opacity-90 mt-1">

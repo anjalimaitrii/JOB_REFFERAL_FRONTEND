@@ -1,5 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import { getMyRequests } from "../../services/request.service";
+import {
+  getMyRequests,
+  updateRequestStatus,
+} from "../../services/request.service";
 import { useEffect, useState } from "react";
 
 const EmployeeDashboard = () => {
@@ -29,6 +32,22 @@ const EmployeeDashboard = () => {
     fetchRequests();
   }, []);
 
+  const handleStatusChange = async (
+    requestId: string,
+    status: "accepted" | "rejected",
+  ) => {
+    try {
+      await updateRequestStatus(requestId, status);
+
+      // UI update without refetch
+      setRequests((prev) =>
+        prev.map((r) => (r._id === requestId ? { ...r, status } : r)),
+      );
+    } catch (err) {
+      alert("Failed to update request");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-100">
       <div className="relative">
@@ -42,6 +61,12 @@ const EmployeeDashboard = () => {
             </div>
 
             <div className="flex gap-3">
+              <button
+                onClick={() => navigate("/employee/companies")}
+                className="px-4 py-2 rounded-full bg-white/20 hover:bg-white/30 text-sm"
+              >
+                 Apply to Other Companies 
+              </button>
               <button
                 onClick={goToProfile}
                 className="px-4 py-2 rounded-full bg-white/20 hover:bg-white/30 text-sm"
@@ -75,7 +100,7 @@ const EmployeeDashboard = () => {
 
         {/* ================= BASE CARDS STRIP ================= */}
         <div className=" z-10 -mt-10 px-10">
-          <div className="bg-white rounded-3xl shadow-xl grid grid-cols-2 md:grid-cols-5 overflow-hidden">
+          <div className="bg-white rounded-3xl shadow-xl grid grid-cols-2 md:grid-cols-4 overflow-hidden">
             <BaseCard title="Pending" count={pending.toString()} />
             <BaseCard title="Approved" count={approved.toString()} />
             <BaseCard title="Rejected" count={rejected.toString()} />
@@ -89,31 +114,31 @@ const EmployeeDashboard = () => {
         <h2 className="text-xl font-semibold mb-6">My Referrals</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          
-  {requests.map((req) => (
-    <StudentCard
-      key={req._id}
-      name={req.sender.name}
-      email={req.sender.email}
-      role={req.sender.interestedIn || 'N/A'}
-      status={
-        req.status === 'pending'
-          ? 'Pending'
-          : req.status === 'accepted'
-          ? 'Approved'
-          : 'Rejected'
-      }
-    />
-  ))}
-</div>
-
+          {requests.map((req) => (
+            <StudentCard
+              key={req._id}
+              name={req.sender.name}
+              email={req.sender.email}
+              role={
+                req.company?.jobs.find((job: any) => job._id === req.role)
+                  ?.title || "N/A"
+              }
+              status={
+                req.status === "pending"
+                  ? "Pending"
+                  : req.status === "accepted"
+                    ? "Approved"
+                    : "Rejected"
+              }
+              onAccept={() => handleStatusChange(req._id, "accepted")}
+              onReject={() => handleStatusChange(req._id, "rejected")}
+            />
+          ))}
         </div>
       </div>
-    
+    </div>
   );
 };
-
-
 
 const BaseCard = ({ title, count }: { title: string; count: string }) => (
   <div
@@ -137,21 +162,63 @@ const StudentCard = ({
   role,
   email,
   status,
+  onAccept,
+  onReject,
 }: {
   name: string;
   role: string;
   email: string;
   status: "Pending" | "Approved" | "Rejected";
+  onAccept?: () => void;
+  onReject?: () => void;
 }) => {
+  const [open, setOpen] = useState(false);
+
   const statusStyle =
     status === "Approved"
       ? "bg-green-100 text-green-600"
       : status === "Rejected"
         ? "bg-red-100 text-red-600"
-        : "bg-yellow-100 text-yellow-600";
+        : "bg-yellow-100 text-yellow-700 cursor-pointer";
 
   return (
-    <div className="bg-white rounded-2xl shadow hover:shadow-xl transition p-6">
+    <div className="relative bg-white rounded-2xl shadow hover:shadow-xl transition p-6">
+      {/* 🔥 STATUS TOP RIGHT */}
+      <div className="absolute top-4 right-4">
+        <span
+          onClick={() => status === "Pending" && setOpen(!open)}
+          className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${statusStyle}`}
+        >
+          {status}
+          {status === "Pending" && <span className="text-[10px]">▾</span>}
+        </span>
+
+        {open && status === "Pending" && (
+          <div className="absolute right-0 mt-2 w-36 bg-white border rounded-xl shadow-lg z-20 overflow-hidden">
+            <button
+              onClick={() => {
+                onAccept?.();
+                setOpen(false);
+              }}
+              className="w-full px-4 py-2 text-left text-sm hover:bg-green-50 text-green-600"
+            >
+              Approve
+            </button>
+
+            <button
+              onClick={() => {
+                onReject?.();
+                setOpen(false);
+              }}
+              className="w-full px-4 py-2 text-left text-sm hover:bg-red-50 text-red-600"
+            >
+              Reject
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* CONTENT */}
       <h3 className="text-lg font-semibold">{name}</h3>
       <p className="text-sm text-gray-500">{email}</p>
 
@@ -159,12 +226,6 @@ const StudentCard = ({
         <p className="text-sm text-gray-500">Job Role</p>
         <p className="font-medium">{role}</p>
       </div>
-
-      <span
-        className={`inline-block mt-4 px-4 py-1 rounded-full text-sm font-medium ${statusStyle}`}
-      >
-        {status}
-      </span>
     </div>
   );
 };
