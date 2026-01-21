@@ -7,6 +7,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import EmployeeDashboard from "./pages/employee/dashboard";
 import Profile from "./pages/profile/ProfilePage";
 import Companies from "./pages/student/companies";
+import Request from "./pages/student/request";
 
 
 
@@ -62,7 +63,15 @@ function App() {
       />
 
     
-        
+              <Route
+        path="/student/requests"
+        element={
+          <ProtectedRoute allowedRole="student">
+            <Request />
+          </ProtectedRoute>
+        }
+      />
+
         <Route path="*" element={<h2>NO ROUTE MATCHED</h2>} />
       </Routes>
     </>

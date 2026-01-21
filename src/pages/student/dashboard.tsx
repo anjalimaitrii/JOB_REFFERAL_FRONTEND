@@ -37,6 +37,12 @@ const StudentDashboard = () => {
               >
                 Logout
               </button>
+                 <button
+                onClick={() => navigate("/student/requests")}
+                className="px-4 py-2 rounded-full bg-red-500/80 hover:bg-red-600 text-sm"
+              >
+                see my requests
+              </button>
             </div>
 
         {/* Search */}

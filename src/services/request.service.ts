@@ -55,3 +55,20 @@ export const updateRequestStatus = async (
   if (!res.ok) throw new Error("Failed to update request");
   return res.json();
 };
+export const getMySentRequests = async () => {
+  const token = localStorage.getItem("token")
+
+  const res = await fetch(`${BASE_URL}/api/request/my-sent`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch sent requests")
+  }
+
+  return res.json()
+}

@@ -41,7 +41,14 @@ function Companies() {
 
   const [selectedJobId, setSelectedJobId] = useState("");
   const [manualJobId, setManualJobId] = useState("");
-  
+  const stored = JSON.parse(localStorage.getItem("user") || "{}");
+  const user=stored.user;
+  const isEmployee = user?.role === "employee";
+  const myCompanyId = String(user?.company);
+
+  const visibleCompanies = isEmployee
+    ? companies.filter((c) => String(c._id) !== myCompanyId)
+    : companies;
 
   useEffect(() => {
     const fetchCompanies = async () => {
@@ -81,7 +88,7 @@ function Companies() {
   const handleSendRequest = async (
     employeeId: string,
     companyId: string,
-   role: string
+    role: string,
   ) => {
     if (!role) {
       alert("Please select a job or enter Job ID");
@@ -123,7 +130,7 @@ function Companies() {
             </thead>
 
             <tbody>
-              {companies.map((company) => (
+              {visibleCompanies.map((company) => (
                 <tr
                   key={company._id}
                   onClick={() => handleCompanyClick(company)}
