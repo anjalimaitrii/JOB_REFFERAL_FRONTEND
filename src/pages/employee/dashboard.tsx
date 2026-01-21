@@ -5,12 +5,17 @@ import {
 } from "../../services/request.service";
 import { useEffect, useState } from "react";
 
+
 const EmployeeDashboard = () => {
   const navigate = useNavigate();
   const [requests, setRequests] = useState<any[]>([]);
   const pending = requests.filter((r) => r.status === "pending").length;
   const approved = requests.filter((r) => r.status === "accepted").length;
   const rejected = requests.filter((r) => r.status === "rejected").length;
+  // const [setActiveChat] = useState<null | {
+  //   requestId: string;
+  //   receiverId: string;
+  // }>(null);
 
   const logout = () => {
     localStorage.clear();
@@ -39,7 +44,6 @@ const EmployeeDashboard = () => {
     try {
       await updateRequestStatus(requestId, status);
 
-      // UI update without refetch
       setRequests((prev) =>
         prev.map((r) => (r._id === requestId ? { ...r, status } : r)),
       );
@@ -65,7 +69,7 @@ const EmployeeDashboard = () => {
                 onClick={() => navigate("/employee/companies")}
                 className="px-4 py-2 rounded-full bg-white/20 hover:bg-white/30 text-sm"
               >
-                 Apply to Other Companies 
+                Apply to Other Companies
               </button>
               <button
                 onClick={goToProfile}
@@ -83,7 +87,6 @@ const EmployeeDashboard = () => {
             </div>
           </div>
 
-          {/* 🔍 CENTER SEARCH BAR */}
           <div className="flex justify-center mt-10">
             <div className="relative w-full max-w-xl">
               <input
@@ -98,7 +101,7 @@ const EmployeeDashboard = () => {
           </div>
         </div>
 
-        {/* ================= BASE CARDS STRIP ================= */}
+    
         <div className=" z-10 -mt-10 px-10">
           <div className="bg-white rounded-3xl shadow-xl grid grid-cols-2 md:grid-cols-4 overflow-hidden">
             <BaseCard title="Pending" count={pending.toString()} />
@@ -109,7 +112,6 @@ const EmployeeDashboard = () => {
         </div>
       </div>
 
-      {/* ================= STUDENT CARDS ================= */}
       <div className="px-10 mt-14">
         <h2 className="text-xl font-semibold mb-6">My Referrals</h2>
 
@@ -132,10 +134,37 @@ const EmployeeDashboard = () => {
               }
               onAccept={() => handleStatusChange(req._id, "accepted")}
               onReject={() => handleStatusChange(req._id, "rejected")}
+              // onChat={() =>
+              //   setActiveChat({
+              //     requestId: req._id,
+              //     receiverId: req.sender._id,
+              //   })
+              // }
             />
           ))}
         </div>
       </div>
+      {/* {activeChat && (
+        <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
+          <div className="w-full max-w-3xl h-[85vh] bg-white rounded-2xl overflow-hidden relative flex flex-col">
+            <Chat
+              requestId={activeChat.requestId}
+              receiverId={activeChat.receiverId}
+              currentUserId={
+                JSON.parse(atob(localStorage.getItem("token")!.split(".")[1]))
+                  ._id
+              }
+            />
+
+            <button
+              onClick={() => setActiveChat(null)}
+              className="absolute top-3 right-3 text-black text-xl"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )} */}
     </div>
   );
 };
@@ -164,6 +193,7 @@ const StudentCard = ({
   status,
   onAccept,
   onReject,
+  onChat,
 }: {
   name: string;
   role: string;
@@ -171,6 +201,7 @@ const StudentCard = ({
   status: "Pending" | "Approved" | "Rejected";
   onAccept?: () => void;
   onReject?: () => void;
+  onChat?: () => void;
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -183,7 +214,6 @@ const StudentCard = ({
 
   return (
     <div className="relative bg-white rounded-2xl shadow hover:shadow-xl transition p-6">
-      {/* 🔥 STATUS TOP RIGHT */}
       <div className="absolute top-4 right-4">
         <span
           onClick={() => status === "Pending" && setOpen(!open)}
@@ -226,6 +256,14 @@ const StudentCard = ({
         <p className="text-sm text-gray-500">Job Role</p>
         <p className="font-medium">{role}</p>
       </div>
+      {status === "Approved" && (
+        <button
+          onClick={onChat}
+          className="mt-4 px-4 py-2 rounded-full bg-indigo-500 text-white text-sm"
+        >
+          Chat
+        </button>
+      )}
     </div>
   );
 };
