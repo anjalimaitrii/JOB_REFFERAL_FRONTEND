@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { getMySentRequests } from "../../services/request.service";
-
+import Chat from "../../components/chat";
 
 function Request() {
   const [requests, setRequests] = useState<any[]>([]);
-  const [, setActiveChat] = useState<null | {
+  const [activeChat, setActiveChat] = useState<null | {
     requestId: string;
     receiverId: string;
   }>(null);
@@ -69,7 +69,7 @@ function Request() {
           ))}
         </div>
       </div>
-      {/* {activeChat && (
+      {activeChat && (
         <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
           <div className="w-full max-w-3xl h-[85vh] bg-white rounded-2xl overflow-hidden flex flex-col relative">
             <Chat
@@ -89,7 +89,7 @@ function Request() {
             </button>
           </div>
         </div>
-      )} */}
+      )}
     </div>
   );
 }

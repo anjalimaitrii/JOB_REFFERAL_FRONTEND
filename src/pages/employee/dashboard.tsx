@@ -4,7 +4,7 @@ import {
   updateRequestStatus,
 } from "../../services/request.service";
 import { useEffect, useState } from "react";
-
+import Chat from "../../components/chat";
 
 const EmployeeDashboard = () => {
   const navigate = useNavigate();
@@ -12,10 +12,10 @@ const EmployeeDashboard = () => {
   const pending = requests.filter((r) => r.status === "pending").length;
   const approved = requests.filter((r) => r.status === "accepted").length;
   const rejected = requests.filter((r) => r.status === "rejected").length;
-  // const [setActiveChat] = useState<null | {
-  //   requestId: string;
-  //   receiverId: string;
-  // }>(null);
+  const [activeChat, setActiveChat] = useState<null | {
+    requestId: string;
+    receiverId: string;
+  }>(null);
 
   const logout = () => {
     localStorage.clear();
@@ -134,17 +134,17 @@ const EmployeeDashboard = () => {
               }
               onAccept={() => handleStatusChange(req._id, "accepted")}
               onReject={() => handleStatusChange(req._id, "rejected")}
-              // onChat={() =>
-              //   setActiveChat({
-              //     requestId: req._id,
-              //     receiverId: req.sender._id,
-              //   })
-              // }
+              onChat={() =>
+                setActiveChat({
+                  requestId: req._id,
+                  receiverId: req.sender._id,
+                })
+              }
             />
           ))}
         </div>
       </div>
-      {/* {activeChat && (
+      {activeChat && (
         <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
           <div className="w-full max-w-3xl h-[85vh] bg-white rounded-2xl overflow-hidden relative flex flex-col">
             <Chat
@@ -164,7 +164,7 @@ const EmployeeDashboard = () => {
             </button>
           </div>
         </div>
-      )} */}
+      )}
     </div>
   );
 };
