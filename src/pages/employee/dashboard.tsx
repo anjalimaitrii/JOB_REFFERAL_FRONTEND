@@ -5,6 +5,7 @@ import {
 } from "../../services/request.service";
 import { useEffect, useState } from "react";
 import Chat from "../../components/chat";
+import { LogOut, User, Mail } from "lucide-react";
 
 const EmployeeDashboard = () => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ const EmployeeDashboard = () => {
   const pending = requests.filter((r) => r.status === "pending").length;
   const approved = requests.filter((r) => r.status === "accepted").length;
   const rejected = requests.filter((r) => r.status === "rejected").length;
+
   const [activeChat, setActiveChat] = useState<null | {
     requestId: string;
     receiverId: string;
@@ -21,19 +23,16 @@ const EmployeeDashboard = () => {
     localStorage.clear();
     navigate("/");
   };
-  const goToProfile = () => {
-    navigate("/profile");
-  };
+
   useEffect(() => {
     const fetchRequests = async () => {
       try {
         const res = await getMyRequests();
         setRequests(res.data);
-      } catch (err) {
+      } catch {
         console.error("Failed to fetch requests");
       }
     };
-
     fetchRequests();
   }, []);
 
@@ -43,76 +42,59 @@ const EmployeeDashboard = () => {
   ) => {
     try {
       await updateRequestStatus(requestId, status);
-
       setRequests((prev) =>
         prev.map((r) => (r._id === requestId ? { ...r, status } : r)),
       );
-    } catch (err) {
+    } catch {
       alert("Failed to update request");
     }
   };
 
   return (
     <div className="min-h-screen bg-slate-100">
-      <div className="relative">
-        <div className="rounded-b-[40px] bg-gradient-to-r from-teal-400 h-[300px] via-cyan-400 to-emerald-300 px-10 py-12 text-white">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-semibold">Hello Anjali,</h1>
-              <p className="opacity-90">
-                Welcome to the Employee Referral Portal
-              </p>
-            </div>
 
-            <div className="flex gap-3">
-              <button
-                onClick={() => navigate("/employee/companies")}
-                className="px-4 py-2 rounded-full bg-white/20 hover:bg-white/30 text-sm"
-              >
-                Apply to Other Companies
-              </button>
-              <button
-                onClick={goToProfile}
-                className="px-4 py-2 rounded-full bg-white/20 hover:bg-white/30 text-sm"
-              >
-                Profile
-              </button>
+      {/* NAVBAR (same as Student) */}
+      <div className="h-16 bg-black flex items-center justify-between px-4 sm:px-8 text-white shadow">
+        <h1 className="text-base sm:text-lg font-semibold">
+          Employee Dashboard
+        </h1>
 
-              <button
-                onClick={logout}
-                className="px-4 py-2 rounded-full bg-red-500/80 hover:bg-red-600 text-sm"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
+        <div className="flex items-center gap-2 sm:gap-3">
+          <button
+            onClick={() => navigate("/profile")}
+            className="p-2 rounded-full hover:bg-gray-800"
+          >
+            <User className="w-4 h-4 sm:w-5 sm:h-5" />
+          </button>
 
-          <div className="flex justify-center mt-10">
-            <div className="relative w-full max-w-xl">
-              <input
-                placeholder="Search students, job roles..."
-                className="w-full px-6 py-3 rounded-full
-                text-gray-700 shadow-lg focus:outline-none"
-              />
-              <span className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400">
-                🔍
-              </span>
-            </div>
-          </div>
-        </div>
+          <button
+            onClick={() => navigate("/employee/companies")}
+            className="p-2 rounded-full hover:bg-gray-800"
+            title="Apply to other companies"
+          >
+            <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
+          </button>
 
-    
-        <div className=" z-10 -mt-10 px-10">
-          <div className="bg-white rounded-3xl shadow-xl grid grid-cols-2 md:grid-cols-4 overflow-hidden">
-            <BaseCard title="Pending" count={pending.toString()} />
-            <BaseCard title="Approved" count={approved.toString()} />
-            <BaseCard title="Rejected" count={rejected.toString()} />
-            <BaseCard title="Total" count={requests.length.toString()} />
-          </div>
+          <button
+            onClick={logout}
+            className="p-2 rounded-full hover:bg-gray-700"
+          >
+            <LogOut className="w-4 h-4 sm:w-5 sm:h-5" />
+          </button>
         </div>
       </div>
 
-      <div className="px-10 mt-14">
+      {/* CONTENT */}
+      <div className="px-4 sm:px-10 py-6">
+
+        {/* STATS */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+          <StatCard title="Pending" count={pending} />
+          <StatCard title="Approved" count={approved} />
+          <StatCard title="Rejected" count={rejected} />
+          <StatCard title="Total" count={requests.length} />
+        </div>
+
         <h2 className="text-xl font-semibold mb-6">My Referrals</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -129,8 +111,8 @@ const EmployeeDashboard = () => {
                 req.status === "pending"
                   ? "Pending"
                   : req.status === "accepted"
-                    ? "Approved"
-                    : "Rejected"
+                  ? "Approved"
+                  : "Rejected"
               }
               onAccept={() => handleStatusChange(req._id, "accepted")}
               onReject={() => handleStatusChange(req._id, "rejected")}
@@ -144,21 +126,28 @@ const EmployeeDashboard = () => {
           ))}
         </div>
       </div>
+
+      {/* CHAT MODAL */}
       {activeChat && (
         <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
-          <div className="w-full max-w-3xl h-[85vh] bg-white rounded-2xl overflow-hidden relative flex flex-col">
+          <div className="
+  w-full max-w-3xl h-[85vh]
+  bg-white rounded-2xl
+  overflow-hidden
+  relative
+  flex flex-col
+">
+
             <Chat
               requestId={activeChat.requestId}
               receiverId={activeChat.receiverId}
               currentUserId={
-                JSON.parse(atob(localStorage.getItem("token")!.split(".")[1]))
-                  ._id
+                JSON.parse(atob(localStorage.getItem("token")!.split(".")[1]))._id
               }
             />
-
             <button
               onClick={() => setActiveChat(null)}
-              className="absolute top-3 right-3 text-black text-xl"
+              className="absolute top-3 right-3 text-xl"
             >
               ✕
             </button>
@@ -169,20 +158,21 @@ const EmployeeDashboard = () => {
   );
 };
 
-const BaseCard = ({ title, count }: { title: string; count: string }) => (
+/* ---------- SMALL UI HELPERS ---------- */
+
+const StatCard = ({ title, count }: { title: string; count: number }) => (
   <div
     className="
-      bg-white
-      flex flex-col items-center justify-center
-      p-6 border
+      bg-white rounded-xl shadow
+      p-6 text-center
       transition-all duration-300 ease-out
-      hover:-translate-y-4
+      hover:-translate-y-2
       hover:shadow-2xl
       cursor-pointer
     "
   >
-    <p className="text-2xl font-bold text-indigo-600">{count}</p>
-    <p className="text-sm text-gray-600 mt-1">{title}</p>
+    <p className="text-2xl font-bold">{count}</p>
+    <p className="text-sm text-gray-500 mt-1">{title}</p>
   </div>
 );
 
@@ -209,38 +199,36 @@ const StudentCard = ({
     status === "Approved"
       ? "bg-green-100 text-green-600"
       : status === "Rejected"
-        ? "bg-red-100 text-red-600"
-        : "bg-yellow-100 text-yellow-700 cursor-pointer";
+      ? "bg-red-100 text-red-600"
+      : "bg-yellow-100 text-yellow-700 cursor-pointer";
 
   return (
-    <div className="relative bg-white rounded-2xl shadow hover:shadow-xl transition p-6">
+    <div className="relative bg-white rounded-2xl shadow p-6">
       <div className="absolute top-4 right-4">
         <span
           onClick={() => status === "Pending" && setOpen(!open)}
-          className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${statusStyle}`}
+          className={`px-3 py-1 rounded-full text-xs ${statusStyle}`}
         >
           {status}
-          {status === "Pending" && <span className="text-[10px]">▾</span>}
         </span>
 
         {open && status === "Pending" && (
-          <div className="absolute right-0 mt-2 w-36 bg-white border rounded-xl shadow-lg z-20 overflow-hidden">
+          <div className="absolute right-0 mt-2 w-36 bg-white border rounded-xl shadow">
             <button
               onClick={() => {
                 onAccept?.();
                 setOpen(false);
               }}
-              className="w-full px-4 py-2 text-left text-sm hover:bg-green-50 text-green-600"
+              className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50"
             >
               Approve
             </button>
-
             <button
               onClick={() => {
                 onReject?.();
                 setOpen(false);
               }}
-              className="w-full px-4 py-2 text-left text-sm hover:bg-red-50 text-red-600"
+              className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50"
             >
               Reject
             </button>
@@ -248,7 +236,6 @@ const StudentCard = ({
         )}
       </div>
 
-      {/* CONTENT */}
       <h3 className="text-lg font-semibold">{name}</h3>
       <p className="text-sm text-gray-500">{email}</p>
 
@@ -256,10 +243,11 @@ const StudentCard = ({
         <p className="text-sm text-gray-500">Job Role</p>
         <p className="font-medium">{role}</p>
       </div>
+
       {status === "Approved" && (
         <button
           onClick={onChat}
-          className="mt-4 px-4 py-2 rounded-full bg-indigo-500 text-white text-sm"
+          className="mt-4 px-4 py-2 rounded-full bg-black text-white text-sm"
         >
           Chat
         </button>

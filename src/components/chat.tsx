@@ -72,10 +72,10 @@ socket.on("receive-message", (msg) => {
 
 
   return (
-    <div className="flex flex-col h-screen bg-slate-100">
+    <div className="flex flex-col h-screen  bg-slate-100">
 
       {/* HEADER */}
-      <div className="bg-indigo-600 text-white px-6 py-4 font-semibold">
+      <div className="bg-indigo-600  text-white px-6 py-4 font-semibold">
         Chat
       </div>
 

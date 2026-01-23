@@ -1,68 +1,73 @@
-
-import { useNavigate } from 'react-router-dom'
-import Companies from './companies'
-
-
+import { useNavigate } from "react-router-dom"
+import Companies from "./companies"
+import { LogOut, User, Mail } from "lucide-react"
 
 const StudentDashboard = () => {
-
   const navigate = useNavigate()
 
-  
   const logout = () => {
     localStorage.clear()
-    navigate('/')
+    navigate("/")
   }
-   const goToProfile = () => {
-    navigate('/profile')
-  }
+
   return (
     <div className="min-h-screen bg-slate-100">
-      <div className="rounded-b-[40px] bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-400 px-10 py-12 text-white">
-        <h1 className="text-3xl font-semibold">Hello Student 👋</h1>
-        <p className="opacity-90 mt-1">
-          Send referral requests to employees
-        </p>
-        <div className="flex gap-3">
-              <button
-                onClick={goToProfile}
-                className="px-4 py-2 rounded-full bg-white/20 hover:bg-white/30 text-sm"
-              >
-                Profile
-              </button>
+      
+      {/* NAVBAR */}
+      <div
+        className="h-16 bg-black flex items-center justify-between
+                   px-4 sm:px-8 text-white shadow"
+      >
+        {/* Left */}
+        <h1 className="text-base sm:text-lg font-semibold tracking-wide">
+          Student Dashboard
+        </h1>
 
-              <button
-                onClick={logout}
-                className="px-4 py-2 rounded-full bg-red-500/80 hover:bg-red-600 text-sm"
-              >
-                Logout
-              </button>
-                 <button
-                onClick={() => navigate("/student/requests")}
-                className="px-4 py-2 rounded-full bg-red-500/80 hover:bg-red-600 text-sm"
-              >
-                see my requests
-              </button>
-            </div>
+        {/* Right Icons */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          <button
+            onClick={() => navigate("/profile")}
+            className="p-2 rounded-full hover:bg-gray-800 transition"
+            title="Profile"
+          >
+            <User className="w-4 h-4 sm:w-5 sm:h-5" />
+          </button>
 
-        {/* Search */}
-        <div className="flex justify-center mt-8">
-          <input
-            placeholder="Search employee name, role..."
-            className="w-full max-w-xl px-6 py-3 rounded-full
-              text-gray-700 shadow-lg focus:outline-none"
-          />
+          <button
+            onClick={() => navigate("/student/requests")}
+            className="p-2 rounded-full hover:bg-gray-800 transition"
+            title="My Requests"
+          >
+            <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
+          </button>
+
+          <button
+            onClick={logout}
+            className="p-2 rounded-full hover:bg-gray-700 transition"
+            title="Logout"
+          >
+            <LogOut className="w-4 h-4 sm:w-5 sm:h-5" />
+          </button>
         </div>
-            
       </div>
 
-     
-    
-    <Companies/>
+    <div className="px-4 sm:px-10 py-5 sm:py-6">
+
+  {/* Search */}
+  <div className="flex justify-center mt-10 sm:mt-6 mb-6 sm:mb-8">
+    <input
+      placeholder="Search employee name, job..."
+      className="w-full sm:max-w-xl px-5 py-3 rounded-full
+      bg-white text-gray-700 border border-gray-300
+      shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400"
+    />
+  </div>
+
+  <Companies />
+</div>
+
     </div>
   )
 }
-
-
 
 export default StudentDashboard
