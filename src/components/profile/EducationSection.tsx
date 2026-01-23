@@ -1,3 +1,6 @@
+import { useEffect, useState } from "react";
+import { getColleges } from "../../services/college.service";
+
 export const EducationSection = ({
   education = [],
   onChange,
@@ -5,11 +8,9 @@ export const EducationSection = ({
   education?: any[];
   onChange: (edu: any[]) => void;
 }) => {
-  const handleChange = (
-    index: number,
-    field: string,
-    value: string
-  ) => {
+  /* ================== EDUCATION HANDLERS ================== */
+
+  const handleChange = (index: number, field: string, value: string) => {
     const updated = [...education];
     updated[index] = {
       ...updated[index],
@@ -55,12 +56,38 @@ export const EducationSection = ({
     return "Subject";
   };
 
+  /* ================== COLLEGE SEARCH ================== */
+
+  const [colleges, setColleges] = useState<any[]>([]);
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchColleges = async () => {
+      setLoading(true);
+      try {
+        const data = await getColleges(
+        search, // 🔥 typed text backend ko ja raha
+      );
+        setColleges(data || []);
+      } catch (err) {
+        console.error("Failed to fetch colleges");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const timer = setTimeout(fetchColleges, 400); // debounce
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  /* ================== UI ================== */
+
   return (
     <div className="bg-white rounded-2xl shadow p-6 space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <h3 className="font-semibold text-lg">Education</h3>
-
         <button
           onClick={addEducation}
           className="px-4 py-2 bg-indigo-500 text-white rounded-lg text-sm hover:bg-indigo-600"
@@ -69,19 +96,14 @@ export const EducationSection = ({
         </button>
       </div>
 
-      {/* Empty state */}
       {education.length === 0 && (
         <p className="text-sm text-gray-400">
           No education added yet. Click <b>Add Education</b> to begin.
         </p>
       )}
 
-      {/* Education blocks */}
       {education.map((edu, index) => (
-        <div
-          key={index}
-          className="relative border rounded-xl p-4 space-y-4"
-        >
+        <div key={index} className="relative border rounded-xl p-4 space-y-4">
           <Select
             label="Education Level"
             value={edu.level}
@@ -99,13 +121,36 @@ export const EducationSection = ({
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input
-              label="School / University"
-              value={edu.institute}
-              onChange={(e: any) =>
-                handleChange(index, "institute", e.target.value)
-              }
-            />
+            {/* 🔥 College Search + Select */}
+            <div>
+              <p className="text-xs text-gray-500 mb-1">
+                School / University
+              </p>
+
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Type college name"
+                className="w-full px-3 py-2 mb-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              />
+
+              <select
+                value={edu.institute}
+                onChange={(e) =>
+                  handleChange(index, "institute", e.target.value)
+                }
+                className="w-full px-3 py-2 border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              >
+                <option value="">
+                  {loading ? "Loading..." : "Select College"}
+                </option>
+                {colleges.map((c) => (
+                  <option key={c._id} value={c.name}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
 
             <Input
               label="Board / Degree"
@@ -153,17 +198,22 @@ export const EducationSection = ({
     </div>
   );
 };
+
+/* ================== REUSABLE INPUT ================== */
+
 const Input = ({ label, value, onChange }: any) => (
   <div>
     <p className="text-xs text-gray-500 mb-1">{label}</p>
     <input
       value={value}
       onChange={onChange}
-      className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
       placeholder={label}
+      className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
     />
   </div>
 );
+
+/* ================== REUSABLE SELECT ================== */
 
 const Select = ({ label, value, onChange, options }: any) => (
   <div>

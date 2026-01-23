@@ -9,3 +9,26 @@ export const getCompanies = async () => {
 
   return res.json()
 }
+export const getCollegesWithEmployees = async () => {
+  const res = await fetch(`${BASE_URL}/api/college/with-employees`);
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch colleges");
+  }
+
+  return res.json(); 
+};
+
+export const getEmployeesByCollege = async (collegeName: string) => {
+  const res = await fetch(
+    `${BASE_URL}/api/college/employees?collegeName=${encodeURIComponent(
+      collegeName
+    )}`
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch employees by college");
+  }
+
+  return res.json(); 
+};

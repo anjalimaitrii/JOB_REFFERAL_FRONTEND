@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getEmployeesByCompany } from "../../services/employee.service";
-import { getCompanies } from "../../services/company.service";
+import { getCollegesWithEmployees, getCompanies, getEmployeesByCollege } from "../../services/company.service";
 import { ChevronsLeft } from "lucide-react";
 import { sendRequestToEmployee } from "../../services/request.service";
 
@@ -42,13 +42,16 @@ function Companies() {
   const [selectedJobId, setSelectedJobId] = useState("");
   const [manualJobId, setManualJobId] = useState("");
   const stored = JSON.parse(localStorage.getItem("user") || "{}");
-  const user=stored.user;
+  const user = stored.user;
   const isEmployee = user?.role === "employee";
   const myCompanyId = String(user?.company);
 
   const visibleCompanies = isEmployee
     ? companies.filter((c) => String(c._id) !== myCompanyId)
     : companies;
+  const [viewMode, setViewMode] = useState<"company" | "college">("company");
+  const [colleges, setColleges] = useState<string[]>([]);
+  const [selectedCollege, setSelectedCollege] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchCompanies = async () => {
@@ -65,7 +68,7 @@ function Companies() {
     fetchCompanies();
   }, []);
 
-  /* ================= COMPANY CLICK ================= */
+  
   const handleCompanyClick = async (company: Company) => {
     setSelectedCompany(company);
 
@@ -76,14 +79,34 @@ function Companies() {
       console.error("Failed to fetch employees");
     }
   };
+useEffect(() => {
+  if (viewMode !== "college") return;
+  const fetchColleges = async () => {
+    try {
+      const res = await getCollegesWithEmployees();
+      setColleges(res.data || []);
+    } catch (err) {
+      setColleges([]);
+    }
+  };
 
-  if (loading) {
-    return <p className="text-center mt-10">Loading companies...</p>;
-  }
+  fetchColleges();
+}, [viewMode]);
 
-  if (error) {
-    return <p className="text-center mt-10 text-red-600">{error}</p>;
+
+const handleCollegeClick = async (collegeName: string) => {
+  setSelectedCollege(collegeName);
+  setSelectedCompany(null);
+
+  try {
+    const res = await getEmployeesByCollege(collegeName);
+    setEmployees(res.data || []);
+  } catch (err) {
+    console.error("Failed to fetch employees by college", err);
+    setEmployees([]);
   }
+};
+
 
   const handleSendRequest = async (
     employeeId: string,
@@ -108,14 +131,49 @@ function Companies() {
       alert("Failed to send request");
     }
   };
+  if (loading) {
+    return <p className="text-center mt-10">Loading companies...</p>;
+  }
+
+  if (error) {
+    return <p className="text-center mt-10 text-red-600">{error}</p>;
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 px-6 py-10">
+      <div className="flex justify-center mb-6">
+        <div className="inline-flex rounded-full bg-gray-100 p-1">
+          <button
+            onClick={() => setViewMode("company")}
+            className={`px-5 py-2 rounded-full text-sm font-medium transition ${
+              viewMode === "company"
+                ? "bg-indigo-600 text-white"
+                : "text-gray-600"
+            }`}
+          >
+            Companies
+          </button>
+
+          <button
+            onClick={() => setViewMode("college")}
+            className={`px-5 py-2 rounded-full text-sm font-medium transition ${
+              viewMode === "college"
+                ? "bg-indigo-600 text-white"
+                : "text-gray-600"
+            }`}
+          >
+            Colleges
+          </button>
+        </div>
+      </div>
+
       {!selectedCompany && (
-        <h1 className="text-3xl font-bold text-center mb-8">Companies</h1>
+        <h1 className="text-3xl font-bold text-center mb-8">
+          {viewMode === "company" ? "Companies" : "Colleges"}
+        </h1>
       )}
       {/*  COMPANIES TABLE  */}
-      {!selectedCompany && (
+      {viewMode === "company" && !selectedCompany && (
         <div className="max-w-8xl mx-auto bg-white rounded-2xl shadow overflow-hidden">
           <table className="w-full">
             <thead>
@@ -173,9 +231,38 @@ function Companies() {
           </table>
         </div>
       )}
+      {viewMode === "college" && !selectedCollege  && (
+        <div className="max-w-8xl mx-auto bg-white rounded-2xl shadow overflow-hidden">
+          <table className="w-full">
+            <thead>
+              <tr className="bg-gray-100 text-left text-sm uppercase text-gray-600">
+                <th className="p-4">College Name</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {colleges.length === 0 ? (
+                <tr>
+                  <td className="p-4 text-gray-400">No colleges found</td>
+                </tr>
+              ) : (
+                colleges.map((college) => (
+                  <tr
+                    key={college}
+                    onClick={() => handleCollegeClick(college)}
+                    className="cursor-pointer border-t hover:bg-gray-50 transition"
+                  >
+                    <td className="p-4 text-gray-700 font-medium">{college}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {/* EMPLOYEES SECTION */}
-      {selectedCompany && (
+      {(selectedCompany || selectedCollege) && (
         <div className="mt-12">
           <button
             onClick={() => {
@@ -187,7 +274,7 @@ function Companies() {
             <ChevronsLeft size={18} />
           </button>
           <h2 className="text-2xl font-semibold text-center mb-6">
-            {selectedCompany.name} Employees
+            {selectedCompany?.name} Employees
           </h2>
 
           {employees.length === 0 ? (

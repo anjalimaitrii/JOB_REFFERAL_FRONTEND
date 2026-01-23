@@ -13,6 +13,7 @@
     "@tabler/icons-react": "^3.36.1",
     "autoprefixer": "^10.4.23",
     "clsx": "^2.1.1",
+    "indian-colleges": "^1.1.1",
     "lucide-react": "^0.562.0",
     "motion": "^12.26.2",
     "react": "^19.2.0",
