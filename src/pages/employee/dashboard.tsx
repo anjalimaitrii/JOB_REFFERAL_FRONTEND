@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import {
   getMyRequests,
+  getMySentRequests,
   updateRequestStatus,
 } from "../../services/request.service";
 import { useEffect, useState } from "react";
@@ -10,13 +11,17 @@ import { LogOut, User, Briefcase } from "lucide-react";
 const EmployeeDashboard = () => {
   const navigate = useNavigate();
   const [requests, setRequests] = useState<any[]>([]);
+  const [sentRequests, setSentRequests] = useState<any[]>([]);
+  const [viewMode, setViewMode] = useState<"received" | "sent">("received");
   const [filterStatus, setFilterStatus] = useState<"all" | "pending" | "accepted" | "rejected">("all");
 
-  const pending = requests.filter((r) => r.status === "pending").length;
-  const approved = requests.filter((r) => r.status === "accepted").length;
-  const rejected = requests.filter((r) => r.status === "rejected").length;
+  const activeRequests = viewMode === "received" ? requests : sentRequests;
 
-  const filteredRequests = requests.filter((r) => {
+  const pending = activeRequests.filter((r) => r.status === "pending").length;
+  const approved = activeRequests.filter((r) => r.status === "accepted").length;
+  const rejected = activeRequests.filter((r) => r.status === "rejected").length;
+
+  const filteredRequests = activeRequests.filter((r) => {
     if (filterStatus === "all") return true;
     return r.status === filterStatus;
   });
@@ -34,8 +39,12 @@ const EmployeeDashboard = () => {
   useEffect(() => {
     const fetchRequests = async () => {
       try {
-        const res = await getMyRequests();
-        setRequests(res.data);
+        const [receivedRes, sentRes] = await Promise.all([
+          getMyRequests(),
+          getMySentRequests(),
+        ]);
+        setRequests(receivedRes.data);
+        setSentRequests(sentRes.data);
       } catch {
         console.error("Failed to fetch requests");
       }
@@ -94,11 +103,41 @@ const EmployeeDashboard = () => {
       {/* CONTENT */}
       <div className="px-4 sm:px-10 py-6">
 
+        {/* TOGGLE VIEW */}
+        <div className="flex justify-center mb-8">
+          <div className="bg-white p-1 rounded-lg border inline-flex">
+            <button
+              onClick={() => {
+                setViewMode("received");
+                setFilterStatus("all");
+              }}
+              className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${viewMode === "received"
+                ? "bg-black text-white shadow-sm"
+                : "text-gray-500 hover:text-gray-900"
+                }`}
+            >
+              Received Referrals
+            </button>
+            <button
+              onClick={() => {
+                setViewMode("sent");
+                setFilterStatus("all");
+              }}
+              className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${viewMode === "sent"
+                ? "bg-black text-white shadow-sm"
+                : "text-gray-500 hover:text-gray-900"
+                }`}
+            >
+              Sent Applications
+            </button>
+          </div>
+        </div>
+
         {/* STATS */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
           <StatCard
             title="Total"
-            count={requests.length}
+            count={activeRequests.length}
             isActive={filterStatus === "all"}
             onClick={() => setFilterStatus("all")}
           />
@@ -123,34 +162,64 @@ const EmployeeDashboard = () => {
 
         </div>
 
-        <h2 className="text-xl font-semibold mb-6">My Referrals</h2>
+        <h2 className="text-xl font-semibold mb-6">
+          {viewMode === "received" ? "Referral Requests" : "Your Applications"}
+        </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredRequests.map((req) => (
-            <StudentCard
-              key={req._id}
-              name={req.sender.name}
-              email={req.sender.email}
-              role={
-                req.company?.jobs.find((job: any) => job._id === req.role)
-                  ?.title || "N/A"
-              }
-              status={
-                req.status === "pending"
-                  ? "Pending"
-                  : req.status === "accepted"
-                    ? "Approved"
-                    : "Rejected"
-              }
-              onAccept={() => handleStatusChange(req._id, "accepted")}
-              onReject={() => handleStatusChange(req._id, "rejected")}
-              onChat={() =>
-                setActiveChat({
-                  requestId: req._id,
-                  receiverId: req.sender._id,
-                })
-              }
-            />
+            viewMode === "received" ? (
+              <StudentCard
+                key={req._id}
+                name={req.sender?.name || "Unknown Candidate"}
+                email={req.sender?.email || "Unknown Email"}
+                role={
+                  req.company?.jobs?.find((job: any) => job._id === req.role)
+                    ?.title || "N/A"
+                }
+                status={
+                  req.status === "pending"
+                    ? "Pending"
+                    : req.status === "accepted"
+                      ? "Approved"
+                      : "Rejected"
+                }
+                onAccept={() => handleStatusChange(req._id, "accepted")}
+                onReject={() => handleStatusChange(req._id, "rejected")}
+                onChat={() => {
+                  if (req.sender?._id) {
+                    setActiveChat({
+                      requestId: req._id,
+                      receiverId: req.sender._id,
+                    });
+                  }
+                }}
+              />
+            ) : (
+              <RequestCard
+                key={req._id}
+                companyName={req.company?.name || "Unknown Company"}
+                role={
+                  req.company?.jobs?.find((job: any) => job._id === req.role)?.title || "N/A"
+                }
+                receiverName={req.receiver?.name || "Unknown User"}
+                status={
+                  req.status === "pending"
+                    ? "Pending"
+                    : req.status === "accepted"
+                      ? "Approved"
+                      : "Rejected"
+                }
+                onChat={() => {
+                  if (req.receiver?._id) {
+                    setActiveChat({
+                      requestId: req._id,
+                      receiverId: req.receiver._id,
+                    });
+                  }
+                }}
+              />
+            )
           ))}
         </div>
       </div>
@@ -298,6 +367,63 @@ const StudentCard = ({
           className="mt-4 w-full px-4 py-2 rounded-full bg-black text-white text-sm hover:bg-gray-800 transition-colors"
         >
           Chat with Candidate
+        </button>
+      )}
+    </div>
+  );
+};
+
+const RequestCard = ({
+  companyName,
+  role,
+  receiverName,
+  status,
+  onChat,
+}: {
+  companyName: string;
+  role: string;
+  receiverName: string;
+  status: "Pending" | "Approved" | "Rejected";
+  onChat?: () => void;
+}) => {
+  const statusStyle =
+    status === "Approved"
+      ? "bg-green-100 text-green-600"
+      : status === "Rejected"
+        ? "bg-red-100 text-red-600"
+        : "bg-yellow-100 text-yellow-700";
+
+  return (
+    <div className="relative bg-white rounded-2xl shadow p-6 hover:shadow-lg transition-shadow">
+      <div className="absolute top-4 right-4">
+        <span
+          className={`px-3 py-1 rounded-full text-xs ${statusStyle}`}
+        >
+          {status}
+        </span>
+      </div>
+
+      <h3 className="text-lg font-semibold">{companyName}</h3>
+      <p className="text-sm text-gray-500">{role}</p>
+
+      <div className="mt-4 pt-4 border-t border-gray-100">
+        <div className="flex items-center gap-3">
+          <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-xs font-bold text-indigo-600">
+            {receiverName.charAt(0)}
+          </div>
+          <div>
+            <p className="text-xs text-gray-400">Sent to</p>
+            <p className="text-sm font-medium">{receiverName}</p>
+          </div>
+        </div>
+      </div>
+
+      {status === "Approved" && (
+        <button
+          onClick={onChat}
+          className="mt-4 w-full px-4 py-2 rounded-full bg-black text-white text-sm hover:bg-gray-800 transition-colors"
+        >
+          Chat with Referrer
         </button>
       )}
     </div>

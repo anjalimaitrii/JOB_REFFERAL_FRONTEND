@@ -113,9 +113,9 @@ const Request = () => {
               return (
                 <RequestCard
                   key={req._id}
-                  companyName={req.company.name}
+                  companyName={req.company?.name || "Unknown Company"}
                   role={roleTitle}
-                  receiverName={req.receiver.name}
+                  receiverName={req.receiver?.name || "Unknown User"}
                   status={
                     req.status === "pending"
                       ? "Pending"
@@ -123,12 +123,14 @@ const Request = () => {
                         ? "Approved"
                         : "Rejected"
                   }
-                  onChat={() =>
-                    setActiveChat({
-                      requestId: req._id,
-                      receiverId: req.receiver._id,
-                    })
-                  }
+                  onChat={() => {
+                    if (req.receiver?._id) {
+                      setActiveChat({
+                        requestId: req._id,
+                        receiverId: req.receiver._id,
+                      });
+                    }
+                  }}
                 />
               )
             })}

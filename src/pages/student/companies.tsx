@@ -294,7 +294,7 @@ function Companies() {
                         />
                       ) : (
                         <div className="w-14 h-14 rounded-full bg-gray-400 text-white flex items-center justify-center text-lg font-semibold">
-                          {emp.name[0]}
+                          {emp.name?.charAt(0) || "?"}
                         </div>
                       )}
 
