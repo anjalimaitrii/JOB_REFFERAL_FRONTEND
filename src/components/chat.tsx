@@ -21,61 +21,61 @@ const Chat = ({ requestId, receiverId, currentUserId }: ChatProps) => {
   const bottomRef = useRef<HTMLDivElement | null>(null)
 
 
-useEffect(() => {
-  const loadHistory = async () => {
-    const res = await getChatByRequest(requestId);
-    setMessages(res.data); 
-  };
+  useEffect(() => {
+    const loadHistory = async () => {
+      const res = await getChatByRequest(requestId);
+      setMessages(res.data);
+    };
 
-  loadHistory();
+    loadHistory();
 
-  socket.emit("join-room", { requestId });
+    socket.emit("join-room", { requestId });
 
-socket.on("receive-message", (msg) => {
-  setMessages(prev => {
-    
-    if (prev.some(m => m._id === msg._id)) return prev;
-    return [...prev, msg];
-  });
-});
+    socket.on("receive-message", (msg) => {
+      setMessages(prev => {
+
+        if (prev.some(m => m._id === msg._id)) return prev;
+        return [...prev, msg];
+      });
+    });
 
 
-  return () => {
-    socket.off("receive-message");
-  };
-}, [requestId]);
+    return () => {
+      socket.off("receive-message");
+    };
+  }, [requestId]);
 
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
 
- const sendMessage = () => {
-  console.log("SEND CLICKED");
+  const sendMessage = () => {
+    console.log("SEND CLICKED");
 
-  if (!text.trim()) return;
+    if (!text.trim()) return;
 
 
-  socket.emit("send-message", {
-    requestId,
-    receiver: receiverId,
-    text,
-  });
+    socket.emit("send-message", {
+      requestId,
+      receiver: receiverId,
+      text,
+    });
 
-  setMessages(prev => [
-    ...prev,
-    { sender: currentUserId, text },
-  ]);
+    setMessages(prev => [
+      ...prev,
+      { sender: currentUserId, text },
+    ]);
 
-  setText("");
-};
+    setText("");
+  };
 
 
   return (
     <div className="flex flex-col h-screen  bg-slate-100">
 
       {/* HEADER */}
-      <div className="bg-indigo-600  text-white px-6 py-4 font-semibold">
+      <div className="bg-gray-500  text-white px-6 py-4 font-semibold">
         Chat
       </div>
 
@@ -90,10 +90,9 @@ socket.on("receive-message", (msg) => {
             >
               <div
                 className={`max-w-xs px-4 py-2 rounded-2xl text-sm
-                  ${
-                    isMe
-                      ? "bg-indigo-500 text-white rounded-br-none"
-                      : "bg-white text-gray-800 rounded-bl-none shadow"
+                  ${isMe
+                    ? "bg-gray-500 text-white rounded-br-none"
+                    : "bg-white text-gray-800 rounded-bl-none shadow"
                   }`}
               >
                 {msg.text}
@@ -115,7 +114,7 @@ socket.on("receive-message", (msg) => {
         />
         <button
           onClick={sendMessage}
-          className="bg-indigo-600 text-white px-5 py-2 rounded-full"
+          className="bg-gray-500 text-white px-5 py-2 rounded-full"
         >
           Send
         </button>

@@ -12,7 +12,7 @@ const StudentDashboard = () => {
 
   return (
     <div className="min-h-screen bg-slate-100">
-      
+
       {/* NAVBAR */}
       <div
         className="h-16 bg-black flex items-center justify-between
@@ -51,20 +51,20 @@ const StudentDashboard = () => {
         </div>
       </div>
 
-    <div className="px-4 sm:px-10 py-5 sm:py-6">
+      <div className="px-4 sm:px-10 py-5 sm:py-6">
 
-  {/* Search */}
-  <div className="flex justify-center mt-10 sm:mt-6 mb-6 sm:mb-8">
-    <input
-      placeholder="Search employee name, job..."
-      className="w-full sm:max-w-xl px-5 py-3 rounded-full
+        {/* Search */}
+        <div className="flex justify-center mt-10 sm:mt-6 mb-6 sm:mb-8">
+          <input
+            placeholder="Search employee name, job..."
+            className="w-full sm:max-w-xl px-5 py-3 rounded-full
       bg-white text-gray-700 border border-gray-300
       shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400"
-    />
-  </div>
+          />
+        </div>
 
-  <Companies />
-</div>
+        <Companies />
+      </div>
 
     </div>
   )

@@ -58,7 +58,7 @@ function AdminEmployees() {
             <nav className="bg-black border-b border-gray-800 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
                 <div className="flex items-center gap-3">
                     <button
-                        onClick={() => navigate("/admin")}
+                        onClick={() => navigate("/admin/dashboard")}
                         className="p-2 hover:bg-gray-800 rounded-lg transition-colors text-white"
                     >
                         <ChevronLeft className="w-5 h-5" />

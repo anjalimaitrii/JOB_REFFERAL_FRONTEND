@@ -5,7 +5,7 @@ import {
 } from "../../services/request.service";
 import { useEffect, useState } from "react";
 import Chat from "../../components/chat";
-import { LogOut, User, Mail } from "lucide-react";
+import { LogOut, User, Briefcase } from "lucide-react";
 
 const EmployeeDashboard = () => {
   const navigate = useNavigate();
@@ -72,7 +72,7 @@ const EmployeeDashboard = () => {
             className="p-2 rounded-full hover:bg-gray-800"
             title="Apply to other companies"
           >
-            <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
+            <Briefcase className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
 
           <button
@@ -111,8 +111,8 @@ const EmployeeDashboard = () => {
                 req.status === "pending"
                   ? "Pending"
                   : req.status === "accepted"
-                  ? "Approved"
-                  : "Rejected"
+                    ? "Approved"
+                    : "Rejected"
               }
               onAccept={() => handleStatusChange(req._id, "accepted")}
               onReject={() => handleStatusChange(req._id, "rejected")}
@@ -131,7 +131,7 @@ const EmployeeDashboard = () => {
       {activeChat && (
         <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
           <div className="
-  w-full max-w-3xl h-[85vh]
+  w-full max-w-3xl h-[80vh]
   bg-white rounded-2xl
   overflow-hidden
   relative
@@ -199,8 +199,8 @@ const StudentCard = ({
     status === "Approved"
       ? "bg-green-100 text-green-600"
       : status === "Rejected"
-      ? "bg-red-100 text-red-600"
-      : "bg-yellow-100 text-yellow-700 cursor-pointer";
+        ? "bg-red-100 text-red-600"
+        : "bg-yellow-100 text-yellow-700 cursor-pointer";
 
   return (
     <div className="relative bg-white rounded-2xl shadow p-6">
