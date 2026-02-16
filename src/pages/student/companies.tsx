@@ -134,22 +134,29 @@ function Companies() {
 
   return (
     <div className="min-h-screen bg-slate-50 px-6 py-10">
+      {/* Search */}
+      <div className="flex justify-center mt-10 sm:mt-6 mb-6 sm:mb-8">
+        <input
+          placeholder="Search employee name, job..."
+          className="w-full sm:max-w-xl px-5 py-3 rounded-full
+      bg-white text-gray-700 border border-gray-300
+      shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400"
+        />
+      </div>
       {/* TOGGLE */}
       <div className="flex justify-center mb-6">
         <div className="inline-flex rounded-lg bg-gray-100 p-1">
           <button
             onClick={() => setViewMode("company")}
-            className={`px-10 py-4 rounded-lg text-sm font-medium ${
-              viewMode === "company" ? "bg-black text-white" : "text-gray-600"
-            }`}
+            className={`px-10 py-4 rounded-lg text-sm font-medium ${viewMode === "company" ? "bg-black text-white" : "text-gray-600"
+              }`}
           >
             Companies
           </button>
           <button
             onClick={() => setViewMode("college")}
-            className={`px-10 py-4 rounded-lg text-sm font-medium ${
-              viewMode === "college" ? "bg-black text-white" : "text-gray-600"
-            }`}
+            className={`px-10 py-4 rounded-lg text-sm font-medium ${viewMode === "college" ? "bg-black text-white" : "text-gray-600"
+              }`}
           >
             Colleges
           </button>
@@ -406,8 +413,8 @@ function Companies() {
                               handleSendRequest(
                                 selectedEmployee._id,
                                 selectedCompany?._id ||
-                                  selectedEmployee.company?._id ||
-                                  selectedEmployee.company,
+                                selectedEmployee.company?._id ||
+                                selectedEmployee.company,
                                 selectedJobId || manualJobId,
                               )
                             }

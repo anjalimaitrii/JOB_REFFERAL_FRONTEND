@@ -2,15 +2,32 @@ import { useEffect, useState } from "react";
 import { getMySentRequests } from "../../services/request.service";
 import Chat from "../../components/chat";
 import { useNavigate } from "react-router-dom";
-import { ChevronsLeft } from "lucide-react";
+import { LogOut, User, Briefcase, ChevronLeft } from "lucide-react";
 
-function Request() {
+const Request = () => {
+  const navigate = useNavigate();
   const [requests, setRequests] = useState<any[]>([]);
+  const [filterStatus, setFilterStatus] = useState<"all" | "pending" | "accepted" | "rejected">("all");
+
+  const pending = requests.filter((r) => r.status === "pending").length;
+  const approved = requests.filter((r) => r.status === "accepted").length;
+  const rejected = requests.filter((r) => r.status === "rejected").length;
+
+  const filteredRequests = requests.filter((r) => {
+    if (filterStatus === "all") return true;
+    return r.status === filterStatus;
+  });
+
   const [activeChat, setActiveChat] = useState<null | {
     requestId: string;
     receiverId: string;
   }>(null);
-  const navigate = useNavigate();
+
+  const logout = () => {
+    localStorage.clear();
+    navigate("/");
+  };
+
   useEffect(() => {
     const fetchRequests = async () => {
       try {
@@ -25,122 +42,120 @@ function Request() {
   }, []);
 
   return (
-    <div className="px-6 md:px-10 mt-8 max-w-8xl mx-auto">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          {/* Back Arrow */}
-          <button onClick={() => navigate(-1)}>
-            <ChevronsLeft size={18} />
+    <div className="min-h-screen bg-slate-100">
+
+      {/* NAVBAR */}
+      <div className="h-16 bg-black flex items-center justify-between px-4 sm:px-8 text-white shadow sticky top-0 z-10">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => navigate("/student/dashboard")}
+            className="p-1 hover:bg-gray-800 rounded-full transition-colors"
+          >
+            <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
-          <h2 className="text-2xl font-semibold tracking-tight">
-            My Referral Requests
-          </h2>
+          <h1 className="text-base sm:text-lg font-semibold">
+            My Requests
+          </h1>
         </div>
 
-        <span className="text-sm text-gray-500">
-          Total: {requests?.length || 0}
-        </span>
+
       </div>
 
-      {/* Empty State */}
-      {!requests?.length && (
-        <div className="bg-white border rounded-2xl p-10 text-center shadow-sm">
-          <p className="text-gray-500">No referral requests yet.</p>
+      {/* CONTENT */}
+      <div className="px-4 sm:px-10 py-6">
+
+        {/* STATS */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+          <StatCard
+            title="Total"
+            count={requests.length}
+            isActive={filterStatus === "all"}
+            onClick={() => setFilterStatus("all")}
+          />
+          <StatCard
+            title="Pending"
+            count={pending}
+            isActive={filterStatus === "pending"}
+            onClick={() => setFilterStatus("pending")}
+          />
+          <StatCard
+            title="Approved"
+            count={approved}
+            isActive={filterStatus === "accepted"}
+            onClick={() => setFilterStatus("accepted")}
+          />
+          <StatCard
+            title="Rejected"
+            count={rejected}
+            isActive={filterStatus === "rejected"}
+            onClick={() => setFilterStatus("rejected")}
+          />
+
         </div>
-      )}
 
-      {/* Requests Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {requests.map((req) => {
-          const roleTitle =
-            req.company?.jobs.find((job: any) => job._id === req.role)?.title ||
-            "N/A";
+        <h2 className="text-xl font-semibold mb-6">Request History</h2>
 
-          const statusStyles: any = {
-            accepted: "bg-green-100 text-green-700 border-green-200",
-            rejected: "bg-red-100 text-red-700 border-red-200",
-            pending: "bg-yellow-100 text-yellow-700 border-yellow-200",
-          };
-
-          return (
-            <div
-              key={req._id}
-              className="group bg-white border rounded-2xl p-5 shadow-sm hover:shadow-lg transition-all duration-200"
+        {requests.length === 0 ? (
+          <div className="bg-white rounded-xl shadow p-10 text-center">
+            <p className="text-gray-500">You haven't made any referral requests yet.</p>
+            <button
+              onClick={() => navigate("/student/dashboard")}
+              className="mt-4 px-6 py-2 bg-black text-white rounded-full hover:bg-gray-800 transition"
             >
-              {/* Employee Info */}
-              <div className="flex items-center gap-3 mb-4">
-                <div className="h-11 w-11 rounded-full bg-indigo-100 flex items-center justify-center font-semibold text-indigo-600">
-                  {req.receiver?.name?.charAt(0) || "E"}
-                </div>
+              Browse Companies
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredRequests.map((req) => {
+              const roleTitle = req.company?.jobs.find((job: any) => job._id === req.role)?.title || "N/A";
 
-                <div>
-                  <p className="font-semibold text-gray-800 leading-none">
-                    {req.receiver.name}
-                  </p>
-                  <p className="text-xs text-gray-500">Employee</p>
-                </div>
-              </div>
-
-              {/* Details */}
-              <div className="space-y-1 mb-4">
-                <p className="text-sm text-gray-600">
-                  <span className="font-medium text-gray-800">Company:</span>{" "}
-                  {req.company.name}
-                </p>
-
-                <p className="text-sm text-gray-600">
-                  <span className="font-medium text-gray-800">Role:</span>{" "}
-                  {roleTitle}
-                </p>
-              </div>
-
-              {/* Status + Action */}
-              <div className="flex items-center justify-between mt-4">
-                <span
-                  className={`px-3 py-1 text-xs font-medium rounded-lg border capitalize ${
-                    statusStyles[req.status] ||
-                    "bg-gray-100 text-gray-600 border-gray-200"
-                  }`}
-                >
-                  {req.status}
-                </span>
-
-                {req.status === "accepted" && (
-                  <button
-                    onClick={() =>
-                      setActiveChat({
-                        requestId: req._id,
-                        receiverId: req.receiver._id,
-                      })
-                    }
-                    className="px-4 py-2 text-sm font-medium rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 active:scale-95 transition"
-                  >
-                     Chat
-                  </button>
-                )}
-              </div>
-            </div>
-          );
-        })}
+              return (
+                <RequestCard
+                  key={req._id}
+                  companyName={req.company.name}
+                  role={roleTitle}
+                  receiverName={req.receiver.name}
+                  status={
+                    req.status === "pending"
+                      ? "Pending"
+                      : req.status === "accepted"
+                        ? "Approved"
+                        : "Rejected"
+                  }
+                  onChat={() =>
+                    setActiveChat({
+                      requestId: req._id,
+                      receiverId: req.receiver._id,
+                    })
+                  }
+                />
+              )
+            })}
+          </div>
+        )}
       </div>
 
-      {/* Chat Modal */}
+      {/* CHAT MODAL */}
       {activeChat && (
         <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
-          <div className="w-full max-w-3xl h-[85vh] bg-white rounded-2xl overflow-hidden flex flex-col relative shadow-2xl">
+          <div className="
+            w-full max-w-3xl h-[80vh]
+            bg-white rounded-2xl
+            overflow-hidden
+            relative
+            flex flex-col
+          ">
             <Chat
               requestId={activeChat.requestId}
               receiverId={activeChat.receiverId}
               currentUserId={
-                JSON.parse(atob(localStorage.getItem("token")!.split(".")[1]))
-                  ._id
+                JSON.parse(atob(localStorage.getItem("token")!.split(".")[1]))._id
               }
             />
-
             <button
               onClick={() => setActiveChat(null)}
-              className="absolute top-3 right-3 text-gray-700 hover:text-black text-xl"
+              className="absolute top-3 right-3 text-xl hover:text-gray-600"
             >
               ✕
             </button>
@@ -149,6 +164,94 @@ function Request() {
       )}
     </div>
   );
-}
+};
+
+/* ---------- UI HELPERS ---------- */
+
+const StatCard = ({
+  title,
+  count,
+  isActive,
+  onClick
+}: {
+  title: string;
+  count: number;
+  isActive: boolean;
+  onClick: () => void;
+}) => (
+  <div
+    onClick={onClick}
+    className={`
+      bg-white rounded-xl shadow
+      p-6 text-center
+      transition-all duration-300 ease-out
+      hover:-translate-y-2
+      hover:shadow-2xl
+      cursor-pointer
+      border-2
+      ${isActive ? "border-black" : "border-transparent"}
+    `}
+  >
+    <p className="text-2xl font-bold">{count}</p>
+    <p className="text-sm text-gray-500 mt-1">{title}</p>
+  </div>
+);
+
+const RequestCard = ({
+  companyName,
+  role,
+  receiverName,
+  status,
+  onChat,
+}: {
+  companyName: string;
+  role: string;
+  receiverName: string;
+  status: "Pending" | "Approved" | "Rejected";
+  onChat?: () => void;
+}) => {
+  const statusStyle =
+    status === "Approved"
+      ? "bg-green-100 text-green-600"
+      : status === "Rejected"
+        ? "bg-red-100 text-red-600"
+        : "bg-yellow-100 text-yellow-700";
+
+  return (
+    <div className="relative bg-white rounded-2xl shadow p-6 hover:shadow-lg transition-shadow">
+      <div className="absolute top-4 right-4">
+        <span
+          className={`px-3 py-1 rounded-full text-xs ${statusStyle}`}
+        >
+          {status}
+        </span>
+      </div>
+
+      <h3 className="text-lg font-semibold">{companyName}</h3>
+      <p className="text-sm text-gray-500">{role}</p>
+
+      <div className="mt-4 pt-4 border-t border-gray-100">
+        <div className="flex items-center gap-3">
+          <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-xs font-bold text-indigo-600">
+            {receiverName.charAt(0)}
+          </div>
+          <div>
+            <p className="text-xs text-gray-400">Sent to</p>
+            <p className="text-sm font-medium">{receiverName}</p>
+          </div>
+        </div>
+      </div>
+
+      {status === "Approved" && (
+        <button
+          onClick={onChat}
+          className="mt-4 w-full px-4 py-2 rounded-full bg-black text-white text-sm hover:bg-gray-800 transition-colors"
+        >
+          Chat with Referrer
+        </button>
+      )}
+    </div>
+  );
+};
 
 export default Request;
