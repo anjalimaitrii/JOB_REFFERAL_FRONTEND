@@ -32,3 +32,60 @@ export const getEmployeesByCollege = async (collegeName: string) => {
 
   return res.json(); 
 };
+
+export const registerCompany = async (payload: {
+  name: string;
+  logo: string;
+  industry: string;
+  location: string;
+  otherLocations?: string[];
+  companySize: string;
+  website: string;
+  jobs?: { title: string }[];
+}) => {
+  const res = await fetch(`${BASE_URL}/api/company`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to register company");
+  }
+
+  return res.json();
+};
+
+// Admin APIs
+export const getAllCompaniesForAdmin = async () => {
+  const token = localStorage.getItem('token');
+  const res = await fetch(`${BASE_URL}/api/company/admin/all`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch companies for admin");
+  }
+
+  return res.json();
+};
+
+export const verifyCompany = async (companyId: string, isVerified: boolean) => {
+  const token = localStorage.getItem('token');
+  const res = await fetch(`${BASE_URL}/api/company/${companyId}/verify`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify({ isVerified }),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to verify company");
+  }
+
+  return res.json();
+};

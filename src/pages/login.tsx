@@ -117,21 +117,31 @@ function Login() {
 </p>
 
 {showRegisterOptions && (
-  <div className="mt-4 flex gap-3">
-    <button
-      onClick={() => navigate('/register/student')}
-      className="flex-1 py-2 rounded-lg border text-sm font-medium
-                 bg-white hover:bg-gray-100"
-    >
-      Register as Student
-    </button>
+  <div className="mt-4 space-y-2">
+    <div className="flex gap-3">
+      <button
+        onClick={() => navigate('/register/student')}
+        className="flex-1 py-2 rounded-lg border text-sm font-medium
+                   bg-white hover:bg-gray-100"
+      >
+        Register as Student
+      </button>
+
+      <button
+        onClick={() => navigate('/register/employee')}
+        className="flex-1 py-2 rounded-lg border text-sm font-medium
+                   bg-white hover:bg-gray-100"
+      >
+        Register as Employee
+      </button>
+    </div>
 
     <button
-      onClick={() => navigate('/register/employee')}
-      className="flex-1 py-2 rounded-lg border text-sm font-medium
-                 bg-white hover:bg-gray-100"
+      onClick={() => navigate('/register/company')}
+      className="w-full py-2 rounded-lg border text-sm font-medium
+                 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border-indigo-300"
     >
-      Register as Employee
+      Register Company
     </button>
   </div>
 )}
