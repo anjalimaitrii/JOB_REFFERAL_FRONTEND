@@ -79,6 +79,7 @@ const EmployeeDashboard = () => {
           <button
             onClick={() => navigate("/profile")}
             className="p-2 rounded-full hover:bg-gray-800"
+            title="Profile"
           >
             <User className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
@@ -94,6 +95,7 @@ const EmployeeDashboard = () => {
           <button
             onClick={logout}
             className="p-2 rounded-full hover:bg-gray-700"
+            title="Logout"
           >
             <LogOut className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
