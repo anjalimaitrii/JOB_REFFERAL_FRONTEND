@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getMySentRequests } from "../../services/request.service";
 import Chat from "../../components/chat";
 import { useNavigate } from "react-router-dom";
-import { LogOut, User, Briefcase, ChevronLeft } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 
 const Request = () => {
   const navigate = useNavigate();
@@ -23,10 +23,6 @@ const Request = () => {
     receiverId: string;
   }>(null);
 
-  const logout = () => {
-    localStorage.clear();
-    navigate("/");
-  };
 
   useEffect(() => {
     const fetchRequests = async () => {
