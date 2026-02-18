@@ -7,7 +7,7 @@ import {
   getCompanies,
   getEmployeesByCollege,
 } from "../../services/company.service";
-import { ChevronsLeft } from "lucide-react";
+import { ChevronsLeft, Search, Building2, GraduationCap, MapPin, Globe, Users, X } from "lucide-react";
 import { sendRequestToEmployee } from "../../services/request.service";
 
 type Company = {
@@ -57,13 +57,47 @@ function Companies() {
   const [viewMode, setViewMode] = useState<"company" | "college">("company");
   const [colleges, setColleges] = useState<string[]>([]);
   const [selectedCollege, setSelectedCollege] = useState<string | null>(null);
-
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [searchData, setSearchData] = useState<any[]>([]);
+  const [filteredResults, setFilteredResults] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchCompanies = async () => {
       try {
         const data = await getCompanies();
-        setCompanies(data.data);
+        const allCompanies = data.data;
+        setCompanies(allCompanies);
+
+        let combined: any[] = [];
+        for (let company of allCompanies) {
+          combined.push({
+            type: "company",
+            id: company._id,
+            name: company.name,
+            industry: company.industry,
+            location: company.location,
+            data: company,
+          });
+          const empRes = await getEmployeesByCompany(company._id);
+          const emps = empRes.data;
+          for (let emp of emps) {
+            const jobTitle = company.jobs?.find(
+              (job: { _id: string; title: string }) => job._id === emp.designation
+            )?.title;
+            combined.push({
+              type: "employee",
+              id: emp._id,
+              name: emp.name,
+              designation: jobTitle || "Employee",
+              companyName: company.name,
+              data: emp,
+              companyData: company,
+              otherLocations: company.otherLocations || [],
+            });
+          }
+        }
+        setSearchData(combined);
       } catch (err: any) {
         setError(err.message);
       } finally {
@@ -73,8 +107,28 @@ function Companies() {
     fetchCompanies();
   }, []);
 
+  useEffect(() => {
+    if (!searchTerm.trim()) {
+      setFilteredResults([]);
+      return;
+    }
+    const term = searchTerm.toLowerCase();
+    const results = searchData.filter(
+      (item) =>
+        item.name?.toLowerCase().includes(term) ||
+        item.industry?.toLowerCase().includes(term) ||
+        item.location?.toLowerCase().includes(term) ||
+        item.designation?.toLowerCase().includes(term) ||
+        item.companyName?.toLowerCase().includes(term) ||
+        (item.otherLocations &&
+          item.otherLocations.some((loc: string) => loc.toLowerCase().includes(term)))
+    );
+    setFilteredResults(results);
+  }, [searchTerm, searchData]);
+
   const handleCompanyClick = async (company: Company) => {
     setSelectedCompany(company);
+    setSelectedCollege(null);
     try {
       const res = await getEmployeesByCompany(company._id);
       setEmployees(res.data);
@@ -107,21 +161,13 @@ function Companies() {
     }
   };
 
-  const handleSendRequest = async (
-    employeeId: string,
-    companyId: string,
-    role: string,
-  ) => {
+  const handleSendRequest = async (employeeId: string, companyId: string, role: string) => {
     if (!role) {
       alert("Please select a job or enter Job ID");
       return;
     }
     try {
-      await sendRequestToEmployee({
-        receiver: employeeId,
-        company: companyId,
-        role,
-      });
+      await sendRequestToEmployee({ receiver: employeeId, company: companyId, role });
       alert("Request sent");
       setShowModal(false);
     } catch {
@@ -129,308 +175,392 @@ function Companies() {
     }
   };
 
-  if (loading) return <p className="text-center mt-10">Loading companies...</p>;
-  if (error) return <p className="text-center mt-10 text-red-600">{error}</p>;
+  if (loading)
+    return (
+      <div className="flex flex-col items-center justify-center py-24 gap-3">
+        <div className="w-10 h-10 border-4 border-black border-t-transparent rounded-full animate-spin" />
+        <p className="text-gray-500 text-sm">Loading companies...</p>
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="flex items-center justify-center py-24">
+        <p className="text-red-500 text-sm">{error}</p>
+      </div>
+    );
 
   return (
-    <div className="min-h-screen bg-slate-50 px-6 py-10">
-      {/* Search */}
-      <div className="flex justify-center mt-10 sm:mt-6 mb-6 sm:mb-8">
-        <input
-          placeholder="Search employee name, job..."
-          className="w-full sm:max-w-xl px-5 py-3 rounded-full
-      bg-white text-gray-700 border border-gray-300
-      shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400"
-        />
-      </div>
-      {/* TOGGLE */}
-      <div className="flex justify-center mb-6">
-        <div className="inline-flex rounded-lg bg-gray-100 p-1">
-          <button
-            onClick={() => setViewMode("company")}
-            className={`px-10 py-4 rounded-lg text-sm font-medium ${viewMode === "company" ? "bg-black text-white" : "text-gray-600"
-              }`}
-          >
-            Companies
-          </button>
-          <button
-            onClick={() => setViewMode("college")}
-            className={`px-10 py-4 rounded-lg text-sm font-medium ${viewMode === "college" ? "bg-black text-white" : "text-gray-600"
-              }`}
-          >
-            Colleges
-          </button>
-        </div>
-      </div>
+    <div className="max-w-7xl mx-auto">
 
-      {!selectedCompany && (
-        <h1 className="text-3xl font-bold text-center mb-8">
-          {viewMode === "company" ? "Companies" : "Colleges"}
-        </h1>
-      )}
-
-      {/* COMPANIES */}
-      {viewMode === "company" && !selectedCompany && (
-        <div className="max-w-8xl mx-auto bg-white rounded-2xl shadow overflow-hidden">
-          <table className="w-full">
-            <thead className="bg-gray-100 text-sm uppercase text-gray-600">
-              <tr>
-                <th className="p-4">Logo</th>
-                <th className="p-4">Company</th>
-                <th className="p-4">Industry</th>
-                <th className="p-4">Location</th>
-                <th className="p-4">Website</th>
-              </tr>
-            </thead>
-            <tbody>
-              {visibleCompanies.map((company) => (
-                <tr
-                  key={company._id}
-                  onClick={() => handleCompanyClick(company)}
-                  className="border-t hover:bg-gray-50 text-center cursor-pointer"
-                >
-                  <td className="p-4">
-                    <img src={company.logo} className="w-8 h-8" />
-                  </td>
-                  <td className="p-4">{company.name}</td>
-                  <td className="p-4">{company.industry || "-"}</td>
-                  <td className="p-4">{company.location}</td>
-                  <td className="p-4" onClick={(e) => e.stopPropagation()}>
-                    {company.website ? (
-                      <a
-                        href={company.website}
-                        target="_blank"
-                        className="px-8 py-2 rounded-lg bg-black text-white text-xs"
-                      >
-                        Visit
-                      </a>
-                    ) : (
-                      "-"
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-      {/* COLLEGES */}
-      {viewMode === "college" && !selectedCollege && (
-        <div className="max-w-8xl mx-auto bg-white rounded-2xl shadow overflow-hidden">
-          <table className="w-full">
-            <thead>
-              <tr className="bg-gray-100 text-left text-sm uppercase text-gray-600">
-                <th className="p-4">College Name</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {colleges.length === 0 ? (
-                <tr>
-                  <td className="p-4 text-gray-400 text-center">
-                    No colleges found
-                  </td>
-                </tr>
-              ) : (
-                colleges.map((college) => (
-                  <tr
-                    key={college}
-                    onClick={() => handleCollegeClick(college)}
-                    className="cursor-pointer border-t hover:bg-gray-50 transition"
-                  >
-                    <td className="p-4 text-gray-700 font-medium">{college}</td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {/* EMPLOYEES */}
-      {(selectedCompany || selectedCollege) && (
-        <div className="mt-12">
-          <button
-            onClick={() => {
-              setSelectedCompany(null);
-              setSelectedCollege(null);
-              setEmployees([]);
+      {/* ── SEARCH BAR ── */}
+      <div className="relative mb-8">
+        <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-2xl shadow-sm px-5 py-3.5 focus-within:ring-2 focus-within:ring-black/20 transition">
+          <Search className="w-4 h-4 text-gray-400 shrink-0" />
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setShowSuggestions(true);
             }}
-            className="mb-4 text-sm text-gray hover:underline flex items-center gap-1"
-          >
-            <ChevronsLeft size={18} />
-          </button>
+            onFocus={() => setShowSuggestions(true)}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+            placeholder="Search company, employee, role, location..."
+            className="flex-1 outline-none text-gray-700 bg-transparent text-sm placeholder-gray-400"
+          />
+          {searchTerm && (
+            <button
+              onClick={() => { setSearchTerm(""); setFilteredResults([]); }}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
 
-          <h2 className="text-2xl font-semibold text-center mb-6">
-            {selectedCompany
-              ? `${selectedCompany.name} Employees`
-              : `${selectedCollege} Employees`}
+        {/* Suggestions Dropdown */}
+        {showSuggestions && searchTerm && filteredResults.length > 0 && (
+          <div className="absolute top-full mt-2 left-0 right-0 bg-white border border-gray-200 rounded-2xl shadow-xl max-h-72 overflow-y-auto z-50">
+            {filteredResults.slice(0, 10).map((item) => (
+              <div
+                key={item.id}
+                onClick={() => {
+                  if (item.type === "company") handleCompanyClick(item.data);
+                  else handleCompanyClick(item.companyData);
+                  setSearchTerm("");
+                  setShowSuggestions(false);
+                }}
+                className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer border-b last:border-0"
+              >
+                {item.type === "company" ? (
+                  <>
+                    <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center shrink-0">
+                      <Building2 className="w-4 h-4 text-blue-500" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-800">{item.name}</p>
+                      <p className="text-xs text-gray-400">{item.industry} · {item.location}</p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="w-8 h-8 bg-violet-50 rounded-lg flex items-center justify-center shrink-0 text-sm font-bold text-violet-600">
+                      {item.name.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-800">{item.name}</p>
+                      <p className="text-xs text-gray-400">{item.designation} · {item.companyName}</p>
+                    </div>
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {showSuggestions && searchTerm && filteredResults.length === 0 && (
+          <div className="absolute top-full mt-2 left-0 right-0 bg-white border border-gray-200 rounded-2xl shadow-xl z-50 px-4 py-4 text-center text-gray-400 text-sm">
+            No results found for "{searchTerm}"
+          </div>
+        )}
+      </div>
+
+      {/* ── TOGGLE ── */}
+      {!selectedCompany && !selectedCollege && (
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold text-gray-800">
+            {viewMode === "company" ? `${visibleCompanies.length} Companies` : `${colleges.length} Colleges`}
           </h2>
+          <div className="inline-flex bg-gray-100 rounded-xl p-1">
+            <button
+              onClick={() => setViewMode("company")}
+              className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium transition-all ${
+                viewMode === "company" ? "bg-black text-white shadow-sm" : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              <Building2 className="w-4 h-4" />
+              Companies
+            </button>
+            <button
+              onClick={() => setViewMode("college")}
+              className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium transition-all ${
+                viewMode === "college" ? "bg-black text-white shadow-sm" : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              <GraduationCap className="w-4 h-4" />
+              Colleges
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── COMPANY CARDS ── */}
+      {viewMode === "company" && !selectedCompany && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {visibleCompanies.map((company) => (
+            <div
+              key={company._id}
+              onClick={() => handleCompanyClick(company)}
+              className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all cursor-pointer p-5 group"
+            >
+              {/* Logo + Name */}
+              <div className="flex items-center gap-3 mb-4">
+                {company.logo ? (
+                  <img
+                    src={company.logo}
+                    alt={company.name}
+                    className="w-12 h-12 rounded-xl object-contain border border-gray-100 p-1 bg-gray-50"
+                  />
+                ) : (
+                  <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center text-lg font-bold text-gray-500">
+                    {company.name.charAt(0)}
+                  </div>
+                )}
+                <div className="min-w-0">
+                  <p className="font-semibold text-gray-800 truncate group-hover:text-black">
+                    {company.name}
+                  </p>
+                  <p className="text-xs text-gray-400 truncate">{company.industry || "—"}</p>
+                </div>
+              </div>
+
+              {/* Info chips */}
+              <div className="flex flex-wrap gap-2 mb-4">
+                <span className="inline-flex items-center gap-1 text-xs text-gray-500 bg-gray-50 px-2.5 py-1 rounded-full">
+                  <MapPin className="w-3 h-3" />
+                  {company.location}
+                </span>
+                {company.jobs?.length > 0 && (
+                  <span className="inline-flex items-center gap-1 text-xs text-gray-500 bg-gray-50 px-2.5 py-1 rounded-full">
+                    <Users className="w-3 h-3" />
+                    {company.jobs.length} {company.jobs.length === 1 ? "role" : "roles"}
+                  </span>
+                )}
+              </div>
+
+              {/* Footer */}
+              <div className="flex items-center justify-between pt-3 border-t border-gray-50">
+                {company.website ? (
+                  <a
+                    href={company.website}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="inline-flex items-center gap-1 text-xs text-blue-600 hover:underline"
+                  >
+                    <Globe className="w-3 h-3" /> Website
+                  </a>
+                ) : (
+                  <span />
+                )}
+                <span className="text-xs text-gray-400 group-hover:text-black transition">
+                  View Employees →
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* ── COLLEGE LIST ── */}
+      {viewMode === "college" && !selectedCollege && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {colleges.length === 0 ? (
+            <p className="col-span-full text-center text-gray-400 py-10">No colleges found</p>
+          ) : (
+            colleges.map((college) => (
+              <div
+                key={college}
+                onClick={() => handleCollegeClick(college)}
+                className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all cursor-pointer p-5 flex items-center gap-4 group"
+              >
+                <div className="w-12 h-12 rounded-xl bg-violet-50 flex items-center justify-center shrink-0">
+                  <GraduationCap className="w-6 h-6 text-violet-500" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold text-gray-800 truncate group-hover:text-black">{college}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">View alumni →</p>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
+
+      {/* ── EMPLOYEES VIEW ── */}
+      {(selectedCompany || selectedCollege) && (
+        <div>
+          {/* Back + Header */}
+          <div className="flex items-center gap-4 mb-6">
+            <button
+              onClick={() => {
+                setSelectedCompany(null);
+                setSelectedCollege(null);
+                setEmployees([]);
+              }}
+              className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-black transition font-medium"
+            >
+              <ChevronsLeft className="w-4 h-4" />
+              Back
+            </button>
+            <div className="h-5 w-px bg-gray-200" />
+            <div className="flex items-center gap-3">
+              {selectedCompany?.logo ? (
+                <img
+                  src={selectedCompany.logo}
+                  className="w-8 h-8 rounded-lg object-contain border border-gray-100 p-0.5"
+                />
+              ) : null}
+              <h2 className="text-lg font-bold text-gray-800">
+                {selectedCompany ? selectedCompany.name : selectedCollege}
+                <span className="text-gray-400 font-normal ml-2 text-sm">
+                  · {employees.length} employee{employees.length !== 1 ? "s" : ""}
+                </span>
+              </h2>
+            </div>
+          </div>
 
           {employees.length === 0 ? (
-            <p className="text-center text-gray-500">No employees found</p>
+            <div className="text-center py-16 text-gray-400">
+              <Users className="w-10 h-10 mx-auto mb-3 opacity-30" />
+              <p>No employees found</p>
+            </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-8xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {employees.map((emp) => {
                 const jobTitle = selectedCompany?.jobs.find(
-                  (job) => job._id === emp.designation,
+                  (job) => job._id === emp.designation
                 )?.title;
 
                 return (
                   <div
                     key={emp._id}
-                    className="
-                rounded-2xl p-6 shadow-md
-                bg-gradient-to-br from-gray-50 via-white to-gray-100
-                hover:shadow-xl transition
-              "
+                    className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition p-5"
                   >
-                    <div className="flex items-center gap-4">
+                    {/* Avatar + Info */}
+                    <div className="flex items-center gap-4 mb-4">
                       {emp.profilePhoto ? (
                         <img
                           src={emp.profilePhoto}
                           alt={emp.name}
-                          className="w-14 h-14 rounded-full object-cover"
+                          className="w-14 h-14 rounded-full object-cover border-2 border-gray-100"
                         />
                       ) : (
-                        <div className="w-14 h-14 rounded-full bg-gray-400 text-white flex items-center justify-center text-lg font-semibold">
+                        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 text-gray-600 flex items-center justify-center text-xl font-bold shrink-0">
                           {emp.name?.charAt(0) || "?"}
                         </div>
                       )}
-
-                      <div>
-                        <p className="text-lg font-semibold text-gray-800">
-                          {emp.name}
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          {jobTitle || "Employee"}
+                      <div className="min-w-0">
+                        <p className="font-semibold text-gray-800 truncate">{emp.name}</p>
+                        <p className="text-sm text-gray-500 truncate">{jobTitle || "Employee"}</p>
+                        <p className="text-xs text-gray-400 mt-0.5">
+                          {emp.experience ? `${emp.experience} yrs exp` : "Fresher"}
                         </p>
                       </div>
                     </div>
 
-                    <div className="my-4 border-t" />
-
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-xs text-gray-400 uppercase tracking-wide">
-                          Experience
-                        </p>
-                        <p className="text-sm font-medium text-gray-700">
-                          {emp.experience
-                            ? `${emp.experience} Years`
-                            : "Fresher"}
-                        </p>
-                      </div>
-
-                      {/* SEND REQUEST BUTTON (BACK) */}
-                      <button
-                        onClick={() => {
-                          setSelectedEmployee(emp);
-                          setShowModal(true);
-                          setUseJobId(false);
-                          setSelectedJobId("");
-                          setManualJobId("");
-                        }}
-                        className="px-4 py-1.5 text-sm rounded-full bg-black text-white"
-                      >
-                        Send Request
-                      </button>
-                    </div>
-
-                    {/*  MODAL (SAME AS OLD CODE) */}
-                    {showModal && selectedEmployee && (
-                      <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-                        <div
-                          className="bg-white rounded-2xl p-6 w-[420px]"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <h3 className="text-lg font-semibold mb-4">
-                            Send Referral Request
-                          </h3>
-
-                          <label className="text-sm text-gray-500">
-                            Select Job Role
-                          </label>
-
-                          <div className="flex gap-2 mt-1">
-                            <select
-                              // disabled={useJobId || !selectedCompany}
-                              value={selectedJobId}
-                              onChange={(e) => {
-                                setSelectedJobId(e.target.value);
-                                setManualJobId("");
-                              }}
-                              className="flex-1 border rounded-lg px-3 py-2 disabled:bg-gray-100"
-                            >
-                              <option value="">Select a job</option>
-                              {selectedCompany?.jobs?.map((job) => (
-                                <option key={job._id} value={job._id}>
-                                  {job.title}
-                                </option>
-                              ))}
-                            </select>
-
-                            <button
-                              onClick={() => {
-                                setUseJobId(true);
-                                setSelectedJobId("");
-                              }}
-                              className="px-3 py-2 text-xs rounded-lg border text-gray-600"
-                            >
-                              Use Job ID
-                            </button>
-                          </div>
-
-                          {useJobId && (
-                            <div className="mt-4">
-                              <label className="text-sm text-gray-500">
-                                Enter Job ID
-                              </label>
-
-                              <input
-                                value={manualJobId}
-                                onChange={(e) => {
-                                  setManualJobId(e.target.value);
-                                  setSelectedJobId("");
-                                }}
-                                className="w-full border rounded-lg px-3 py-2 mt-1"
-                              />
-
-                              <button
-                                onClick={() => {
-                                  setUseJobId(false);
-                                  setManualJobId("");
-                                }}
-                                className="text-xs mt-2 text-gray-500 underline"
-                              >
-                                Back to job list
-                              </button>
-                            </div>
-                          )}
-
-                          <button
-                            onClick={() =>
-                              handleSendRequest(
-                                selectedEmployee._id,
-                                selectedCompany?._id ||
-                                selectedEmployee.company?._id ||
-                                selectedEmployee.company,
-                                selectedJobId || manualJobId,
-                              )
-                            }
-                            disabled={!selectedJobId && !manualJobId}
-                            className="mt-6 w-full py-2 rounded-lg bg-black text-white disabled:opacity-50"
-                          >
-                            Send Request
-                          </button>
-                        </div>
-                      </div>
-                    )}
+                    <button
+                      onClick={() => {
+                        setSelectedEmployee(emp);
+                        setShowModal(true);
+                        setUseJobId(false);
+                        setSelectedJobId("");
+                        setManualJobId("");
+                      }}
+                      className="w-full py-2 rounded-xl bg-black text-white text-sm font-medium hover:bg-gray-800 active:scale-95 transition-all"
+                    >
+                      Send Request
+                    </button>
                   </div>
                 );
               })}
             </div>
           )}
+        </div>
+      )}
+
+      {/* ── MODAL ── */}
+      {showModal && selectedEmployee && (
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          onClick={() => setShowModal(false)}
+        >
+          <div
+            className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <h3 className="text-lg font-bold text-gray-900">Send Referral Request</h3>
+                <p className="text-sm text-gray-400 mt-0.5">to {selectedEmployee.name}</p>
+              </div>
+              <button
+                onClick={() => setShowModal(false)}
+                className="p-2 hover:bg-gray-100 rounded-full transition"
+              >
+                <X className="w-4 h-4 text-gray-500" />
+              </button>
+            </div>
+
+            {/* Job select */}
+            {!useJobId ? (
+              <>
+                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                  Select Job Role
+                </label>
+                <select
+                  value={selectedJobId}
+                  onChange={(e) => { setSelectedJobId(e.target.value); setManualJobId(""); }}
+                  className="w-full mt-2 border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-black/10 bg-gray-50"
+                >
+                  <option value="">— Choose a role —</option>
+                  {selectedCompany?.jobs?.map((job) => (
+                    <option key={job._id} value={job._id}>{job.title}</option>
+                  ))}
+                </select>
+                <button
+                  onClick={() => { setUseJobId(true); setSelectedJobId(""); }}
+                  className="mt-2 text-xs text-gray-400 hover:text-gray-700 underline"
+                >
+                  Don't see your role? Enter Job ID manually
+                </button>
+              </>
+            ) : (
+              <>
+                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                  Job ID
+                </label>
+                <input
+                  value={manualJobId}
+                  onChange={(e) => { setManualJobId(e.target.value); setSelectedJobId(""); }}
+                  placeholder="Paste Job ID here..."
+                  className="w-full mt-2 border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-black/10 bg-gray-50"
+                />
+                <button
+                  onClick={() => { setUseJobId(false); setManualJobId(""); }}
+                  className="mt-2 text-xs text-gray-400 hover:text-gray-700 underline"
+                >
+                  ← Back to job list
+                </button>
+              </>
+            )}
+
+            <button
+              onClick={() =>
+                handleSendRequest(
+                  selectedEmployee._id,
+                  selectedCompany?._id || selectedEmployee.company?._id || selectedEmployee.company,
+                  selectedJobId || manualJobId,
+                )
+              }
+              disabled={!selectedJobId && !manualJobId}
+              className="mt-6 w-full py-3 rounded-xl bg-black text-white font-semibold text-sm hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 transition-all"
+            >
+              Send Request
+            </button>
+          </div>
         </div>
       )}
     </div>

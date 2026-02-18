@@ -15,6 +15,7 @@ import AdminStudents from "./pages/admin/AdminStudents";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminProtectedRoute from "./routes/AdminProtectedRoute";
 import AdminEmployees from "./pages/admin/AdminEmployees";
+import NotificationsPage from "./components/NotificationsPage";
 
 function App() {
   return (
@@ -68,6 +69,11 @@ function App() {
             </ProtectedRoute>
           }
         />
+  <Route path="/student/notifications" element={<NotificationsPage />} />
+  <Route
+  path="/employee/notifications"
+  element={<NotificationsPage />}
+/>
 
 
         {/* 
@@ -100,6 +106,8 @@ function App() {
             </ProtectedRoute>
           }
         />
+        
+      
 
         <Route path="*" element={<h2>NO ROUTE MATCHED</h2>} />
       </Routes>

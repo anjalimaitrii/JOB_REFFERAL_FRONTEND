@@ -1,44 +1,4 @@
-// import { useState } from "react"
-
-// export const PersonalDetailsSection = () => {
-//   const [data, setData] = useState({
-//     name: "Anjali",
-//     email: "anjali@gmail.com",
-//     phone: "",
-//     gender: "",
-//   })
-
-//   const handleChange = (field: string, value: string) => {
-//     setData({ ...data, [field]: value })
-//   }
-
-//   return (
-//     <div className="bg-white rounded-2xl shadow p-6">
-//       <h3 className="font-semibold mb-6 text-lg">
-//         Personal Information
-//       </h3>
-
-//       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-//         <Input label="Full Name" value={data.name} onChange={(e: { target: { value: string } }) => handleChange("name", e.target.value)} />
-//         <Input label="Email" value={data.email} onChange={(e: { target: { value: string } }) => handleChange("email", e.target.value)} />
-//         <Input label="Phone" value={data.phone} onChange={(e: { target: { value: string } }) => handleChange("phone", e.target.value)} />
-//         <Input label="Gender" value={data.gender} onChange={(e: { target: { value: string } }) => handleChange("gender", e.target.value)} />
-//       </div>
-//     </div>
-//   )
-// }
-
-// const Input = ({ label, value, onChange }: any) => (
-//   <div>
-//     <p className="text-xs text-gray-500 mb-1">{label}</p>
-//     <input
-//       value={value}
-//       onChange={onChange}
-//       className="w-full px-3 py-2 border rounded-lg"
-//       placeholder={label}
-//     />
-//   </div>
-// )
+import { User, Mail, Phone, Linkedin } from "lucide-react";
 
 export const PersonalDetailsSection = ({
   data,
@@ -52,93 +12,104 @@ export const PersonalDetailsSection = ({
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow p-6">
-      <h3 className="font-semibold mb-6 text-lg">Personal Information</h3>
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+      {/* Section Header */}
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center">
+          <User className="w-4 h-4 text-gray-600" />
+        </div>
+        <div>
+          <h3 className="font-semibold text-gray-900">Personal Information</h3>
+          <p className="text-xs text-gray-400">Update your personal details</p>
+        </div>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <Input
           label="Full Name"
+          icon={<User className="w-4 h-4" />}
           value={data.name || ""}
-          onChange={(e: { target: { value: string } }) =>
-            handleChange("name", e.target.value)
-          }
+          placeholder="John Doe"
+          onChange={(e: any) => handleChange("name", e.target.value)}
         />
 
         <Input
           label="Email"
+          icon={<Mail className="w-4 h-4" />}
           value={data.email || ""}
-          onChange={(e: { target: { value: string } }) =>
-            handleChange("email", e.target.value)
-          }
+          placeholder="john@example.com"
+          type="email"
+          onChange={(e: any) => handleChange("email", e.target.value)}
         />
 
         <Input
           label="Phone"
+          icon={<Phone className="w-4 h-4" />}
           value={data.contact || ""}
-          onChange={(e: { target: { value: string } }) =>
-            handleChange("contact", e.target.value)
-          }
+          placeholder="+91 9876543210"
+          type="tel"
+          onChange={(e: any) => handleChange("contact", e.target.value)}
         />
 
+        {/* Gender — pill toggle */}
         <div>
-  <p className="text-xs text-gray-500 mb-2">Gender</p>
-
-  <div className="flex gap-6">
-    <label className="flex items-center gap-2 text-sm">
-      <input
-        type="radio"
-        name="gender"
-        value="male"
-        checked={data.gender === "male"}
-        onChange={() => handleChange("gender", "male")}
-      />
-      Male
-    </label>
-
-    <label className="flex items-center gap-2 text-sm">
-      <input
-        type="radio"
-        name="gender"
-        value="female"
-        checked={data.gender === "female"}
-        onChange={() => handleChange("gender", "female")}
-      />
-      Female
-    </label>
-
-    <label className="flex items-center gap-2 text-sm">
-      <input
-        type="radio"
-        name="gender"
-        value="other"
-        checked={data.gender === "other"}
-        onChange={() => handleChange("gender", "other")}
-      />
-      Other
-    </label>
-  </div>
-</div>
+          <p className="text-xs font-medium text-gray-500 mb-2">Gender</p>
+          <div className="flex gap-2">
+            {["male", "female", "other"].map((g) => (
+              <button
+                key={g}
+                type="button"
+                onClick={() => handleChange("gender", g)}
+                className={`flex-1 py-2 rounded-xl text-sm font-medium border transition-all capitalize ${
+                  data.gender === g
+                    ? "bg-gray-900 text-white border-gray-900"
+                    : "bg-white text-gray-500 border-gray-200 hover:border-gray-400"
+                }`}
+              >
+                {g}
+              </button>
+            ))}
+          </div>
+        </div>
 
         <Input
           label="LinkedIn Profile"
+          icon={<Linkedin className="w-4 h-4" />}
           value={data.linkedin || ""}
-          onChange={(e: { target: { value: string } }) =>
-            handleChange("linkedin", e.target.value)
-          }
+          placeholder="linkedin.com/in/username"
+          onChange={(e: any) => handleChange("linkedin", e.target.value)}
         />
       </div>
     </div>
   );
 };
 
-const Input = ({ label, value, onChange }: any) => (
+const Input = ({
+  label,
+  value,
+  onChange,
+  placeholder,
+  type = "text",
+  icon,
+}: {
+  label: string;
+  value: string;
+  onChange: (e: any) => void;
+  placeholder?: string;
+  type?: string;
+  icon?: React.ReactNode;
+}) => (
   <div>
-    <p className="text-xs text-gray-500 mb-1">{label}</p>
-    <input
-      value={value}
-      onChange={onChange}
-      className="w-full px-3 py-2 border rounded-lg"
-      placeholder={label}
-    />
+    <p className="text-xs font-medium text-gray-500 mb-1.5">{label}</p>
+    <div className="flex items-center gap-2.5 border border-gray-200 rounded-xl px-3 py-2.5 bg-gray-50 focus-within:bg-white focus-within:border-gray-400 focus-within:ring-2 focus-within:ring-gray-100 transition-all">
+      {icon && <span className="text-gray-400 shrink-0">{icon}</span>}
+      <input
+        type={type}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder || label}
+        className="flex-1 bg-transparent outline-none text-sm text-gray-800 placeholder-gray-400"
+      />
+    </div>
   </div>
 );
