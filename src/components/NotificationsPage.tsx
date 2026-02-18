@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
-  CheckCircle2,
-  AlertCircle,
   Info,
   Clock,
   CheckCheck,
@@ -15,8 +13,7 @@ import {
 } from "../services/notification.service";
 import socket from "../services/socket";
 
-// ── Types ─────────────────────────────────────────────────────
-type NotifType = "success" | "info" | "alert";
+
 
 interface Notification {
   _id: string;
@@ -37,18 +34,18 @@ interface Notification {
   isRead: boolean;
 }
 
-// ── Icon per type (fallback generic) ───────────────────────────
+
 const NotifIcon = () => {
   return <Info className="w-4 h-4 text-sky-500 shrink-0 mt-0.5" />;
 };
 
-// ── Component ─────────────────────────────────────────────────
+
 const NotificationsPage = () => {
   const navigate = useNavigate();
   const [notifs, setNotifs] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // ── Fetch Notifications ────────────────────────────────────
+
   const loadNotifications = async () => {
     try {
       const res = await getNotifications();
@@ -77,7 +74,6 @@ const handleNotifClick = async (notif: Notification) => {
 
     const isEmployee = user.role === "employee";
 
-    // 🔹 MESSAGE → open chat
     if (notif.type === "message" && notif.request?._id) {
       navigate(
         isEmployee ? "/employee/dashboard" : "/student/requests",
@@ -87,7 +83,7 @@ const handleNotifClick = async (notif: Notification) => {
       );
     }
 
-    // 🔹 REQUEST RELATED → just open request page
+   
     else if (
       notif.type === "request_accepted" ||
       notif.type === "request_rejected" ||
