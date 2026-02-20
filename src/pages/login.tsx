@@ -31,7 +31,8 @@ function Login() {
 
       localStorage.setItem('token', res.token)
       localStorage.setItem('role', res.role)
-      localStorage.setItem('user', JSON.stringify(res))
+      localStorage.setItem('user', JSON.stringify(res.user))
+      localStorage.setItem("justLoggedIn", "true")
 
 
       // role based redirect

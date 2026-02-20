@@ -76,15 +76,15 @@ function App() {
 />
 
 
-        {/* 
+        
           <Route
-        path="/student/dashboard"
+        path="/student/companies"
         element={
           <ProtectedRoute allowedRole="student">
-            <StudentDashboard />
+            <Companies />
           </ProtectedRoute>
         }
-      /> */}
+      />
 
 
 

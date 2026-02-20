@@ -18,6 +18,8 @@
     "autoprefixer": "^10.4.23",
     "clsx": "^2.1.1",
     "daisyui": "^5.5.18",
+    "framer-motion": "^12.34.2",
+    "gsap": "^3.14.2",
     "indian-colleges": "^1.1.1",
     "lucide-react": "^0.562.0",
     "motion": "^12.26.2",
@@ -25,6 +27,7 @@
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.12.0",
     "socket.io-client": "^4.8.3",
+    "swiper": "^12.1.2",
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {

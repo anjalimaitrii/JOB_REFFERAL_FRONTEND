@@ -18,31 +18,8 @@ import {
   X,
   ChevronDown,
 } from "lucide-react";
-import { Bell } from "lucide-react";
-import { getNotifications, markAllRead ,markAsRead} from "../../services/notification.service";
+import NotificationBell from "../../components/NotificationBell";
 
-interface Notification {
-  _id: string;
-  sender: {
-    name: string;
-    avatar?: string;
-  };
-  type:
-    | "message"
-    | "request_accepted"
-    | "request_rejected"
-    | "request_received";
-  request?: {
-    _id: string;
-  };
-  text: string;
-  createdAt: string;
-  isRead: boolean;
-  receiver?: {
-    name: string;
-    _id: string;
-  };
-}
 
 const EmployeeDashboard = () => {
   const navigate = useNavigate();
@@ -56,11 +33,7 @@ const EmployeeDashboard = () => {
   const pending = activeRequests.filter((r) => r.status === "pending").length;
   const approved = activeRequests.filter((r) => r.status === "accepted").length;
   const rejected = activeRequests.filter((r) => r.status === "rejected").length;
-  const [bellOpen, setBellOpen] = useState(false);
-  const [notifs, setNotifs] = useState<Notification[]>([]);
-  const [loadingNotif, setLoadingNotif] = useState(true);
-  const bellRef = useRef<HTMLDivElement>(null);
-  const unreadCount = notifs.filter((n) => !n.isRead).length;
+
 
   const filteredRequests = activeRequests.filter((r) => {
     if (filterStatus === "all") return true;
@@ -93,27 +66,6 @@ const EmployeeDashboard = () => {
     fetchRequests();
   }, []);
 
-  useEffect(() => {
-    const loadNotifications = async () => {
-      try {
-        const res = await getNotifications();
-        setNotifs(
-  (res.data || []).filter(
-    (n: any) =>
-      n.type !== "request_accepted" &&
-      n.type !== "request_rejected"
-  )
-);
-
-      } catch (err) {
-        console.error("Failed to load notifications", err);
-      } finally {
-        setLoadingNotif(false);
-      }
-    };
-
-    loadNotifications();
-  }, []);
 
   const handleStatusChange = async (
     requestId: string,
@@ -128,52 +80,7 @@ const EmployeeDashboard = () => {
       alert("Failed to update request");
     }
   };
-  const handleNotifClick = async (notif: Notification) => {
-  try {
-    //  Mark as read
-    if (!notif.isRead) {
-      await markAsRead(notif._id);
 
-      setNotifs((prev) =>
-        prev.map((n) =>
-          n._id === notif._id ? { ...n, isRead: true } : n
-        )
-      );
-    }
-
-    setBellOpen(false);
-
-    // If message → open chat modal
-    if (notif.type === "message" && notif.request?._id) {
-      const requestId = notif.request._id;
-
-      // find request from both received & sent
-      const allRequests = [...requests, ...sentRequests];
-
-      const matchedReq = allRequests.find(
-        (r) => r._id === requestId
-      );
-
-      if (matchedReq) {
-        const receiverId =
-          viewMode === "received"
-            ? matchedReq.sender?._id
-            : matchedReq.receiver?._id;
-
-        if (receiverId) {
-          setActiveChat({
-            requestId: requestId,
-            receiverId: receiverId,
-          });
-        }
-      }
-    }
-
-    //  If not message → do nothing (stay same)
-  } catch (err) {
-    console.error("Notification click failed", err);
-  }
-};
 
 
   return (
@@ -198,96 +105,8 @@ const EmployeeDashboard = () => {
           >
             <Briefcase className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
-          <div className="relative" ref={bellRef}>
-            <button
-              onClick={() => setBellOpen((o) => !o)}
-              className={`p-2 rounded-full transition-colors relative ${
-                bellOpen ? "bg-gray-800" : "hover:bg-gray-800"
-              }`}
-            >
-              <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
-              {notifs.filter((n) => !n.isRead).length > 0 && (
-                <span className="absolute top-1 right-1 w-4 h-4 bg-amber-400 rounded-full text-black text-[9px] font-semibold flex items-center justify-center">
-                  {notifs.filter((n) => !n.isRead).length}
-                </span>
-              )}
-            </button>
-
-            {bellOpen && (
-              <div className="absolute right-0 top-12 w-80 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-50">
-                <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-slate-800">
-                      Notifications
-                    </span>
-                    {unreadCount > 0 && (
-                      <span className="bg-amber-100 text-amber-700 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-amber-200">
-                        {unreadCount} new
-                      </span>
-                    )}
-                  </div>
-
-                  {unreadCount > 0 && (
-                    <button
-                      onClick={async () => {
-                        await markAllRead();
-                        setNotifs((prev) =>
-                          prev.map((n) => ({ ...n, isRead: true })),
-                        );
-                      }}
-                      className="text-[11px] text-sky-500 hover:text-sky-600 font-medium"
-                    >
-                      Mark all read
-                    </button>
-                  )}
-                </div>
-
-                <div className="max-h-[380px] overflow-y-auto divide-y divide-slate-50">
-                  {notifs.map((n) => (
-                    <div
-                      key={n._id}
-                       onClick={() => handleNotifClick(n)}
-                      className={`relative flex items-start gap-3 px-4 py-3.5 transition-colors ${
-                        !n.isRead ? "bg-amber-50/40" : "hover:bg-slate-50"
-                      }`}
-                    >
-                      {!n.isRead && (
-                        <span className="absolute left-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-amber-400" />
-                      )}
-
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[13px] font-semibold text-slate-800">
-                          {n.type === "message"
-                            ? `${n.sender?.name} sent you a message`
-                            : n.type === "request_received"
-                              ? `You received a referral request from ${n.sender?.name}`
-                              : n.type === "request_accepted"
-                                ? `${n.sender?.name} accepted your referral request 🎉`
-                                : `${n.sender?.name} rejected your referral request ❌`}
-                        </p>
-
-                        <p className="text-[11px] text-slate-400 mt-1">
-                          {new Date(n.createdAt).toLocaleString()}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="border-t border-slate-100 px-4 py-2.5 text-center">
-                  <button
-                    onClick={() => {
-                      setBellOpen(false);
-                      navigate("/employee/notifications");
-                    }}
-                    className="text-[12px] text-amber-500 font-medium"
-                  >
-                    View all notifications →
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
+          <NotificationBell role="employee" />
+          
 
           <button
             onClick={logout}
