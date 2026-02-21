@@ -79,14 +79,17 @@ function Companies() {
   const [manualJobId, setManualJobId] = useState("");
   const [pageVisible, setPageVisible] = useState(false);
 
-  const stored = JSON.parse(localStorage.getItem("user") || "{}");
-  const user = stored.user;
-  const isEmployee = user?.role === "employee";
-  const myCompanyId = String(user?.company);
+const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-  const visibleCompanies = isEmployee
-    ? companies.filter((c) => String(c._id) !== myCompanyId)
-    : companies;
+const myCompanyId =
+  typeof user?.company === "object"
+    ? String(user?.company?._id)
+    : String(user?.company || "");
+
+const visibleCompanies = companies.filter((c) => {
+  if (!myCompanyId) return true;
+  return String(c._id) !== myCompanyId;
+});
 
   const [viewMode, setViewMode] = useState<"company" | "college">("company");
   const [colleges, setColleges] = useState<string[]>([]);

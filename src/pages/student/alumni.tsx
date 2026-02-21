@@ -4,16 +4,18 @@ import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 
-import { getMySentRequests, sendRequestToEmployee } from "../../services/request.service";
+import {
+  getMySentRequests,
+  sendRequestToEmployee,
+} from "../../services/request.service";
 import { getAllEmployees } from "../../services/employee.service";
-
 
 interface Employee {
   _id: string;
   name: string;
   designation: string;
   profilePhoto?: string;
-   company: {
+  company: {
     _id: string;
     name: string;
     jobs: any[];
@@ -23,12 +25,9 @@ interface Employee {
     level: string;
     institute: string;
   }[];
-  
 }
 
 const VISIBLE = 2;
-
-
 
 export default function Alumni() {
   const [current, setCurrent] = useState(0);
@@ -38,14 +37,34 @@ export default function Alumni() {
   const prev = () => setCurrent((c) => Math.max(0, c - 1));
   const next = () => setCurrent((c) => Math.min(maxIndex, c + 1));
   const [sentRequests, setSentRequests] = useState<string[]>([]);
-  
-  
+
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const myUserId = String(user?._id || "");
+  const myCompanyId = String(user?.company || "");
+  const myRole = user?.role;
 
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
         const res = await getAllEmployees();
-        setEmployees(res.data || []);
+        const allEmployees = res.data || [];
+
+        let filteredEmployees = allEmployees;
+
+        if (myRole === "employee") {
+          filteredEmployees = allEmployees.filter((emp: Employee) => {
+            const empId = String(emp._id);
+            const empCompanyId = String(emp.company?._id);
+
+            if (empId === myUserId) return false;
+
+            if (empCompanyId === myCompanyId) return false;
+
+            return true;
+          });
+        }
+
+        setEmployees(filteredEmployees);
       } catch (err) {
         console.error("Failed to fetch employees");
       } finally {
@@ -56,22 +75,22 @@ export default function Alumni() {
     fetchEmployees();
   }, []);
   useEffect(() => {
-  const fetchSentRequests = async () => {
-    try {
-      const res = await getMySentRequests();
+    const fetchSentRequests = async () => {
+      try {
+        const res = await getMySentRequests();
 
-      const receiverIds = res.data.map(
-        (req: any) => String(req.receiver._id)
-      );
+        const receiverIds = res.data.map((req: any) =>
+          String(req.receiver._id),
+        );
 
-      setSentRequests(receiverIds);
-    } catch (err) {
-      console.error("Failed to fetch sent requests");
-    }
-  };
+        setSentRequests(receiverIds);
+      } catch (err) {
+        console.error("Failed to fetch sent requests");
+      }
+    };
 
-  fetchSentRequests();
-}, []);
+    fetchSentRequests();
+  }, []);
 
   if (loading) {
     return <div className="text-center py-10">Loading alumni...</div>;
@@ -159,9 +178,7 @@ export default function Alumni() {
                         ? "rgba(255,255,255,0.04)"
                         : "rgba(255,195,0,0.12)",
                     color:
-                      current >= maxIndex
-                        ? "rgba(255,255,255,0.2)"
-                        : "#FFC300",
+                      current >= maxIndex ? "rgba(255,255,255,0.2)" : "#FFC300",
                   }}
                 >
                   <ChevronRight className="w-4 h-4" />
@@ -203,12 +220,12 @@ export default function Alumni() {
 }
 
 const colorPalette = [
-  { color: "#4285F4", bg: "#EBF2FF" }, 
-  { color: "#16A34A", bg: "#EAF7EF" }, 
-  { color: "#9333EA", bg: "#F3E8FF" }, 
-  { color: "#F97316", bg: "#FFF1E6" }, 
-  { color: "#DC2626", bg: "#FEECEC" }, 
-  { color: "#0EA5E9", bg: "#E0F2FE" }, 
+  { color: "#4285F4", bg: "#EBF2FF" },
+  { color: "#16A34A", bg: "#EAF7EF" },
+  { color: "#9333EA", bg: "#F3E8FF" },
+  { color: "#F97316", bg: "#FFF1E6" },
+  { color: "#DC2626", bg: "#FEECEC" },
+  { color: "#0EA5E9", bg: "#E0F2FE" },
 ];
 
 const getCardColor = (id: string) => {
@@ -229,30 +246,22 @@ function AlumniCard({
   alreadyRequested: boolean;
 }) {
   const [requested, setRequested] = useState(alreadyRequested);
-  
 
-useEffect(() => {
-  setRequested(alreadyRequested);
-}, [alreadyRequested]);
+  useEffect(() => {
+    setRequested(alreadyRequested);
+  }, [alreadyRequested]);
   const { color, bg } = getCardColor(person._id);
 
-
   const jobTitle =
-  person.company?.jobs?.find(
-    (job: any) => job._id === person.designation
-  )?.title || person.designation;
+    person.company?.jobs?.find((job: any) => job._id === person.designation)
+      ?.title || person.designation;
 
-  const graduation =
-  person.education?.find(
-    (edu: any) =>
-      edu.level?.toLowerCase() === "graduation" 
+  const graduation = person.education?.find(
+    (edu: any) => edu.level?.toLowerCase() === "graduation",
   );
 
+  const collegeName = graduation?.institute || "College not added";
 
-const collegeName =
-  graduation?.institute || "College not added";
-
-  
   return (
     <motion.div
       className="shrink-0 rounded-2xl overflow-hidden flex flex-col"
@@ -315,14 +324,10 @@ const collegeName =
       <div className="bg-white flex-1 p-4 flex flex-col justify-between">
         <div>
           <p className="font-bold text-slate-800 text-sm">{person.name}</p>
-          <p className="text-xs text-slate-400 font-light mt-0.5">
-            {jobTitle}
-          </p>
+          <p className="text-xs text-slate-400 font-light mt-0.5">{jobTitle}</p>
           <p className="text-xs text-slate-400 font-light mt-2">
             {collegeName}
           </p>
-         
-
         </div>
 
         <motion.button
