@@ -6,7 +6,7 @@ import { Star, X } from "lucide-react";
 import { createSuccessStory } from "../../services/successStory.service";
 
 export default function ReviewFloater({
-  designation,   // ✅ properly receive prop
+
 }: {
   // (unused but keeping since you defined)
   designation: string;

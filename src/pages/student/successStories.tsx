@@ -9,12 +9,7 @@ interface Testimonial {
   comment: string;
 }
 
-/*  Desktop Positions */
-const INITIAL_POSITIONS = [
-  { x: 60, y: 80 },
-  { x: 360, y: 40 },
-  { x: 660, y: 90 },
-];
+
 
 /* Types */
 interface CardPos {

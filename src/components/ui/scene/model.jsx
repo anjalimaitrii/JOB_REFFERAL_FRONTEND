@@ -17,7 +17,7 @@ export default function Model() {
   });
 
   return (
-    <group scale={viewport.width / 3.75}>
+    <group scale={viewport.width / 2.75}>
 
      
       <mesh ref={torus} {...nodes.Torus002}>

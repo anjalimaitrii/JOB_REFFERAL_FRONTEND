@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import Companies from "./companies";
 import {
   LogOut,
   User,
@@ -8,7 +7,6 @@ import {
   TrendingUp,
   Users,
   Building2,
-  ChevronRight,
   Star,
 } from "lucide-react";
 import { useState } from "react";

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getEmployeesByCompany } from "../../services/employee.service";
 import {
@@ -10,7 +10,6 @@ import {
 } from "../../services/company.service";
 import {
   ArrowLeft,
-  ChevronsLeft,
   Search,
   Building2,
   GraduationCap,
