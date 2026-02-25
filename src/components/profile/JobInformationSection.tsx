@@ -69,11 +69,10 @@ export const JobInformationSection = ({
                 key={type}
                 type="button"
                 onClick={() => handleChange("employmentType", type)}
-                className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
-                  data.employmentType === type
+                className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${data.employmentType === type
                     ? "bg-gray-900 text-white border-gray-900"
                     : "bg-white text-gray-500 border-gray-200 hover:border-gray-400"
-                }`}
+                  }`}
               >
                 {type}
               </button>

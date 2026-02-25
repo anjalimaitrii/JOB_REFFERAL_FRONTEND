@@ -7,8 +7,8 @@ interface Testimonial {
   role: string;
   rating: number;
   comment: string;
+  company: string;
 }
-
 
 
 /* Types */
@@ -17,16 +17,15 @@ interface CardPos {
   y: number;
 }
 
-/* ⭐ Rating */
+/* Rating */
 function StarRating({ rating }: { rating: number }) {
   return (
     <div className="flex gap-0.5">
       {Array.from({ length: 5 }).map((_, i) => (
         <svg
           key={i}
-          className={`w-4 h-4 ${
-            i < rating ? "text-yellow-400" : "text-white/20"
-          }`}
+          className={`w-4 h-4 ${i < rating ? "text-yellow-400" : "text-white/20"
+            }`}
           fill="currentColor"
           viewBox="0 0 20 20"
         >
@@ -192,10 +191,9 @@ export default function SuccessStories() {
         setTestimonials(data);
 
         const generated = data.map((_: any, i: number) => ({
-          x: 60 + i * 300,
-          y: 80 + (i % 2 === 0 ? 0 : 40),
+          x: (i % 3) * 280 + 40,
+          y: Math.floor(i / 3) * 220 + 40,
         }));
-
         setPositions(generated);
       } catch (err) {
         console.error("Failed to fetch stories");
@@ -230,12 +228,15 @@ export default function SuccessStories() {
       </div>
 
       {!isMobile && (
-        <div className="relative flex-1 min-h-[400px]">
+        <div className="relative h-[420px] overflow-hidden">
           {testimonials.map((t, i) => (
             <DraggableCard
               key={t.id}
               t={t}
-              pos={positions[i] || { x: 0, y: 0 }}
+              pos={{
+                x: (i % 10) * 200,
+                y: (i % 5) * 30,
+              }}
               onPositionChange={handlePositionChange}
               index={i}
             />
