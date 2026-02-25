@@ -2,7 +2,7 @@ import { useRef, useState, useCallback, useEffect } from "react";
 import { getSuccessStories } from "../../services/successStory.service";
 
 interface Testimonial {
-  id: string;
+  _id: string;
   name: string;
   role: string;
   rating: number;
@@ -79,7 +79,7 @@ function DraggableCard({
     const dx = e.clientX - dragStart.current.mouseX;
     const dy = e.clientY - dragStart.current.mouseY;
 
-    onPositionChange(t.id, {
+    onPositionChange(t._id, {
       x: dragStart.current.cardX + dx,
       y: dragStart.current.cardY + dy,
     });
@@ -185,11 +185,10 @@ export default function SuccessStories() {
     const fetchStories = async () => {
       try {
         const res = await getSuccessStories();
-
         const data = res.data || [];
-
         setTestimonials(data);
 
+        // Generate positions for the cards
         const generated = data.map((_: any, i: number) => ({
           x: (i % 3) * 280 + 40,
           y: Math.floor(i / 3) * 220 + 40,
@@ -206,7 +205,7 @@ export default function SuccessStories() {
   const handlePositionChange = useCallback(
     (id: string, pos: CardPos) => {
       setPositions((prev) =>
-        prev.map((p, i) => (testimonials[i]?.id === id ? pos : p)),
+        prev.map((p, i) => (testimonials[i]?._id === id ? pos : p)),
       );
     },
     [testimonials],
@@ -231,12 +230,9 @@ export default function SuccessStories() {
         <div className="relative h-[420px] overflow-hidden">
           {testimonials.map((t, i) => (
             <DraggableCard
-              key={t.id}
+              key={t._id}
               t={t}
-              pos={{
-                x: (i % 10) * 200,
-                y: (i % 5) * 30,
-              }}
+              pos={positions[i] || { x: (i % 10) * 200, y: (i % 5) * 30 }}
               onPositionChange={handlePositionChange}
               index={i}
             />
@@ -247,10 +243,11 @@ export default function SuccessStories() {
       {isMobile && (
         <div className="px-4 pb-14 grid gap-4">
           {testimonials.map((t, i) => (
-            <MobileCard key={t.id} t={t} index={i} />
+            <MobileCard key={t._id} t={t} index={i} />
           ))}
         </div>
       )}
     </div>
   );
 }
+

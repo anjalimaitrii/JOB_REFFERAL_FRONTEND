@@ -1,14 +1,25 @@
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-/* Get All Success Stories */
+export interface SuccessStory {
+  _id: string;
+  name: string;
+  role: string;
+  rating: number;
+  comment: string;
+  company: string;
+  status: 'pending' | 'approved' | 'rejected';
+  createdAt: string;
+}
+
+/* Get All Approved Success Stories */
 export const getSuccessStories = async () => {
-    const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
   const res = await fetch(
-    `${BASE_URL}/api/success-stories`,{
-        headers: {
-      Authorization: `Bearer ${token}`,  
+    `${BASE_URL}/api/success-stories`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
     },
-    }
+  }
   );
 
   if (!res.ok) {
@@ -47,4 +58,40 @@ export const createSuccessStory = async (data: {
   }
 
   return result;
+};
+
+/* Admin: Get All Success Stories */
+export const getAllSuccessStoriesForAdmin = async () => {
+  const token = localStorage.getItem("token");
+  const res = await fetch(`${BASE_URL}/api/success-stories/admin/all`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch all success stories");
+  }
+
+  return res.json();
+};
+
+/* Admin: Verify Success Story */
+export const verifySuccessStory = async (id: string, status: "approved" | "rejected" | "pending") => {
+  const token = localStorage.getItem("token");
+  const res = await fetch(`${BASE_URL}/api/success-stories/${id}/verify`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ status }),
+  });
+
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.message || "Failed to verify success story");
+  }
+
+  return res.json();
 };

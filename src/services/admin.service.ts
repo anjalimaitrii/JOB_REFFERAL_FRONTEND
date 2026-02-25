@@ -6,6 +6,8 @@ export type AdminStats = {
     employees: number;
     totalCompanies: number;
     pendingCompanies: number;
+    totalStories: number;
+    pendingStories: number;
   };
   recentUsers: {
     _id: string;

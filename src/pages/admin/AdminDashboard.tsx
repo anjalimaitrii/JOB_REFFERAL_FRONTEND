@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { type AdminStats, getAdminStats } from "../../services/admin.service";
 import { useNavigate } from "react-router-dom";
-import { Users, Building2, ChevronRight, LayoutDashboard, LogOut, Activity } from "lucide-react";
+import { Users, Building2, ChevronRight, LayoutDashboard, LogOut, Activity, MessageSquare } from "lucide-react";
 
 function AdminDashboard() {
   const navigate = useNavigate();
@@ -68,7 +68,7 @@ function AdminDashboard() {
           <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400 flex items-center gap-2">
             <div className="w-1 h-1 bg-black rounded-full"></div> Core Management
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <ModuleCard
               title="Students"
               count={stats?.counts.students || 0}
@@ -91,6 +91,14 @@ function AdminDashboard() {
               icon={<Building2 className="w-6 h-6" />}
               onClick={() => navigate("/admin/companies")}
               badge={stats?.counts.pendingCompanies}
+            />
+            <ModuleCard
+              title="Stories"
+              count={stats?.counts.totalStories || 0}
+              desc="Moderate student success stories and reviews."
+              icon={<MessageSquare className="w-6 h-6" />}
+              onClick={() => navigate("/admin/stories")}
+              badge={stats?.counts.pendingStories}
             />
           </div>
         </section>
