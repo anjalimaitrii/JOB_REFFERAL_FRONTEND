@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import Navbar from "./navbar.js";
 import HeroSection from "./heroSection.js";
-import  ReferralGallery  from "../../components/ui/skipper.js";
+// import  ReferralGallery  from "../../components/ui/skipper.js";
 
 const EmployeeDashboard = () => {
   return (
@@ -14,7 +14,7 @@ const EmployeeDashboard = () => {
       <div className="min-h-screen bg-slate-100">
         <Navbar />
         <HeroSection />
-        <ReferralGallery/>
+        {/* <ReferralGallery/> */}
       </div>
     </motion.div>
   );
