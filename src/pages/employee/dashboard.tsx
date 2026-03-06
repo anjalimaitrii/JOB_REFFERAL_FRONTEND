@@ -1,9 +1,19 @@
 import { motion } from "framer-motion";
-import Navbar from "./navbar.js";
-import HeroSection from "./heroSection.js";
-// import  ReferralGallery  from "../../components/ui/skipper.js";
+import { useState } from "react";
+import Navbar from "./navbar";
+
+import HeroSection from "./heroSection";
+import CreatePost from "./CreatePost";
+import EmployeeFeed from "./EmployeeFeed";
 
 const EmployeeDashboard = () => {
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handlePostCreated = () => {
+    setRefreshKey((prev: number) => prev + 1);
+  };
+
+
   return (
     <motion.div
       initial={{ opacity: 0, x: 40 }}
@@ -11,13 +21,19 @@ const EmployeeDashboard = () => {
       exit={{ opacity: 0, x: -40 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="min-h-screen bg-slate-100">
+      <div className="min-h-screen bg-slate-50 pb-20">
         <Navbar />
-        <HeroSection />
-        {/* <ReferralGallery/> */}
+        {/* <HeroSection /> */}
+
+        <div className=" z-20 mt-20">
+          <CreatePost onPostCreated={handlePostCreated} />
+          <EmployeeFeed refreshKey={refreshKey} />
+        </div>
       </div>
     </motion.div>
   );
 };
+
+
 
 export default EmployeeDashboard;

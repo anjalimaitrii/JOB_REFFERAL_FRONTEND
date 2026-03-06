@@ -14,10 +14,13 @@
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.3.8",
     "@mui/material": "^7.3.8",
+    "@radix-ui/react-dropdown-menu": "^2.1.16",
+    "@radix-ui/react-toggle": "^1.1.10",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
     "@tabler/icons-react": "^3.36.1",
     "autoprefixer": "^10.4.23",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "daisyui": "^5.5.18",
     "framer-motion": "^12.34.2",
@@ -32,7 +35,8 @@
     "react-router-dom": "^7.12.0",
     "socket.io-client": "^4.8.3",
     "swiper": "^12.1.2",
-    "tailwind-merge": "^3.4.0",
+    "tailwind-merge": "^3.5.0",
+    "tailwindcss-animate": "^1.0.7",
     "three": "^0.183.1"
   },
   "devDependencies": {

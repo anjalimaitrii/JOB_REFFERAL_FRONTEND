@@ -22,6 +22,7 @@ import Footer from "../../components/footer";
 import Blog from "./blog";
 import LoadingScreen from "./loadingScreen";
 import ReviewFloater from "../../components/ui/ReviewFloater";
+import Feed from "./Feed";
 
 // ── Mock Data ─────────────────────────────────────────────────
 const STATS = [
@@ -198,6 +199,7 @@ const StudentDashboard = () => {
 
           <ApplyNow />
           <HowItWorks />
+          <Feed />
           <Alumni />
           <Blog />
           <SuccessStories />
