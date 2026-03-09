@@ -20,7 +20,6 @@ import {
   likePost,
   addComment,
   type Post,
-  getCompanyPosts,
 } from "../../services/post.service";
 import {
   followEmployee,
@@ -138,21 +137,19 @@ const Feed = ({ companyId, limit }: Props) => {
         <div className="flex gap-2">
           <button
             onClick={() => setFilter("recent")}
-            className={`px-4 py-2 rounded-full border text-xs font-medium transition-colors ${
-              filter === "recent"
+            className={`px-4 py-2 rounded-full border text-xs font-medium transition-colors ${filter === "recent"
                 ? "bg-white/10 border-white/20 text-white"
                 : "border-white/10 text-gray-400 hover:bg-white/5"
-            }`}
+              }`}
           >
             Following
           </button>
           <button
             onClick={() => setFilter("explore")}
-            className={`px-4 py-2 rounded-full border text-xs font-medium transition-colors ${
-              filter === "explore"
+            className={`px-4 py-2 rounded-full border text-xs font-medium transition-colors ${filter === "explore"
                 ? "bg-amber-400 border-amber-400 text-black font-bold"
                 : "border-white/10 text-gray-400 hover:bg-white/5"
-            }`}
+              }`}
           >
             Explore
           </button>
@@ -214,11 +211,10 @@ const Feed = ({ companyId, limit }: Props) => {
                                 !!isFollowing,
                               )
                             }
-                            className={`text-[11px] font-bold flex items-center gap-1 transition-colors ${
-                              isFollowing
+                            className={`text-[11px] font-bold flex items-center gap-1 transition-colors ${isFollowing
                                 ? "text-gray-400 hover:text-white"
                                 : "text-amber-400 hover:text-amber-500"
-                            }`}
+                              }`}
                           >
                             {togglingFollow === post.employee?._id ? (
                               <Loader2 className="w-3 h-3 animate-spin" />
@@ -267,11 +263,10 @@ const Feed = ({ companyId, limit }: Props) => {
                   <div className="pt-4 border-t border-white/5 flex items-center gap-6">
                     <button
                       onClick={() => handleLike(post._id)}
-                      className={`flex items-center gap-2 transition-colors group ${
-                        isLiked
+                      className={`flex items-center gap-2 transition-colors group ${isLiked
                           ? "text-red-400"
                           : "text-gray-500 hover:text-red-400"
-                      }`}
+                        }`}
                     >
                       <Heart
                         className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`}

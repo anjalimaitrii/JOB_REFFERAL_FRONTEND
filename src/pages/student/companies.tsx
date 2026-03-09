@@ -9,27 +9,13 @@ import {
   getCompanies,
   getEmployeesByCollege,
 } from "../../services/company.service";
-import {
-  ArrowLeft,
-  Search,
-  Building2,
-  GraduationCap,
-  MapPin,
-  Globe,
-  Users,
-  X,
-  Briefcase,
-  ChevronRight,
-  Heart,
-  MessageSquare,
-} from "lucide-react";
-import { motion } from "framer-motion";
 import { sendRequestToEmployee } from "../../services/request.service";
 import HeroHeader from "@/components/companies/HeroHeader";
 import CompanyCard from "@/components/companies/CompanyCard";
 import EmployeeCard from "@/components/companies/EmployeeCard";
 import CollegeCard from "@/components/companies/CollegeCard";
 import Feed from "./Feed";
+import { X } from "lucide-react";
 
 type Company = {
   _id: string;
@@ -52,7 +38,6 @@ type Employee = {
   experience?: string;
 };
 
-const FILTERS = ["All", "Remote", "Bengaluru", "Hyderabad", "Startup", "MNC", "Product"];
 
 // Staggered animation hook
 function useStaggeredVisible(count: number, delay = 60) {
@@ -87,8 +72,8 @@ function Companies() {
   const [manualJobId, setManualJobId] = useState("");
   const [pageVisible, setPageVisible] = useState(false);
   const [detailView, setDetailView] = useState<"feed" | "employees">("employees");
-  const [companyPosts, setCompanyPosts] = useState<Post[]>([]);
-  const [postsLoading, setPostsLoading] = useState(false);
+  const [, setCompanyPosts] = useState<Post[]>([]);
+  const [, setPostsLoading] = useState(false);
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 

@@ -44,9 +44,6 @@ const EmployeeFeed = ({
   const [commentContent, setCommentContent] = useState("");
   const [view, setView] = useState<"all" | "mine">("all");
   const currentUserId = localStorage.getItem("userId");
-  const [reportModalOpen, setReportModalOpen] = useState(false);
-  const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
-  const [reportReason, setReportReason] = useState("");
   const navigate = useNavigate();
   const filteredPosts =
     view === "mine"
@@ -339,11 +336,10 @@ const EmployeeFeed = ({
                   <div className="pt-3 border-t border-slate-100 flex items-center gap-6">
                     <button
                       onClick={() => handleLike(post._id)}
-                      className={`flex items-center gap-1.5 transition-colors ${
-                        isLiked
+                      className={`flex items-center gap-1.5 transition-colors ${isLiked
                           ? "text-red-500"
                           : "text-slate-500 hover:text-red-500"
-                      }`}
+                        }`}
                     >
                       <Heart
                         className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`}

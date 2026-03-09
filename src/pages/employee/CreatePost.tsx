@@ -1,4 +1,4 @@
-import { Image, Calendar, Layout, Send, X, Loader2 } from "lucide-react";
+import { Image, Layout, Send, X, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { createPost } from "../../services/post.service";
