@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { ArrowLeft, Search, X, Building2, GraduationCap } from "lucide-react";
 
 
@@ -19,6 +18,8 @@ type Props = {
     employees: any[];
     activeFilter: string;
     setActiveFilter: (value: string) => void;
+    detailView: "feed" | "employees";
+    setDetailView: (view: "feed" | "employees") => void;
 };
 
 const FILTERS = ["All", "Remote", "Bengaluru", "Hyderabad", "Startup", "MNC", "Product"];
@@ -39,10 +40,11 @@ const HeroHeader = ({
     employees,
     setFilteredResults,
     activeFilter,
-    setActiveFilter
+    setActiveFilter,
+    detailView,
+    setDetailView
 }: Props) => {
     const isDetailView = !!(selectedCompany || selectedCollege);
-    const [detailView, setDetailView] = useState<"feed" | "employees">("employees");
     return (
         <div>
             <div

@@ -20,6 +20,8 @@ import NotificationsPage from "./components/NotificationsPage";
 import RequestSection from "./pages/employee/request";
 import { AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
+import Feed from "./pages/student/Feed";
+import EmployeeFeed from "./pages/employee/EmployeeFeed";
 
 function App() {
   const location = useLocation();
@@ -119,14 +121,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-          {/* <Route
-          path="/employee/companies"
-          element={
-            <ProtectedRoute allowedRole="employee">
-              <Companies />
-            </ProtectedRoute>
-          }
-        /> */}
 
           <Route
             path="/student/requests"
@@ -141,6 +135,23 @@ function App() {
             element={
               <ProtectedRoute allowedRole="employee">
                 <RequestSection />
+              </ProtectedRoute>
+            }
+          />
+
+            <Route
+            path="/employee/posts"
+            element={
+              <ProtectedRoute allowedRole="employee">
+                <EmployeeFeed />
+              </ProtectedRoute>
+            }
+          />
+            <Route
+            path="/student/posts"
+            element={
+              <ProtectedRoute allowedRole="student">
+                <Feed />
               </ProtectedRoute>
             }
           />

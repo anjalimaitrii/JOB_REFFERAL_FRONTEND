@@ -181,7 +181,7 @@ const StudentDashboard = () => {
               {STATS.map(({ icon: Icon, label, value, color }) => (
                 <div
                   key={label}
-                  className="bg-white rounded-2xl border border-slate-100 shadow-sm px-5 py-4 flex items-center gap-3 hover:shadow-md transition-shadow"
+                  className="bg-white rounded-2xl border border-slate-100 shadow-sm px-5 py-4 flex items-center gap-3 hover:shadow-md hover:scale-105  transition-all"
                 >
                   <Icon className={`w-5 h-5 shrink-0 ${color}`} />
                   <div>
@@ -199,7 +199,7 @@ const StudentDashboard = () => {
 
           <ApplyNow />
           <HowItWorks />
-          <Feed />
+          <Feed limit={2} />
           <Alumni />
           <Blog />
           <SuccessStories />

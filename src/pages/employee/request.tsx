@@ -293,24 +293,45 @@ const StatCard = ({
   return (
     <button
       onClick={onClick}
-      className={`group relative text-left p-4 rounded-[2rem] border transition-all duration-500 hover:scale-[1.02] ${dark
-        ? 'bg-gradient-to-br from-[#1a1a1a] via-[#333] to-[#444] text-white border-gray-800 shadow-xl'
-        : 'bg-gradient-to-br from-white via-[#fcfcfc] to-[#f5f5f5] text-gray-900 border-gray-100 shadow-sm hover:shadow-xl'
-        } ${isActive ? (dark ? 'ring-2 ring-white/30 scale-[1.02]' : 'ring-2 ring-black/20 scale-[1.02]') : ''}`}
+      className={`group relative text-left px-5 py-4 rounded-[2rem] border transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 ${
+        dark
+          ? 'bg-gradient-to-br from-[#1a1a1a] via-[#333] to-[#444] text-white border-gray-800 shadow-xl'
+          : 'bg-gradient-to-br from-white via-[#fcfcfc] to-[#f5f5f5] text-gray-900 border-gray-100 shadow-sm'
+      } ${
+        isActive
+          ? dark
+            ? 'ring-2 ring-white/30'
+            : 'ring-2 ring-black/20'
+          : ''
+      }`}
     >
-      <div className="flex items-start justify-between mb-8">
-        <div className={`p-3 rounded-2xl ${dark ? 'bg-white/10' : 'bg-gray-50 group-hover:bg-black group-hover:text-white'} transition-colors duration-300`}>
+      <div className="flex items-center justify-between mb-3">
+        <div
+          className={`w-9 h-9 rounded-xl flex items-center justify-center ${
+            dark
+              ? 'bg-white/10'
+              : 'bg-gray-50 group-hover:bg-black group-hover:text-white'
+          } transition-colors duration-300`}
+        >
           {icon}
         </div>
-        <div className="flex flex-col items-end">
-          <span className={`text-3xl font-semibold tracking-tight ${dark ? 'text-white' : 'text-gray-900'}`}>{count}</span>
-          <span className={`text-[10px] font-bold uppercase tracking-widest ${dark ? 'text-gray-500' : 'text-gray-400'}`}>Count</span>
-        </div>
+
+        <span
+          className={`text-2xl font-semibold tracking-tight ${
+            dark ? 'text-white' : 'text-gray-900'
+          }`}
+        >
+          {count}
+        </span>
       </div>
 
-      <div className="space-y-1">
-        <h4 className="text-lg font-bold uppercase tracking-tight">{title}</h4>
-        <p className={`text-xs font-medium leading-relaxed ${dark ? 'text-gray-400' : 'text-gray-500'}`}>
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-wide">{title}</p>
+        <p
+          className={`text-[11px] leading-relaxed ${
+            dark ? 'text-gray-400' : 'text-gray-500'
+          }`}
+        >
           {title === "Total" && "All received referral requests."}
           {title === "Pending" && "Awaiting your response."}
           {title === "Approved" && "Requests you've accepted."}
@@ -350,19 +371,19 @@ const RequestCard = ({
   }[status];
 
   return (
-    <div className="group bg-gradient-to-br from-white via-[#fcfcfc] to-[#f5f5f5] rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 hover:scale-[1.02] p-6 flex flex-col gap-5">
+    <div className="group bg-gradient-to-br from-white via-[#fcfcfc] to-[#f5f5f5] rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 px-5 py-4 flex flex-col gap-3">
 
       {/* Top row */}
-      <div className="flex items-start justify-between gap-2">
+      <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
           {companyLogo ? (
             <img
               src={companyLogo}
               alt={companyName}
-              className="w-12 h-12 rounded-2xl object-contain border border-gray-100 bg-gray-50 p-1.5 shrink-0"
+              className="w-10 h-10 rounded-xl object-contain border border-gray-100 bg-gray-50 p-1 shrink-0"
             />
           ) : (
-            <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-sm font-bold text-gray-400 shrink-0 group-hover:bg-black group-hover:text-white transition-colors duration-300">
+            <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-sm font-bold text-gray-400 shrink-0 group-hover:bg-black group-hover:text-white transition-colors duration-300">
               {companyName.charAt(0)}
             </div>
           )}
@@ -375,13 +396,13 @@ const RequestCard = ({
           </div>
         </div>
 
-        {/* Status badge with dropdown */}
+        {/* Status badge */}
         <div className="relative shrink-0">
           <div
             onClick={() => status === "Pending" && setOpen(!open)}
-            className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-tighter transition-all duration-200
+            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-tighter transition-all duration-200
               ${statusBadge}
-              ${status === "Pending" ? "cursor-pointer hover:scale-105 active:scale-95" : "cursor-default"}
+              ${status === "Pending" ? "cursor-pointer hover:scale-105 active:scale-95" : ""}
             `}
           >
             {status}
@@ -401,13 +422,13 @@ const RequestCard = ({
 
           {/* Dropdown */}
           {open && status === "Pending" && (
-            <div className="absolute right-0 mt-2 w-32 bg-white border border-gray-100 rounded-2xl shadow-xl overflow-hidden z-50">
+            <div className="absolute right-0 mt-2 w-32 bg-white border border-gray-100 rounded-xl shadow-xl overflow-hidden z-50">
               <button
                 onClick={() => {
                   onAccept?.();
                   setOpen(false);
                 }}
-                className="w-full text-left px-4 py-2.5 text-xs font-bold uppercase tracking-widest hover:bg-gray-50 text-gray-900 transition"
+                className="w-full text-left px-4 py-2 text-xs font-bold uppercase tracking-widest hover:bg-gray-50 text-gray-900 transition"
               >
                 Approve
               </button>
@@ -416,7 +437,7 @@ const RequestCard = ({
                   onReject?.();
                   setOpen(false);
                 }}
-                className="w-full text-left px-4 py-2.5 text-xs font-bold uppercase tracking-widest hover:bg-gray-50 text-gray-400 transition"
+                className="w-full text-left px-4 py-2 text-xs font-bold uppercase tracking-widest hover:bg-gray-50 text-gray-400 transition"
               >
                 Reject
               </button>
@@ -425,15 +446,17 @@ const RequestCard = ({
         </div>
       </div>
 
-      <div className="border-t border-gray-100" />
+      <div className="border-t border-gray-100 my-1" />
 
       {/* Sender */}
       <div className="flex items-center gap-3">
-        <div className="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center text-xs font-bold text-gray-500 shrink-0">
+        <div className="w-8 h-8 rounded-xl bg-gray-50 flex items-center justify-center text-xs font-bold text-gray-500 shrink-0">
           {senderName?.charAt(0) || "?"}
         </div>
         <div>
-          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Request From</p>
+          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+            Request From
+          </p>
           <p className="text-sm font-semibold text-gray-900">{senderName}</p>
         </div>
       </div>
@@ -442,7 +465,7 @@ const RequestCard = ({
       {status === "Approved" && (
         <button
           onClick={onChat}
-          className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-black text-white text-[11px] font-bold uppercase tracking-widest hover:bg-gray-800 active:scale-95 transition-all"
+          className="flex items-center justify-center gap-2 w-full py-2 rounded-xl bg-black text-white text-[11px] font-bold uppercase tracking-widest hover:bg-gray-800 active:scale-95 transition-all"
         >
           <MessageCircle className="w-4 h-4" />
           Chat with Student

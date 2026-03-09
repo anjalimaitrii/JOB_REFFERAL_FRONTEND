@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getEmployeesByCompany } from "../../services/employee.service";
+import { getCompanyPosts, type Post } from "../../services/post.service";
 import {
   getCollegesWithEmployees,
   getCompanies,
@@ -19,12 +20,16 @@ import {
   X,
   Briefcase,
   ChevronRight,
+  Heart,
+  MessageSquare,
 } from "lucide-react";
+import { motion } from "framer-motion";
 import { sendRequestToEmployee } from "../../services/request.service";
 import HeroHeader from "@/components/companies/HeroHeader";
 import CompanyCard from "@/components/companies/CompanyCard";
 import EmployeeCard from "@/components/companies/EmployeeCard";
 import CollegeCard from "@/components/companies/CollegeCard";
+import Feed from "./Feed";
 
 type Company = {
   _id: string;
@@ -81,6 +86,9 @@ function Companies() {
   const [selectedJobId, setSelectedJobId] = useState("");
   const [manualJobId, setManualJobId] = useState("");
   const [pageVisible, setPageVisible] = useState(false);
+  const [detailView, setDetailView] = useState<"feed" | "employees">("employees");
+  const [companyPosts, setCompanyPosts] = useState<Post[]>([]);
+  const [postsLoading, setPostsLoading] = useState(false);
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
@@ -155,11 +163,49 @@ function Companies() {
   const handleCompanyClick = async (company: Company) => {
     setSelectedCompany(company);
     setSelectedCollege(null);
+    setDetailView("employees"); // Reset to employees view on click
     try {
       const res = await getEmployeesByCompany(company._id);
       setEmployees(res.data);
     } catch { console.error("Failed to fetch employees"); }
   };
+
+  useEffect(() => {
+    if (selectedCompany && detailView === "feed") {
+      const fetchPosts = async () => {
+        setPostsLoading(true);
+        try {
+          const res = await getCompanyPosts(selectedCompany._id);
+
+          let postsData: any[] = [];
+
+          if (Array.isArray(res)) {
+            postsData = res;
+          } else if (res.data && Array.isArray(res.data)) {
+            postsData = res.data;
+          } else if (res.posts && Array.isArray(res.posts)) {
+            postsData = res.posts;
+          } else if (res.data?.posts && Array.isArray(res.data.posts)) {
+            postsData = res.data.posts;
+          } else if (res && typeof res === 'object') {
+            const possibleArray = Object.values(res).find(val => Array.isArray(val));
+            if (possibleArray) {
+              postsData = possibleArray as any[];
+            } else if (res._id || res.id) {
+              postsData = [res];
+            }
+          }
+
+          setCompanyPosts(postsData);
+        } catch (error) {
+          console.error("Error fetching company posts:", error);
+        } finally {
+          setPostsLoading(false);
+        }
+      };
+      fetchPosts();
+    }
+  }, [selectedCompany?._id, detailView]);
 
   useEffect(() => {
     if (viewMode !== "college") return;
@@ -241,7 +287,8 @@ function Companies() {
         employees={employees}
         activeFilter={activeFilter}
         setActiveFilter={setActiveFilter}
-
+        detailView={detailView}
+        setDetailView={setDetailView}
       />
 
       {/* ════ CONTENT AREA ════ */}
@@ -278,17 +325,89 @@ function Companies() {
           />
 
           {/* ── EMPLOYEES DETAIL VIEW ── */}
-          <EmployeeCard
-            isDetailView={isDetailView}
-            employees={employees}
-            empVisible={empVisible}
-            selectedCompany={selectedCompany}
-            setSelectedEmployee={setSelectedEmployee}
-            setShowModal={setShowModal}
-            setUseJobId={setUseJobId}
-            setSelectedJobId={setSelectedJobId}
-            setManualJobId={setManualJobId}
-          />
+          {isDetailView && (detailView === "employees" ? (
+            <EmployeeCard
+              isDetailView={isDetailView}
+              employees={employees}
+              empVisible={empVisible}
+              selectedCompany={selectedCompany}
+              setSelectedEmployee={setSelectedEmployee}
+              setShowModal={setShowModal}
+              setUseJobId={setUseJobId}
+              setSelectedJobId={setSelectedJobId}
+              setManualJobId={setManualJobId}
+            />
+          ) : (
+            // <div className="space-y-6 max-w-4xl mx-auto py-10">
+            //   {postsLoading ? (
+            //     <div className="flex flex-col items-center justify-center py-20 gap-4">
+            //       <div className="w-8 h-8 border-4 border-amber-400 border-t-transparent rounded-full animate-spin" />
+            //       <p className="text-slate-400 font-medium">Loading posts...</p>
+            //     </div>
+            //   ) : companyPosts.length === 0 ? (
+            //     <div className="text-center py-20 bg-white/40 backdrop-blur-md rounded-3xl border border-dashed border-slate-200 shadow-sm">
+            //       <p className="text-slate-400">No posts found for this company.</p>
+            //     </div>
+            //   ) : (
+            //     companyPosts.map((post: any, index) => {
+            //       // Resolve designation ID to Job Title from company.jobs
+            //       const designationId =
+            //         typeof post.employee === "object"
+            //           ? post.employee?.designation
+            //           : post.designation;
+
+            //       const resolvedDesignation =
+            //         post.company?.jobs?.find((job: any) => job._id === designationId)?.title ||
+            //         "Employee";
+
+            //       return (
+            //         <motion.div
+            //           key={post._id || index}
+            //           initial={{ opacity: 0, y: 20 }}
+            //           animate={{ opacity: 1, y: 0 }}
+            //           transition={{ delay: index * 0.1 }}
+            //           className="bg-white/80 backdrop-blur-xl rounded-3xl border border-white/20 p-6 shadow-xl relative z-20"
+            //         >
+            //           <div className="flex items-center gap-3 mb-4">
+            //             <div className="w-10 h-10 rounded-xl bg-amber-400 flex items-center justify-center text-black font-bold text-lg">
+            //               {typeof post.employee === 'object' ? post.employee?.name?.charAt(0) : (post.userName?.charAt(0) || "P")}
+            //             </div>
+            //             <div>
+            //               <h4 className="text-slate-900 font-bold">
+            //                 {typeof post.employee === 'object' ? post.employee?.name : (post.userName || "Author")}
+            //               </h4>
+            //               <p className="text-slate-400 text-xs text-left">
+            //                 {resolvedDesignation} • {post.createdAt ? new Date(post.createdAt).toLocaleDateString() : "Just now"}
+            //               </p>
+            //             </div>
+            //           </div>
+            //           {post.content && (
+            //             <p className="text-slate-700 text-left leading-relaxed whitespace-pre-wrap mb-4 text-sm">
+            //               {post.content}
+            //             </p>
+            //           )}
+            //           {post.image && (
+            //             <div className="rounded-2xl overflow-hidden border border-slate-100 mb-4">
+            //               <img src={post.image} alt="Post content" className="w-full h-auto object-cover max-h-[400px]" />
+            //             </div>
+            //           )}
+            //           <div className="pt-4 border-t border-slate-50 flex items-center gap-6">
+            //             <div className="flex items-center gap-2 text-slate-400">
+            //               <Heart className="w-4 h-4" />
+            //               <span className="text-xs font-semibold">{post.likes?.length || 0}</span>
+            //             </div>
+            //             <div className="flex items-center gap-2 text-slate-400">
+            //               <MessageSquare className="w-4 h-4" />
+            //               <span className="text-xs font-semibold">{post.comments?.length || 0}</span>
+            //             </div>
+            //           </div>
+            //         </motion.div>
+            //       );
+            //     })
+            //   )}
+            // </div>
+            selectedCompany && <Feed companyId={selectedCompany._id} />
+          ))}
 
         </div>
       </div>
