@@ -3,7 +3,7 @@
 import React, { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Environment } from "@react-three/drei";
-import Model from "./Model.jsx";
+import Model from "./model.jsx";
 
 export default function Index() {
   return (
