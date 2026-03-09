@@ -17,6 +17,9 @@ export default function Index() {
           position={[0, 2, 3]}
         />
 
+
+
+
         <Suspense fallback={null}>
           <Model />
           <Environment preset="city" />
