@@ -11,6 +11,7 @@ import Companies from "./pages/student/companies";
 import Request from "./pages/student/request";
 import AdminCompanies from "./pages/admin/AdminCompanies";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminPosts from "./pages/admin/AdminPosts";
 import AdminStudents from "./pages/admin/AdminStudents";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminProtectedRoute from "./routes/AdminProtectedRoute";
@@ -139,7 +140,7 @@ function App() {
             }
           />
 
-            <Route
+          <Route
             path="/employee/posts"
             element={
               <ProtectedRoute allowedRole="employee">
@@ -147,12 +148,20 @@ function App() {
               </ProtectedRoute>
             }
           />
-            <Route
+          <Route
             path="/student/posts"
             element={
-              <ProtectedRoute allowedRole="student">
+              <ProtectedRoute allowedRole={["employee", "student"]}>
                 <Feed />
               </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/posts"
+            element={
+              <AdminProtectedRoute>
+                <AdminPosts />
+              </AdminProtectedRoute>
             }
           />
 

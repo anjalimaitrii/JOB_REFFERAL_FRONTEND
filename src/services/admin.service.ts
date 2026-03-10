@@ -55,3 +55,20 @@ export const getUsersByRole = async (role: "student" | "employee"): Promise<{ su
 
   return res.json();
 };
+
+export const getAdminPosts = async () => {
+  const res = await fetch(`${BASE_URL}/api/posts/admin/posts`);
+
+  if (!res.ok) throw new Error("Failed to fetch posts");
+
+  return res.json();
+};
+export const deleteAdminPost = async (id: string) => {
+  const res = await fetch(`${BASE_URL}/api/posts/admin/posts/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!res.ok) throw new Error("Failed to delete post");
+
+  return res.json();
+};

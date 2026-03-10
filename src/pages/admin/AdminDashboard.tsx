@@ -68,7 +68,7 @@ function AdminDashboard() {
           <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400 flex items-center gap-2">
             <div className="w-1 h-1 bg-black rounded-full"></div> Core Management
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <ModuleCard
               title="Students"
               count={stats?.counts.students || 0}
@@ -99,6 +99,14 @@ function AdminDashboard() {
               icon={<MessageSquare className="w-6 h-6" />}
               onClick={() => navigate("/admin/stories")}
               badge={stats?.counts.pendingStories}
+            />
+            <ModuleCard
+              title="Feed Posts"
+              count={stats?.counts.totalStories || 0}
+              desc="Global monitoring of all community feed interactions."
+              icon={<Activity className="w-6 h-6" />}
+              onClick={() => navigate("/admin/posts")}
+              dark
             />
           </div>
         </section>
@@ -167,7 +175,7 @@ function ModuleCard({ title, count, desc, icon, onClick, dark = false, badge }: 
         : 'bg-gradient-to-br from-white via-[#fcfcfc] to-[#f5f5f5] text-gray-900 border-gray-100 shadow-sm hover:shadow-xl'
         }`}
     >
-      <div className="flex items-start justify-between mb-8">
+      <div className="flex items-start justify-between mb-1">
         <div className={`p-3 rounded-2xl ${dark ? 'bg-white/10' : 'bg-gray-50 group-hover:bg-black group-hover:text-white'} transition-colors duration-300`}>
           {icon}
         </div>
