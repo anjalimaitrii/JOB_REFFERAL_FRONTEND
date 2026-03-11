@@ -8,12 +8,11 @@ import {
   Pencil,
   Trash2,
   Flag,
-  Plus,
   TrendingUp,
   Award,
   BarChart3,
   ThumbsDown,
-  Image as ImageIcon,
+
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
@@ -50,6 +49,7 @@ const EmployeeFeed = ({
   const [view, setView] = useState<"all" | "mine">("all");
   const currentUserId = localStorage.getItem("userId");
   const navigate = useNavigate();
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const userName = user?.name || "Employee";
@@ -205,30 +205,20 @@ const EmployeeFeed = ({
             </div>
 
             {/* Quick Post Entry */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm group">
+            {/* <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm group">
               <div className="flex gap-4 items-center">
                 <div className="w-12 h-12 rounded-2xl bg-amber-400 flex items-center justify-center text-black font-black text-xl shadow-lg shadow-amber-200">
                   {userInitial}
                 </div>
                 <div
                   className="flex-1 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl px-5 py-3 cursor-pointer transition-all"
-                  onClick={() => {/* Trigger CreatePost modal if possible, or just scroll to FAB */ }}
+                  onClick={() => { }}
                 >
                   <p className="text-slate-400 text-sm font-medium">What's on your mind, {userName}?</p>
                 </div>
               </div>
-              <div className="flex gap-6 mt-4 pt-4 border-t border-slate-100">
-                <button className="flex items-center gap-2 text-slate-500 hover:text-blue-500 text-xs font-bold transition-colors">
-                  <ImageIcon className="w-4 h-4" /> Media
-                </button>
-                <button className="flex items-center gap-2 text-slate-500 hover:text-emerald-500 text-xs font-bold transition-colors">
-                  <Briefcase className="w-4 h-4" /> Opportunity
-                </button>
-                <button className="flex items-center gap-2 text-slate-500 hover:text-amber-500 text-xs font-bold transition-colors">
-                  <Plus className="w-4 h-4" /> Story
-                </button>
-              </div>
-            </div>
+
+            </div> */}
 
             {/* Posts List */}
             {filteredPosts.length === 0 ? (
@@ -337,7 +327,8 @@ const EmployeeFeed = ({
                               <img
                                 src={post.image}
                                 alt="Post"
-                                className="w-full max-h-[400px] object-cover hover:scale-105 transition-transform duration-500"
+                                onClick={() => setPreviewImage(post.image!)}
+                                className="w-full max-h-[400px] object-contain cursor-pointer transition-transform duration-300 hover:scale-[1.02]"
                               />
                             </div>
                           )}
@@ -534,7 +525,34 @@ const EmployeeFeed = ({
         </div>
       </div>
       <CreatePost onPostCreated={fetchPosts} />
+      {previewImage && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-6 animate-fadeIn"
+          onClick={() => setPreviewImage(null)}
+        >
+          <div
+            className="relative max-w-6xl w-full flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close button */}
+            <button
+              onClick={() => setPreviewImage(null)}
+              className="absolute top-4 right-4 z-10 bg-white/90 hover:bg-white text-black rounded-full w-10 h-10 flex items-center justify-center shadow-lg transition"
+            >
+              ✕
+            </button>
+
+            {/* Image */}
+            <img
+              src={previewImage}
+              alt="Preview"
+              className="max-h-[90vh] w-auto max-w-full object-contain rounded-xl shadow-2xl"
+            />
+          </div>
+        </div>
+      )}
     </section>
+
   );
 };
 
