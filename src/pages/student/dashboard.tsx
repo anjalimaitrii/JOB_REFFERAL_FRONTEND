@@ -8,6 +8,7 @@ import {
   Users,
   Building2,
   Star,
+  Layout,
 } from "lucide-react";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -22,7 +23,6 @@ import Footer from "../../components/footer";
 import Blog from "./blog";
 import LoadingScreen from "./loadingScreen";
 import ReviewFloater from "../../components/ui/ReviewFloater";
-import Feed from "./Feed";
 
 // ── Mock Data ─────────────────────────────────────────────────
 const STATS = [
@@ -115,6 +115,13 @@ const StudentDashboard = () => {
               >
                 <User className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
+              <button
+                onClick={() => navigate("/student/posts")}
+                className="p-2 rounded-full hover:bg-white/10 transition-colors"
+                title="Activity Feed"
+              >
+                <Layout className="w-4 h-4 sm:w-5 sm:h-5" />
+              </button>
 
               <button
                 onClick={() => navigate("/student/requests")}
@@ -199,7 +206,6 @@ const StudentDashboard = () => {
 
           <ApplyNow />
           <HowItWorks />
-          <Feed limit={2} />
           <Alumni />
           <Blog />
           <SuccessStories />

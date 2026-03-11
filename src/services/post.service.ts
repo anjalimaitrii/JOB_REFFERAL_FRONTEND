@@ -33,6 +33,7 @@ export interface Post {
     content: string;
     image?: string;
     likes: string[];
+    dislikes?: string[];
     comments: Comment[];
     isFollowing?: boolean;
     createdAt: string;
@@ -59,7 +60,6 @@ export const createPost = async (content: string, image?: string) => {
 
     return result;
 };
-
 
 /* Get explore feed (random/recent posts) */
 export const getExploreFeed = async () => {
@@ -126,6 +126,23 @@ export const likePost = async (postId: string) => {
     return res.json();
 };
 
+/* Toggle dislike on a post (Employees only) */
+export const dislikePost = async (postId: string) => {
+    const token = localStorage.getItem("token");
+    const res = await fetch(`${BASE_URL}/api/posts/dislike/${postId}`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    if (!res.ok) {
+        throw new Error("Failed to toggle dislike");
+    }
+
+    return res.json();
+};
+
 /* Add comment to a post */
 export const addComment = async (postId: string, content: string) => {
     const token = localStorage.getItem("token");
@@ -160,8 +177,6 @@ export const deletePost = async (postId: string) => {
 
     return res.json();
 };
-
-
 
 export const updatePost = async (postId: string, content: string, image?: string) => {
     const token = localStorage.getItem("token");

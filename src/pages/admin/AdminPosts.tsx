@@ -7,7 +7,6 @@ import { deleteAdminPost, getAdminPosts } from "../../services/admin.service";
 import {
     Search,
     Trash2,
-    ExternalLink,
     ArrowLeft,
     Building,
     Clock,
