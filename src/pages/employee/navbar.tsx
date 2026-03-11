@@ -10,7 +10,7 @@ function Navbar() {
   };
   return (
     <div>
-      <div className="h-16 w-full bg-black fixed z-30 flex items-center justify-between px-4 sm:px-8 text-white shadow">
+      <div className="h-16 w-full bg-black fixed z-30  items-center justify-between px-4 sm:px-8 text-white shadow hidden lg:flex">
         <h1 className="text-base sm:text-lg font-semibold">
           Employee Dashboard
         </h1>

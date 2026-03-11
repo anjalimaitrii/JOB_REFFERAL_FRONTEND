@@ -6,7 +6,7 @@ import { Layout, User, Mail, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function MobileBottomNav() {
-    const [value, setValue] = React.useState("feed");
+    const [value, setValue] = React.useState("home");
     const navigate = useNavigate();
 
     const handleChange = (_event: React.SyntheticEvent, newValue: string) => {

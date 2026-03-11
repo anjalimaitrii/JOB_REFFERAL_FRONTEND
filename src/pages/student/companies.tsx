@@ -74,8 +74,13 @@ function Companies() {
   const [detailView, setDetailView] = useState<"feed" | "employees">("employees");
   const [, setCompanyPosts] = useState<Post[]>([]);
   const [, setPostsLoading] = useState(false);
+  const [modalCompany, setModalCompany] = useState<Company | null>(null);
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const myCollege =
+    user?.education?.find(
+      (e: any) => e.level?.toLowerCase() === "graduation"
+    )?.institute || "";
 
   const myCompanyId =
     typeof user?.company === "object"
@@ -99,6 +104,7 @@ function Companies() {
   const companyVisible = useStaggeredVisible(visibleCompanies.length, 55);
   const collegeVisible = useStaggeredVisible(colleges.length, 55);
   const empVisible = useStaggeredVisible(employees.length, 50);
+
 
 
   useEffect(() => {
@@ -148,7 +154,7 @@ function Companies() {
   const handleCompanyClick = async (company: Company) => {
     setSelectedCompany(company);
     setSelectedCollege(null);
-    setDetailView("employees"); // Reset to employees view on click
+    setDetailView("employees");
     try {
       const res = await getEmployeesByCompany(company._id);
       setEmployees(res.data);
@@ -195,7 +201,19 @@ function Companies() {
   useEffect(() => {
     if (viewMode !== "college") return;
     (async () => {
-      try { const res = await getCollegesWithEmployees(); setColleges(res.data || []); }
+      try {
+        const res = await getCollegesWithEmployees();
+        let collegeList = res.data || [];
+
+        if (user?.role === "employee" && myCollege) {
+          collegeList = collegeList.filter(
+            (c: string) =>
+              c.trim().toLowerCase() !== myCollege.trim().toLowerCase()
+          );
+        }
+
+        setColleges(collegeList);
+      }
       catch { setColleges([]); }
     })();
   }, [viewMode]);
@@ -203,8 +221,23 @@ function Companies() {
   const handleCollegeClick = async (collegeName: string) => {
     setSelectedCollege(collegeName);
     setSelectedCompany(null);
-    try { const res = await getEmployeesByCollege(collegeName); setEmployees(res.data || []); }
-    catch { setEmployees([]); }
+
+    try {
+      const res = await getEmployeesByCollege(collegeName);
+      const emps = res.data || [];
+
+      // employees set karo
+      setEmployees(emps);
+
+      // first employee ki company detect karo
+      if (emps.length > 0) {
+        const company = companies.find(c => c._id === emps[0].company);
+        setModalCompany(company || null);
+      }
+
+    } catch {
+      setEmployees([]);
+    }
   };
 
   const handleSendRequest = async (employeeId: string, companyId: string, role: string) => {
@@ -431,7 +464,7 @@ function Companies() {
                   className="w-full mt-2 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-amber-400/30 focus:border-amber-300 bg-slate-50 transition-all"
                 >
                   <option value="">— Choose a role —</option>
-                  {selectedCompany?.jobs?.map((job) => (
+                  {(selectedCompany || modalCompany)?.jobs?.map((job) => (
                     <option key={job._id} value={job._id}>{job.title}</option>
                   ))}
                 </select>
