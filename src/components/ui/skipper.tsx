@@ -5,18 +5,18 @@ import { useEffect, useRef, useState } from "react";
 
 
 const images = [
-"https://logos.hunter.io/google.com",
-"https://logos.hunter.io/microsoft.com",
-"https://logos.hunter.io/amazon.com",
-"https://logos.hunter.io/apple.com",
-"https://logos.hunter.io/meta.com",
-"https://logos.hunter.io/netflix.com",
-"https://logos.hunter.io/adobe.com",
-"https://logos.hunter.io/oracle.com",
-"https://logos.hunter.io/ibm.com",
-"https://logos.hunter.io/intel.com",
-"https://logos.hunter.io/uber.com",
-"https://logos.hunter.io/salesforce.com"
+  "https://logos.hunter.io/google.com",
+  "https://logos.hunter.io/microsoft.com",
+  "https://logos.hunter.io/amazon.com",
+  "https://logos.hunter.io/apple.com",
+  "https://logos.hunter.io/meta.com",
+  "https://logos.hunter.io/netflix.com",
+  "https://logos.hunter.io/adobe.com",
+  "https://logos.hunter.io/oracle.com",
+  "https://logos.hunter.io/ibm.com",
+  "https://logos.hunter.io/intel.com",
+  "https://logos.hunter.io/uber.com",
+  "https://logos.hunter.io/salesforce.com"
 ];
 
 const ReferralGallery = () => {
@@ -34,7 +34,7 @@ const ReferralGallery = () => {
   const y3 = useTransform(scrollYProgress, [0, 1], [0, height * 1.25]);
   const y4 = useTransform(scrollYProgress, [0, 1], [0, height * 3]);
   const y5 = useTransform(scrollYProgress, [0, 1], [0, height * 2.5]);
- 
+
   useEffect(() => {
     const lenis = new Lenis();
 
@@ -58,13 +58,7 @@ const ReferralGallery = () => {
 
   return (
     <main className="w-full bg-black text-black">
-      <div className="font-geist flex items-center justify-center gap-2">
-        <div className="absolute left-1/2 top-[10%] grid -translate-x-1/2 content-start justify-items-center gap-6 text-center text-black">
-          <span className="relative max-w-[12ch] text-xs uppercase leading-tight opacity-40 after:absolute after:left-1/2 after:top-full after:h-16 after:w-px after:bg-gradient-to-b after:from-white after:to-black after:content-['']">
-            scroll down to see
-          </span>
-        </div>
-      </div>
+
 
       <div
         ref={gallery}
@@ -77,13 +71,7 @@ const ReferralGallery = () => {
         <Column images={[images[1], images[0], images[2]]} y={y5} />
 
       </div>
-      <div className="font-geist relative flex h-screen items-center justify-center gap-2">
-        <div className="absolute left-1/2 top-[10%] grid -translate-x-1/2 content-start justify-items-center gap-6 text-center text-black">
-          <span className="relative max-w-[12ch] text-xs uppercase leading-tight opacity-40 after:absolute after:left-1/2 after:top-full after:h-16 after:w-px after:bg-gradient-to-b after:from-white after:to-black after:content-['']">
-            scroll Up to see
-          </span>
-        </div>
-      </div>
+
     </main>
   );
 };
