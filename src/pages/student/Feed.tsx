@@ -44,6 +44,8 @@ const Feed = ({ companyId }: Props) => {
   const [commentingOn, setCommentingOn] = useState<string | null>(null);
   const [commentContent, setCommentContent] = useState("");
   const [togglingFollow, setTogglingFollow] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+
 
   // Sidebar states
   const [suggestedEmployees, setSuggestedEmployees] = useState<any[]>([]);
@@ -359,11 +361,12 @@ const Feed = ({ companyId }: Props) => {
                             {post.content}
                           </p>
                           {post.image && (
-                            <div className="mt-5 rounded-3xl overflow-hidden border border-white/5 bg-black/50 aspect-video flex items-center justify-center">
+                            <div className="mt-4 rounded-3xl overflow-hidden border border-slate-100 bg-slate-50 shadow-inner">
                               <img
                                 src={post.image}
-                                alt="Post content"
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                                alt="Post"
+                                onClick={() => setPreviewImage(post.image!)}
+                                className="w-full max-h-[400px] object-contain cursor-pointer transition-transform duration-300 hover:scale-[1.02]"
                               />
                             </div>
                           )}
@@ -602,6 +605,32 @@ const Feed = ({ companyId }: Props) => {
           </div>
         </div>
       </div>
+      {previewImage && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-6 animate-fadeIn"
+          onClick={() => setPreviewImage(null)}
+        >
+          <div
+            className="relative max-w-6xl w-full flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close button */}
+            <button
+              onClick={() => setPreviewImage(null)}
+              className="absolute top-4 right-4 z-10 bg-white/90 hover:bg-white text-black rounded-full w-10 h-10 flex items-center justify-center shadow-lg transition"
+            >
+              ✕
+            </button>
+
+            {/* Image */}
+            <img
+              src={previewImage}
+              alt="Preview"
+              className="max-h-[90vh] w-auto max-w-full object-contain rounded-xl shadow-2xl"
+            />
+          </div>
+        </div>
+      )}
     </section>
   );
 };
