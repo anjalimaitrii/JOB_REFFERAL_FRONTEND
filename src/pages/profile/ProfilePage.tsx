@@ -15,27 +15,27 @@ import { useNavigate } from "react-router-dom";
 
 const STUDENT_TABS = [
   { key: "Personal Information", icon: User },
-  { key: "Education",            icon: GraduationCap },
-  { key: "Skills",               icon: Code2 },
-  { key: "Projects",             icon: FolderGit2 },
+  { key: "Education", icon: GraduationCap },
+  { key: "Skills", icon: Code2 },
+  { key: "Projects", icon: FolderGit2 },
 ];
 
 const EMPLOYEE_TABS = [
   { key: "Personal Information", icon: User },
-  { key: "Education",            icon: GraduationCap },
-  { key: "Job Information",      icon: Briefcase },
-  { key: "Interest",             icon: Sparkles },
-  { key: "Experience",           icon: Clock },
-  { key: "Skills",               icon: Code2 },
+  { key: "Education", icon: GraduationCap },
+  { key: "Job Information", icon: Briefcase },
+  { key: "Interest", icon: Sparkles },
+  { key: "Experience", icon: Clock },
+  { key: "Skills", icon: Code2 },
 ];
 
 const Profile = () => {
-  const [user, setUser]           = useState<any>(null);
-  const [loading, setLoading]     = useState(false);
-  const [saved, setSaved]         = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [activeTab, setActiveTab] = useState("Personal Information");
-  const fileInputRef              = useRef<HTMLInputElement | null>(null);
-  const navigate                  = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => { fetchProfile(); }, []);
 
@@ -110,7 +110,7 @@ const Profile = () => {
           className="absolute top-4 left-4 z-20 flex items-center gap-2 bg-black/50 backdrop-blur-sm text-white text-xs font-medium px-3 py-2 rounded-full hover:bg-black/70 transition"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
-          Back
+
         </button>
 
         {/* Role badge */}
@@ -146,11 +146,10 @@ const Profile = () => {
           <button
             onClick={handleUpdate}
             disabled={loading}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold shadow-sm transition-all active:scale-95 ${
-              saved
-                ? "bg-green-500 text-white"
-                : "bg-gray-900 text-white hover:bg-gray-700"
-            }`}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold shadow-sm transition-all active:scale-95 ${saved
+              ? "bg-green-500 text-white"
+              : "bg-gray-900 text-white hover:bg-gray-700"
+              }`}
           >
             {loading ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -187,11 +186,10 @@ const Profile = () => {
                 <button
                   key={key}
                   onClick={() => setActiveTab(key)}
-                  className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-left ${
-                    activeTab === key
-                      ? "bg-gray-900 text-white"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                  }`}
+                  className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-left ${activeTab === key
+                    ? "bg-gray-900 text-white"
+                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                    }`}
                 >
                   <Icon className="w-4 h-4 shrink-0" />
                   {key}
@@ -207,11 +205,10 @@ const Profile = () => {
                 <button
                   key={key}
                   onClick={() => setActiveTab(key)}
-                  className={`shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all ${
-                    activeTab === key
-                      ? "bg-gray-900 text-white"
-                      : "text-gray-600 hover:bg-gray-50"
-                  }`}
+                  className={`shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all ${activeTab === key
+                    ? "bg-gray-900 text-white"
+                    : "text-gray-600 hover:bg-gray-50"
+                    }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
                   {key}
