@@ -1,7 +1,7 @@
 const BASE_URL = import.meta.env.VITE_API_BASE_URL
 
-export const sendRequestToEmployee = async (payload:{receiver: string,company:string,role:string}) => {
-  const token = localStorage.getItem("token") 
+export const sendRequestToEmployee = async (payload: { receiver: string, company: string, role: string }) => {
+  const token = localStorage.getItem("token")
 
   const res = await fetch(`${BASE_URL}/api/request`, {
     method: "POST",
@@ -72,3 +72,29 @@ export const getMySentRequests = async () => {
 
   return res.json()
 }
+
+export const fakePaymentSuccess = async (requestId: string) => {
+  const res = await fetch(`${BASE_URL}/api/payment/payment-success/${requestId}`, {
+    method: "POST",
+  });
+  if (!res.ok) {
+    throw new Error("Failed to update request");
+  }
+  return res.json();
+};
+
+export const markRequestCompleted = async (requestId: string) => {
+  const res = await fetch(`${BASE_URL}/api/request/complete/${requestId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to mark request completed");
+  }
+
+  return res.json();
+};

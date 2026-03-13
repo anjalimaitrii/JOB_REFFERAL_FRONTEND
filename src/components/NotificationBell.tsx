@@ -118,13 +118,20 @@ const NotificationBell = ({ role }: Props) => {
                       : "font-semibold text-slate-900"
                       }`}
                   >
+
                     {n.type === "message"
                       ? `${n.sender?.name || "Someone"} sent you a message`
                       : n.type === "request_received"
-                        ? `You received a referral request`
+                        ? `${n.sender?.name || "Someone"} sent you a referral request`
                         : n.type === "request_accepted"
-                          ? `Request accepted 🎉`
-                          : `Request rejected ❌`}
+                          ? `${n.sender?.name || "Employee"} accepted your request 🎉 Complete the payment to proceed.`
+                          : n.type === "payment_success_employee"
+                            ? `${n.sender?.name} completed the payment for ${n.request?.company?.name} - ${n.request?.role}. You have 48 hours to provide the referral.`
+                            : n.type === "payment_success_student"
+                              ? `Payment completed successfully 🎉 ${n.sender?.name} will provide your referral soon.`
+                              : n.type === "referral_completed"
+                                ? `🎉 ${n.sender?.name} submitted your referral for ${n.request?.company?.name} - ${n.request?.role}.`
+                                : `Request rejected ❌`}
                   </p>
 
                   <p className="text-[11px] text-slate-400 mt-1 flex items-center gap-1">

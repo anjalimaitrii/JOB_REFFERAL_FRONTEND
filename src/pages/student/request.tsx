@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { getMySentRequests } from "../../services/request.service";
+import { fakePaymentSuccess, getMySentRequests } from "../../services/request.service";
 import Chat from "../../components/chat";
 import { useNavigate } from "react-router-dom";
-import { ChevronLeft, MessageCircle, Inbox, Clock, CheckCircle2, XCircle, X, Briefcase, Search } from "lucide-react";
+import { ChevronLeft, MessageCircle, Inbox, Clock, CheckCircle2, XCircle, X, Briefcase, Search, CreditCard } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import PaymentModal from "@/components/ui/Paymentmodal";
 
 const Request = () => {
   const navigate = useNavigate();
@@ -17,6 +18,14 @@ const Request = () => {
   const pending = requests.filter((r) => r.status === "pending").length;
   const approved = requests.filter((r) => r.status === "accepted").length;
   const rejected = requests.filter((r) => r.status === "rejected").length;
+  const [activePayment, setActivePayment] = useState<null | {
+    amount: string;
+    merchantName: string;
+    merchantInitial: string;
+    description: string;
+    orderId: string;
+  }>(null);
+
 
   const filteredRequests = requests.filter((r) => {
     const statusMatch = filterStatus === "all" || r.status === filterStatus;
@@ -214,13 +223,24 @@ const Request = () => {
                         ? "Pending"
                         : req.status === "accepted"
                           ? "Approved"
-                          : "Rejected"
+                          : req.status === "completed"
+                            ? "Completed"
+                            : "Rejected"
                     }
                     onChat={() => {
                       if (req.receiver?._id) {
                         setActiveChat({ requestId: req._id, receiverId: req.receiver._id });
                       }
                     }}
+                    onPay={() =>
+                      setActivePayment({
+                        amount: "499.00",
+                        merchantName: req.company?.name || "Company",
+                        merchantInitial: (req.company?.name || "C").charAt(0),
+                        description: `Referral fee · ${roleTitle}`,
+                        orderId: req._id,
+                      })
+                    }
                   />
                 );
               })}
@@ -254,6 +274,30 @@ const Request = () => {
             </button>
           </div>
         </div>
+      )}
+      {activePayment && (
+        <PaymentModal
+          amount={activePayment.amount}
+          merchantName={activePayment.merchantName}
+          merchantInitial={activePayment.merchantInitial}
+          description={activePayment.description}
+          orderId={activePayment.orderId}
+          onClose={() => setActivePayment(null)}
+          onSuccess={async (txnId) => {
+
+            await fakePaymentSuccess(activePayment?.orderId)
+
+            setRequests(prev =>
+              prev.map(r =>
+                r._id === activePayment?.orderId
+                  ? { ...r, paymentStatus: "paid" }
+                  : r
+              )
+            )
+
+            setActivePayment(null)
+          }}
+        />
       )}
     </div>
   );
@@ -298,19 +342,21 @@ const StatCard = ({
 
 /* ── REQUEST CARD (Student Theme) ── */
 const RequestCard = ({
-  companyName, companyLogo, role, receiverName, status, onChat,
+  companyName, companyLogo, role, receiverName, status, onChat, onPay
 }: {
   companyName: string;
   companyLogo?: string;
   role: string;
   receiverName: string;
-  status: "Pending" | "Approved" | "Rejected";
+  status: "Pending" | "Approved" | "Rejected" | "Completed";
   onChat?: () => void;
+  onPay?: () => void;
 }) => {
   const statusConfig = {
     Approved: { bg: "bg-emerald-50", text: "text-emerald-600", border: "border-emerald-200", dot: "bg-emerald-500" },
     Rejected: { bg: "bg-red-50", text: "text-red-500", border: "border-red-200", dot: "bg-red-500" },
     Pending: { bg: "bg-amber-50", text: "text-amber-600", border: "border-amber-200", dot: "bg-amber-400 animate-pulse" },
+    Completed: { bg: "bg-green-50", text: "text-green-600", border: "border-green-200", dot: "bg-green-500" },
   }[status];
 
   return (
@@ -341,6 +387,15 @@ const RequestCard = ({
           {status}
         </span>
       </div>
+      {status === "Approved" && (
+        <button
+          onClick={onPay}
+          className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-emerald-500 text-emerald-600 text-sm font-semibold hover:bg-emerald-50 active:scale-95 transition-all"
+        >
+          <CreditCard className="w-4 h-4" />
+          Pay Referral Fee
+        </button>
+      )}
 
       <div className="border-t border-slate-50" />
 

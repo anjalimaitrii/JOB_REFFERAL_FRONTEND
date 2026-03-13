@@ -8,19 +8,28 @@ import socket from "../services/socket";
 
 export interface Notification {
   _id: string;
-  sender: {
+  sender?: {
     name: string;
+    avatar?: string;
   };
   type:
-    | "message"
-    | "request_accepted"
-    | "request_rejected"
-    | "request_received";
+  | "message"
+  | "request_accepted"
+  | "request_rejected"
+  | "request_received"
+  | "payment_success_employee"
+  | "payment_success_student"
+  | "referral_completed";
   request?: {
     _id: string;
+    role?: string;
+    company?: {
+      name?: string;
+    };
   };
   createdAt: string;
   isRead: boolean;
+
 }
 
 const useNotifications = () => {

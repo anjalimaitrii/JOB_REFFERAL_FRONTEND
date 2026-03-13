@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   getMyRequests,
+  markRequestCompleted,
   updateRequestStatus,
 } from "../../services/request.service";
 import Chat from "../../components/chat";
@@ -17,6 +18,8 @@ import {
   Search,
   Activity,
 } from "lucide-react";
+import EmployeeRequestModal from "@/components/ui/EmployeeRequestModal";
+
 
 const RequestSection = () => {
   const navigate = useNavigate();
@@ -35,6 +38,13 @@ const RequestSection = () => {
   const pending = requests.filter((r) => r.status === "pending").length;
   const approved = requests.filter((r) => r.status === "accepted").length;
   const rejected = requests.filter((r) => r.status === "rejected").length;
+  const [selectedRequest, setSelectedRequest] = useState<any>(null);
+  const [openModal, setOpenModal] = useState(false);
+
+  const handleView = (req: any) => {
+    setSelectedRequest(req);
+    setOpenModal(true);
+  };
 
   const filteredRequests = requests.filter((r) => {
     const statusMatch = filterStatus === "all" || r.status === filterStatus;
@@ -73,6 +83,20 @@ const RequestSection = () => {
       );
     } catch {
       alert("Failed to update request");
+    }
+  };
+  const handleComplete = async (id: string) => {
+    try {
+      await markRequestCompleted(id);
+
+      setRequests((prev) =>
+        prev.map((r) =>
+          r._id === id ? { ...r, status: "completed" } : r
+        )
+      );
+
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -230,6 +254,8 @@ const RequestSection = () => {
                           ? "Approved"
                           : "Rejected"
                     }
+                    onView={() => handleView(req)}
+
                     onChat={() =>
                       setActiveChat({
                         requestId: req._id,
@@ -273,6 +299,15 @@ const RequestSection = () => {
           </div>
         </div>
       )}
+      <EmployeeRequestModal
+        isOpen={openModal}
+        onClose={() => setOpenModal(false)}
+        request={selectedRequest}
+        onAccept={() => handleStatusChange(selectedRequest?._id, "accepted")}
+        onReject={() => handleStatusChange(selectedRequest?._id, "rejected")}
+        onComplete={() => handleComplete(selectedRequest._id)}
+
+      />
     </div>
   );
 };
@@ -293,33 +328,29 @@ const StatCard = ({
   return (
     <button
       onClick={onClick}
-      className={`group relative text-left px-5 py-4 rounded-[2rem] border transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 ${
-        dark
-          ? 'bg-gradient-to-br from-[#1a1a1a] via-[#333] to-[#444] text-white border-gray-800 shadow-xl'
-          : 'bg-gradient-to-br from-white via-[#fcfcfc] to-[#f5f5f5] text-gray-900 border-gray-100 shadow-sm'
-      } ${
-        isActive
+      className={`group relative text-left px-5 py-4 rounded-[2rem] border transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 ${dark
+        ? 'bg-gradient-to-br from-[#1a1a1a] via-[#333] to-[#444] text-white border-gray-800 shadow-xl'
+        : 'bg-gradient-to-br from-white via-[#fcfcfc] to-[#f5f5f5] text-gray-900 border-gray-100 shadow-sm'
+        } ${isActive
           ? dark
             ? 'ring-2 ring-white/30'
             : 'ring-2 ring-black/20'
           : ''
-      }`}
+        }`}
     >
       <div className="flex items-center justify-between mb-3">
         <div
-          className={`w-9 h-9 rounded-xl flex items-center justify-center ${
-            dark
-              ? 'bg-white/10'
-              : 'bg-gray-50 group-hover:bg-black group-hover:text-white'
-          } transition-colors duration-300`}
+          className={`w-9 h-9 rounded-xl flex items-center justify-center ${dark
+            ? 'bg-white/10'
+            : 'bg-gray-50 group-hover:bg-black group-hover:text-white'
+            } transition-colors duration-300`}
         >
           {icon}
         </div>
 
         <span
-          className={`text-2xl font-semibold tracking-tight ${
-            dark ? 'text-white' : 'text-gray-900'
-          }`}
+          className={`text-2xl font-semibold tracking-tight ${dark ? 'text-white' : 'text-gray-900'
+            }`}
         >
           {count}
         </span>
@@ -328,9 +359,8 @@ const StatCard = ({
       <div>
         <p className="text-xs font-semibold uppercase tracking-wide">{title}</p>
         <p
-          className={`text-[11px] leading-relaxed ${
-            dark ? 'text-gray-400' : 'text-gray-500'
-          }`}
+          className={`text-[11px] leading-relaxed ${dark ? 'text-gray-400' : 'text-gray-500'
+            }`}
         >
           {title === "Total" && "All received referral requests."}
           {title === "Pending" && "Awaiting your response."}
@@ -352,6 +382,7 @@ const RequestCard = ({
   onChat,
   onAccept,
   onReject,
+  onView
 }: {
   companyName: string;
   companyLogo?: string;
@@ -361,8 +392,10 @@ const RequestCard = ({
   onChat?: () => void;
   onAccept?: () => void;
   onReject?: () => void;
+  onView?: () => void;
 }) => {
   const [open, setOpen] = useState(false);
+
 
   const statusBadge = {
     Approved: "bg-black text-white",
@@ -374,8 +407,10 @@ const RequestCard = ({
     <div className="group bg-gradient-to-br from-white via-[#fcfcfc] to-[#f5f5f5] rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 px-5 py-4 flex flex-col gap-3">
 
       {/* Top row */}
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-3 min-w-0">
+      <div className="flex items-center justify-between gap-3 w-full">
+
+        {/* Left side */}
+        <div className="flex items-center gap-3 min-w-0 flex-1">
           {companyLogo ? (
             <img
               src={companyLogo}
@@ -383,7 +418,7 @@ const RequestCard = ({
               className="w-10 h-10 rounded-xl object-contain border border-gray-100 bg-gray-50 p-1 shrink-0"
             />
           ) : (
-            <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-sm font-bold text-gray-400 shrink-0 group-hover:bg-black group-hover:text-white transition-colors duration-300">
+            <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-sm font-bold text-gray-400 shrink-0">
               {companyName.charAt(0)}
             </div>
           )}
@@ -392,58 +427,27 @@ const RequestCard = ({
             <p className="font-bold text-gray-900 truncate text-sm">
               {companyName}
             </p>
-            <p className="text-xs text-gray-400 truncate font-medium">{role}</p>
+            <p className="text-xs text-gray-400 truncate font-medium">
+              {role}
+            </p>
           </div>
         </div>
 
-        {/* Status badge */}
-        <div className="relative shrink-0">
-          <div
-            onClick={() => status === "Pending" && setOpen(!open)}
-            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-tighter transition-all duration-200
-              ${statusBadge}
-              ${status === "Pending" ? "cursor-pointer hover:scale-105 active:scale-95" : ""}
-            `}
+        {/* Right side */}
+        <div className="flex items-center gap-2 shrink-0">
+
+
+
+          {/* View button */}
+          <button
+            onClick={onView}
+            className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-tighter transition-all duration-200"
           >
-            {status}
+            View
+          </button>
 
-            {status === "Pending" && (
-              <svg
-                className={`w-3 h-3 ml-0.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-              </svg>
-            )}
-          </div>
-
-          {/* Dropdown */}
-          {open && status === "Pending" && (
-            <div className="absolute right-0 mt-2 w-32 bg-white border border-gray-100 rounded-xl shadow-xl overflow-hidden z-50">
-              <button
-                onClick={() => {
-                  onAccept?.();
-                  setOpen(false);
-                }}
-                className="w-full text-left px-4 py-2 text-xs font-bold uppercase tracking-widest hover:bg-gray-50 text-gray-900 transition"
-              >
-                Approve
-              </button>
-              <button
-                onClick={() => {
-                  onReject?.();
-                  setOpen(false);
-                }}
-                className="w-full text-left px-4 py-2 text-xs font-bold uppercase tracking-widest hover:bg-gray-50 text-gray-400 transition"
-              >
-                Reject
-              </button>
-            </div>
-          )}
         </div>
+
       </div>
 
       <div className="border-t border-gray-100 my-1" />
@@ -471,6 +475,7 @@ const RequestCard = ({
           Chat with Student
         </button>
       )}
+
     </div>
   );
 };
