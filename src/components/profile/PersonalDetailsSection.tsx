@@ -1,4 +1,6 @@
-import { User, Mail, Phone, Linkedin } from "lucide-react";
+import { User, Mail, Phone, Linkedin, ShieldCheck, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { sendOtp, verifyOtp } from "../../services/user.service";
 
 export const PersonalDetailsSection = ({
   data,
@@ -7,8 +9,45 @@ export const PersonalDetailsSection = ({
   data: any;
   onChange: (u: any) => void;
 }) => {
+  const [showOtpField, setShowOtpField] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
   const handleChange = (field: string, value: string) => {
     onChange({ ...data, [field]: value });
+  };
+
+  const handleSendOtp = async () => {
+    if (!data.email) return alert("Please enter an email first");
+    try {
+      setLoading(true);
+      setError("");
+      await sendOtp(data.email);
+      setShowOtpField(true);
+      alert("OTP sent to your email!");
+    } catch (err: any) {
+      setError(err.message || "Failed to send OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    if (!otp) return alert("Please enter the OTP");
+    try {
+      setLoading(true);
+      setError("");
+      await verifyOtp(data.email, otp);
+      onChange({ ...data, isEmailVerified: true });
+      setShowOtpField(false);
+      setOtp("");
+      alert("Email verified successfully!");
+    } catch (err: any) {
+      setError(err.message || "Verification failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -33,14 +72,56 @@ export const PersonalDetailsSection = ({
           onChange={(e: any) => handleChange("name", e.target.value)}
         />
 
-        <Input
-          label="Email"
-          icon={<Mail className="w-4 h-4" />}
-          value={data.email || ""}
-          placeholder="john@example.com"
-          type="email"
-          onChange={(e: any) => handleChange("email", e.target.value)}
-        />
+        <div className="relative">
+          <Input
+            label="Email"
+            icon={<Mail className="w-4 h-4" />}
+            value={data.email || ""}
+            placeholder="john@example.com"
+            type="email"
+            onChange={(e: any) => handleChange("email", e.target.value)}
+          />
+          <div className="absolute top-0 right-0">
+            {data.isEmailVerified ? (
+              <span className="flex items-center gap-1 text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full mt-0.5">
+                <ShieldCheck className="w-3 h-3" /> Verified
+              </span>
+            ) : (
+              <button
+                type="button"
+                onClick={handleSendOtp}
+                disabled={loading}
+                className="text-[10px] font-bold text-blue-600 hover:text-blue-800 bg-blue-50 px-2 py-0.5 rounded-full mt-0.5 transition-colors disabled:opacity-50"
+              >
+                {loading && !showOtpField ? "Sending..." : "Verify Email"}
+              </button>
+            )}
+          </div>
+
+          {showOtpField && !data.isEmailVerified && (
+            <div className="mt-3 p-3 bg-gray-50 rounded-xl border border-dashed border-gray-300 animate-in fade-in slide-in-from-top-2">
+              <p className="text-[10px] font-medium text-gray-500 mb-2">Enter 6-digit OTP sent to your email</p>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  maxLength={6}
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-sm outline-none focus:border-gray-400"
+                  placeholder="000000"
+                />
+                <button
+                  onClick={handleVerifyOtp}
+                  disabled={loading}
+                  className="bg-gray-900 text-white text-xs font-semibold px-4 py-1.5 rounded-lg hover:bg-gray-800 transition shadow-sm disabled:opacity-50 flex items-center gap-1.5"
+                >
+                  {loading ? <Loader2 className="w-3 h-3 animate-spin" /> : "Verify"}
+                </button>
+              </div>
+              {error && <p className="text-[10px] text-red-500 mt-1">{error}</p>}
+            </div>
+          )}
+        </div>
 
         <Input
           label="Phone"
@@ -60,11 +141,10 @@ export const PersonalDetailsSection = ({
                 key={g}
                 type="button"
                 onClick={() => handleChange("gender", g)}
-                className={`flex-1 py-2 rounded-xl text-sm font-medium border transition-all capitalize ${
-                  data.gender === g
-                    ? "bg-gray-900 text-white border-gray-900"
-                    : "bg-white text-gray-500 border-gray-200 hover:border-gray-400"
-                }`}
+                className={`flex-1 py-2 rounded-xl text-sm font-medium border transition-all capitalize ${data.gender === g
+                  ? "bg-gray-900 text-white border-gray-900"
+                  : "bg-white text-gray-500 border-gray-200 hover:border-gray-400"
+                  }`}
               >
                 {g}
               </button>

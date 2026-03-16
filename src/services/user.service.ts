@@ -10,7 +10,7 @@ export const getProfile = async () => {
   })
 
   if (!res.ok) throw new Error('Failed to fetch user')
-  return res.json() 
+  return res.json()
 }
 
 export const updateProfile = async (data: any) => {
@@ -27,4 +27,36 @@ export const updateProfile = async (data: any) => {
 
   if (!res.ok) throw new Error('Update failed')
   return res.json()
+}
+
+export const sendOtp = async (email: string) => {
+  const token = localStorage.getItem('token')
+  const res = await fetch(`${BASE_URL}/api/auth/send-otp`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ email }),
+  })
+
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.message || 'Failed to send OTP')
+  return data
+}
+
+export const verifyOtp = async (email: string, otp: string) => {
+  const token = localStorage.getItem('token')
+  const res = await fetch(`${BASE_URL}/api/auth/verify-otp`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ email, otp }),
+  })
+
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.message || 'Verification failed')
+  return data
 }
