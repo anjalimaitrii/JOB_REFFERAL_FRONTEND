@@ -285,7 +285,7 @@ const Request = () => {
           onClose={() => setActivePayment(null)}
           onSuccess={async (txnId) => {
 
-            await fakePaymentSuccess(activePayment?.orderId)
+            await fakePaymentSuccess(activePayment!.orderId, 499)
 
             setRequests(prev =>
               prev.map(r =>

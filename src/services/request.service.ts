@@ -73,9 +73,13 @@ export const getMySentRequests = async () => {
   return res.json()
 }
 
-export const fakePaymentSuccess = async (requestId: string) => {
+export const fakePaymentSuccess = async (requestId: string, amount: number) => {
   const res = await fetch(`${BASE_URL}/api/payment/payment-success/${requestId}`, {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ amount }),
   });
   if (!res.ok) {
     throw new Error("Failed to update request");
