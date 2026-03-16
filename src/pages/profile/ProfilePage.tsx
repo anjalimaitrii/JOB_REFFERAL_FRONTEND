@@ -51,7 +51,10 @@ const Profile = () => {
   const handleUpdate = async () => {
     try {
       setLoading(true);
-      await updateProfile(user);
+      const res = await updateProfile(user);
+      if (res.user) {
+        setUser(res.user);
+      }
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
     } catch {
@@ -64,17 +67,27 @@ const Profile = () => {
   const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setUser((prev: any) => ({ ...prev, profilePhoto: URL.createObjectURL(file) }));
+
+    // Optimistic update with blob URL
+    const blobUrl = URL.createObjectURL(file);
+    setUser((prev: any) => ({ ...prev, profilePhoto: blobUrl }));
+
     const formData = new FormData();
     formData.append("profilePhoto", file);
     try {
       setLoading(true);
-      await updateProfile(formData);
+      const res = await updateProfile(formData);
+      if (res.user) {
+        // Sync with permanent URL from backend
+        setUser(res.user);
+      }
     } catch {
       alert("Profile photo update failed");
+      fetchProfile();
     } finally {
       setLoading(false);
       e.target.value = "";
+      URL.revokeObjectURL(blobUrl);
     }
   };
 
@@ -167,8 +180,8 @@ const Profile = () => {
           <h1 className="text-2xl font-bold text-gray-900">{user.name}</h1>
           {user.role === "employee" && (
             <p className="text-sm text-gray-500 mt-0.5">
-              {user.designation || "—"}
-              {user.company ? <span className="text-gray-400"> · {user.company}</span> : ""}
+              {user.jobTitle || user.designation || "—"}
+              {user.companyName ? <span className="text-gray-400"> · {user.companyName}</span> : ""}
             </p>
           )}
         </div>

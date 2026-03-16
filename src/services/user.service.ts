@@ -15,14 +15,15 @@ export const getProfile = async () => {
 
 export const updateProfile = async (data: any) => {
   const token = localStorage.getItem('token')
+  const isFormData = data instanceof FormData
 
   const res = await fetch(`${BASE_URL}/api/auth/update`, {
     method: 'PUT',
     headers: {
-      'Content-Type': 'application/json',
+      ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(data),
+    body: isFormData ? data : JSON.stringify(data),
   })
 
   if (!res.ok) throw new Error('Update failed')
