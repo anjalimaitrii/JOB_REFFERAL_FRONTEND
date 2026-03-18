@@ -1,4 +1,20 @@
 import { Briefcase, Building2, Layers, Clock, BadgeCheck } from "lucide-react";
+import { useState } from "react";
+
+const JOB_TITLES = [
+  "Software Engineer",
+  "Frontend Developer",
+  "Backend Developer",
+  "Fullstack Developer",
+  "DevOps Engineer",
+  "Data Scientist",
+  "Product Manager",
+  "UI/UX Designer",
+  "QA Engineer",
+  "Mobile Developer",
+  "Cloud Architect",
+  "Security Engineer"
+];
 
 export const JobInformationSection = ({
   data,
@@ -7,8 +23,24 @@ export const JobInformationSection = ({
   data: any;
   onChange: (u: any) => void;
 }) => {
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
   const handleChange = (field: string, value: string) => {
     onChange({ ...data, [field]: value });
+
+    if (field === "designation") {
+      if (value.trim()) {
+        const filtered = JOB_TITLES.filter(title =>
+          title.toLowerCase().includes(value.toLowerCase())
+        );
+        setSuggestions(filtered);
+        setShowSuggestions(true);
+      } else {
+        setSuggestions([]);
+        setShowSuggestions(false);
+      }
+    }
   };
 
   return (
@@ -35,13 +67,35 @@ export const JobInformationSection = ({
           onChange={(e: any) => handleChange("company", e.target.value)}
         />
 
-        <Input
-          label="Designation"
-          icon={<BadgeCheck className="w-4 h-4" />}
-          value={data.designation || ""}
-          placeholder="e.g. Software Engineer"
-          onChange={(e: any) => handleChange("designation", e.target.value)}
-        />
+        <div className="relative">
+          <Input
+            label="Designation"
+            icon={<BadgeCheck className="w-4 h-4" />}
+            value={data.designation || ""}
+            placeholder="e.g. Software Engineer"
+            onChange={(e: any) => handleChange("designation", e.target.value)}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+            onFocus={() => {
+              if (data.designation?.trim()) setShowSuggestions(true);
+            }}
+          />
+          {showSuggestions && suggestions.length > 0 && (
+            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-48 overflow-y-auto">
+              {suggestions.map((title, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => {
+                    handleChange("designation", title);
+                    setShowSuggestions(false);
+                  }}
+                  className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer transition-colors"
+                >
+                  {title}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
         <Input
           label="Department"
@@ -70,8 +124,8 @@ export const JobInformationSection = ({
                 type="button"
                 onClick={() => handleChange("employmentType", type)}
                 className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${data.employmentType === type
-                    ? "bg-gray-900 text-white border-gray-900"
-                    : "bg-white text-gray-500 border-gray-200 hover:border-gray-400"
+                  ? "bg-gray-900 text-white border-gray-900"
+                  : "bg-white text-gray-500 border-gray-200 hover:border-gray-400"
                   }`}
               >
                 {type}
@@ -93,6 +147,8 @@ const Input = ({
   placeholder,
   icon,
   type = "text",
+  onBlur,
+  onFocus
 }: {
   label: string;
   value: string;
@@ -100,6 +156,8 @@ const Input = ({
   placeholder?: string;
   icon?: React.ReactNode;
   type?: string;
+  onBlur?: () => void;
+  onFocus?: () => void;
 }) => (
   <div>
     <p className="text-xs font-medium text-gray-500 mb-1.5">{label}</p>
@@ -109,6 +167,8 @@ const Input = ({
         type={type}
         value={value}
         onChange={onChange}
+        onBlur={onBlur}
+        onFocus={onFocus}
         placeholder={placeholder || label}
         className="flex-1 bg-transparent outline-none text-sm text-gray-800 placeholder-gray-400"
       />

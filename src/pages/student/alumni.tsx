@@ -340,23 +340,23 @@ function AlumniCard({
                 role: person.designation,
               });
               setRequested(true);
-            } catch {
-              alert("Failed to send request");
+            } catch (err: any) {
+              alert(err.message || "Failed to send request");
             }
           }}
           className="mt-3 w-full py-2.5 rounded-xl text-xs font-bold transition-all duration-300"
           style={
             requested
               ? {
-                  background: "#f0fdf4",
-                  color: "#10b981",
-                  border: "1px solid #bbf7d0",
-                }
+                background: "#f0fdf4",
+                color: "#10b981",
+                border: "1px solid #bbf7d0",
+              }
               : {
-                  background: `linear-gradient(135deg, ${color}, ${color}cc)`,
-                  color: "#fff",
-                  boxShadow: `0 4px 16px ${color}40`,
-                }
+                background: `linear-gradient(135deg, ${color}, ${color}cc)`,
+                color: "#fff",
+                boxShadow: `0 4px 16px ${color}40`,
+              }
           }
         >
           {requested ? "✓ Requested!" : "Request Referral"}

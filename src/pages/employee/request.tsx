@@ -53,8 +53,9 @@ const RequestSection = () => {
     const q = searchQuery.toLowerCase();
     const companyName = (r.company?.name || "").toLowerCase();
     const senderName = (r.sender?.name || "").toLowerCase();
-    const roleTitle = (r.company?.jobs?.find((job: any) => job._id === r.role)?.title || "").toLowerCase();
-    return companyName.includes(q) || senderName.includes(q) || roleTitle.includes(q);
+    const roleTitle = (r.role || "").toLowerCase();
+    const jobId = (r.jobId || "").toLowerCase();
+    return companyName.includes(q) || senderName.includes(q) || roleTitle.includes(q) || jobId.includes(q);
   });
 
   useEffect(() => {
@@ -236,16 +237,13 @@ const RequestSection = () => {
           {!loading && filteredRequests.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredRequests.map((req) => {
-                const roleTitle =
-                  req.company?.jobs?.find((job: any) => job._id === req.role)?.title ||
-                  "N/A";
-
                 return (
                   <RequestCard
                     key={req._id}
                     companyName={req.company?.name || "Unknown"}
                     companyLogo={req.company?.logo}
-                    role={roleTitle}
+                    role={req.role}
+                    jobId={req.jobId}
                     senderName={req.sender?.name}
                     status={
                       req.status === "pending"
@@ -262,8 +260,6 @@ const RequestSection = () => {
                         receiverId: req.sender?._id,
                       })
                     }
-                    onAccept={() => handleStatusChange(req._id, "accepted")}
-                    onReject={() => handleStatusChange(req._id, "rejected")}
                   />
                 );
               })}
@@ -377,32 +373,21 @@ const RequestCard = ({
   companyName,
   companyLogo,
   role,
+  jobId,
   senderName,
   status,
   onChat,
-  onAccept,
-  onReject,
   onView
 }: {
   companyName: string;
   companyLogo?: string;
   role: string;
+  jobId?: string;
   senderName: string;
   status: "Pending" | "Approved" | "Rejected";
   onChat?: () => void;
-  onAccept?: () => void;
-  onReject?: () => void;
   onView?: () => void;
 }) => {
-  const [open, setOpen] = useState(false);
-
-
-  const statusBadge = {
-    Approved: "bg-black text-white",
-    Rejected: "bg-gray-200 text-gray-600",
-    Pending: "bg-gray-100 text-gray-500",
-  }[status];
-
   return (
     <div className="group bg-gradient-to-br from-white via-[#fcfcfc] to-[#f5f5f5] rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 px-5 py-4 flex flex-col gap-3">
 
@@ -428,7 +413,7 @@ const RequestCard = ({
               {companyName}
             </p>
             <p className="text-xs text-gray-400 truncate font-medium">
-              {role}
+              {role} {jobId && <span className="text-gray-300 font-normal ml-1">#{jobId}</span>}
             </p>
           </div>
         </div>

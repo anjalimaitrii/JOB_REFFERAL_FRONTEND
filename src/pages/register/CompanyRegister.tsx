@@ -7,7 +7,6 @@ function CompanyRegister() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [otherLocationInput, setOtherLocationInput] = useState("");
-  const [jobInput, setJobInput] = useState("");
 
   const [form, setForm] = useState({
     name: "",
@@ -17,7 +16,6 @@ function CompanyRegister() {
     otherLocations: [] as string[],
     companySize: "",
     website: "",
-    jobs: [] as { title: string }[],
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -41,22 +39,7 @@ function CompanyRegister() {
     });
   };
 
-  const handleAddJob = () => {
-    if (jobInput.trim()) {
-      setForm({
-        ...form,
-        jobs: [...form.jobs, { title: jobInput.trim() }],
-      });
-      setJobInput("");
-    }
-  };
 
-  const handleRemoveJob = (index: number) => {
-    setForm({
-      ...form,
-      jobs: form.jobs.filter((_, i) => i !== index),
-    });
-  };
 
   const handleNext = () => {
     if (!form.name || !form.industry || !form.location || !form.companySize) {
@@ -81,10 +64,9 @@ function CompanyRegister() {
         otherLocations: form.otherLocations,
         companySize: form.companySize,
         website: form.website,
-        jobs: form.jobs,
       };
 
-    
+
 
       await registerCompany(payload);
       alert("Company registered successfully");
@@ -227,50 +209,7 @@ function CompanyRegister() {
                 )}
               </div>
 
-              {/* Jobs */}
-              <div>
-                <label className="text-sm text-gray-600 mb-1 block">
-                  Job Positions (Optional)
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="Add job title (e.g., Software Engineer)"
-                    value={jobInput}
-                    onChange={(e) => setJobInput(e.target.value)}
-                    onKeyPress={(e) => e.key === "Enter" && handleAddJob()}
-                    className="flex-1 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleAddJob}
-                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
-                  >
-                    Add
-                  </button>
-                </div>
 
-                {/* Display added jobs */}
-                {form.jobs.length > 0 && (
-                  <div className="mt-2 space-y-1">
-                    {form.jobs.map((job, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between bg-gray-100 px-3 py-2 rounded-lg"
-                      >
-                        <span className="text-sm text-gray-700">{job.title}</span>
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveJob(index)}
-                          className="text-red-500 text-sm hover:text-red-700"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
             </>
           )}
         </div>

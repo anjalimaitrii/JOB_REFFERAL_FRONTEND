@@ -26,7 +26,6 @@ type Company = {
   otherLocations?: string[];
   companySize?: string;
   website?: string;
-  jobs: { _id: string; title: string }[];
 };
 
 type Employee = {
@@ -67,15 +66,12 @@ function Companies() {
   const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<any>(null);
-  const [useJobId, setUseJobId] = useState(false);
-  const [selectedJobId, setSelectedJobId] = useState("");
   const [manualJobId, setManualJobId] = useState("");
+  const [manualRole, setManualRole] = useState("");
   const [pageVisible, setPageVisible] = useState(false);
   const [detailView, setDetailView] = useState<"feed" | "employees">("employees");
   const [, setCompanyPosts] = useState<Post[]>([]);
   const [, setPostsLoading] = useState(false);
-  const [modalCompany, setModalCompany] = useState<Company | null>(null);
-
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const myCollege =
     user?.education?.find(
@@ -124,8 +120,7 @@ function Companies() {
           const empRes = await getEmployeesByCompany(company._id);
           const emps = empRes.data;
           for (let emp of emps) {
-            const jobTitle = company.jobs?.find((job: any) => job._id === emp.designation)?.title;
-            combined.push({ type: "employee", id: emp._id, name: emp.name, designation: jobTitle || "Employee", companyName: company.name, data: emp, companyData: company, otherLocations: company.otherLocations || [] });
+            combined.push({ type: "employee", id: emp._id, name: emp.name, designation: emp.designation || "Employee", companyName: company.name, data: emp, companyData: company, otherLocations: company.otherLocations || [] });
           }
         }
         setSearchData(combined);
@@ -240,13 +235,17 @@ function Companies() {
     }
   };
 
-  const handleSendRequest = async (employeeId: string, companyId: string, role: string) => {
-    if (!role) { alert("Please select a job or enter Job ID"); return; }
+  const handleSendRequest = async (employeeId: string, companyId: string, role: string, jobId?: string) => {
+    if (!role && !jobId) { alert("Please enter Job ID or Job Role"); return; }
     try {
-      await sendRequestToEmployee({ receiver: employeeId, company: companyId, role });
+      await sendRequestToEmployee({ receiver: employeeId, company: companyId, role, jobId });
       alert("Request sent");
+      setManualRole("");
+      setManualJobId("");
       setShowModal(false);
-    } catch { alert("Failed to send request"); }
+    } catch (err: any) {
+      alert(err.message || "Failed to send request");
+    }
   };
 
   const goBack = () => {
@@ -348,11 +347,8 @@ function Companies() {
               isDetailView={isDetailView}
               employees={employees}
               empVisible={empVisible}
-              selectedCompany={selectedCompany}
               setSelectedEmployee={setSelectedEmployee}
               setShowModal={setShowModal}
-              setUseJobId={setUseJobId}
-              setSelectedJobId={setSelectedJobId}
               setManualJobId={setManualJobId}
             />
           ) : (
@@ -455,41 +451,33 @@ function Companies() {
               </button>
             </div>
 
-            {!useJobId ? (
-              <>
-                <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Select Job Role</label>
-                <select
-                  value={selectedJobId}
-                  onChange={(e) => { setSelectedJobId(e.target.value); setManualJobId(""); }}
-                  className="w-full mt-2 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-amber-400/30 focus:border-amber-300 bg-slate-50 transition-all"
-                >
-                  <option value="">— Choose a role —</option>
-                  {(selectedCompany || modalCompany)?.jobs?.map((job) => (
-                    <option key={job._id} value={job._id}>{job.title}</option>
-                  ))}
-                </select>
-                <button onClick={() => { setUseJobId(true); setSelectedJobId(""); }} className="mt-2 text-xs text-slate-400 hover:text-amber-500 underline transition-colors">
-                  Don't see your role? Enter Job ID manually
-                </button>
-              </>
-            ) : (
-              <>
-                <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Job ID</label>
-                <input
-                  value={manualJobId}
-                  onChange={(e) => { setManualJobId(e.target.value); setSelectedJobId(""); }}
-                  placeholder="Paste Job ID here..."
-                  className="w-full mt-2 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-amber-400/30 focus:border-amber-300 bg-slate-50 transition-all"
-                />
-                <button onClick={() => { setUseJobId(false); setManualJobId(""); }} className="mt-2 text-xs text-slate-400 hover:text-amber-500 underline transition-colors">
-                  ← Back to job list
-                </button>
-              </>
-            )}
+            <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Job ID</label>
+            <input
+              value={manualJobId}
+              onChange={(e) => setManualJobId(e.target.value)}
+              placeholder="e.g. 123456"
+              className="w-full mt-2 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-amber-400/30 focus:border-amber-300 bg-slate-50 transition-all font-mono"
+            />
+
+            <div className="mt-4">
+              <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Job Role <span className="text-slate-300 font-normal lowercase">(Optional)</span></label>
+              <input
+                value={manualRole}
+                onChange={(e) => setManualRole(e.target.value)}
+                placeholder="e.g. Software Engineer"
+                className="w-full mt-2 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-emerald-400/30 focus:border-emerald-300 bg-slate-50 transition-all"
+              />
+            </div>
+
+            <div className="mt-4 p-3 bg-amber-50 rounded-xl border border-amber-100">
+              <p className="text-[10px] text-amber-700 leading-relaxed font-medium">
+                Please provide the correct Job ID from the company's career portal for faster referral processing.
+              </p>
+            </div>
 
             <button
-              onClick={() => handleSendRequest(selectedEmployee._id, selectedCompany?._id || selectedEmployee.company?._id || selectedEmployee.company, selectedJobId || manualJobId)}
-              disabled={!selectedJobId && !manualJobId}
+              onClick={() => handleSendRequest(selectedEmployee._id, selectedCompany?._id || selectedEmployee.company?._id || selectedEmployee.company, manualRole || "Referral Request", manualJobId)}
+              disabled={!manualJobId && !manualRole}
               className="mt-5 w-full py-3.5 rounded-xl bg-black text-white font-semibold text-sm hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] transition-all duration-200"
             >
               Send Request

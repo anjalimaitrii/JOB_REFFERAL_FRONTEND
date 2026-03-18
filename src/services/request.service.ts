@@ -1,6 +1,6 @@
 const BASE_URL = import.meta.env.VITE_API_BASE_URL
 
-export const sendRequestToEmployee = async (payload: { receiver: string, company: string, role: string }) => {
+export const sendRequestToEmployee = async (payload: { receiver: string, company: string, role: string, jobId?: string }) => {
   const token = localStorage.getItem("token")
 
   const res = await fetch(`${BASE_URL}/api/request`, {
@@ -13,7 +13,8 @@ export const sendRequestToEmployee = async (payload: { receiver: string, company
   })
 
   if (!res.ok) {
-    throw new Error("Failed to send request")
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || "Failed to send request");
   }
 
   return res.json()

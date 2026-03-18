@@ -34,8 +34,9 @@ const Request = () => {
     const q = searchQuery.toLowerCase();
     const companyName = (r.company?.name || "").toLowerCase();
     const receiverName = (r.receiver?.name || "").toLowerCase();
-    const roleTitle = (r.company?.jobs?.find((job: any) => job._id === r.role)?.title || "").toLowerCase();
-    return companyName.includes(q) || receiverName.includes(q) || roleTitle.includes(q);
+    const roleTitle = (r.role || "").toLowerCase();
+    const jobId = (r.jobId || "").toLowerCase();
+    return companyName.includes(q) || receiverName.includes(q) || roleTitle.includes(q) || jobId.includes(q);
   });
 
   useEffect(() => {
@@ -207,16 +208,13 @@ const Request = () => {
           {!loading && filteredRequests.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredRequests.map((req) => {
-                const roleTitle = req.company?.jobs.find(
-                  (job: any) => job._id === req.role
-                )?.title || "N/A";
-
                 return (
                   <RequestCard
                     key={req._id}
                     companyName={req.company?.name || "Unknown Company"}
                     companyLogo={req.company?.logo}
-                    role={roleTitle}
+                    role={req.role}
+                    jobId={req.jobId}
                     receiverName={req.receiver?.name || "Unknown User"}
                     status={
                       req.status === "pending"
@@ -237,7 +235,7 @@ const Request = () => {
                         amount: "499.00",
                         merchantName: req.company?.name || "Company",
                         merchantInitial: (req.company?.name || "C").charAt(0),
-                        description: `Referral fee · ${roleTitle}`,
+                        description: `Referral fee · ${req.role}`,
                         orderId: req._id,
                       })
                     }
@@ -283,7 +281,7 @@ const Request = () => {
           description={activePayment.description}
           orderId={activePayment.orderId}
           onClose={() => setActivePayment(null)}
-          onSuccess={async (txnId) => {
+          onSuccess={async () => {
 
             await fakePaymentSuccess(activePayment!.orderId, 499)
 
@@ -342,11 +340,12 @@ const StatCard = ({
 
 /* ── REQUEST CARD (Student Theme) ── */
 const RequestCard = ({
-  companyName, companyLogo, role, receiverName, status, onChat, onPay
+  companyName, companyLogo, role, jobId, receiverName, status, onChat, onPay
 }: {
   companyName: string;
   companyLogo?: string;
   role: string;
+  jobId?: string;
   receiverName: string;
   status: "Pending" | "Approved" | "Rejected" | "Completed";
   onChat?: () => void;
@@ -378,7 +377,9 @@ const RequestCard = ({
           )}
           <div className="min-w-0">
             <p className="font-semibold text-slate-800 truncate text-sm">{companyName}</p>
-            <p className="text-xs text-slate-400 truncate">{role}</p>
+            <p className="text-xs text-slate-400 truncate">
+              {role} {jobId && <span className="text-slate-300 font-normal ml-1">#{jobId}</span>}
+            </p>
           </div>
         </div>
 

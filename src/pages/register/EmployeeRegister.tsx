@@ -9,10 +9,28 @@ type Company = {
   jobs: { _id: string; title: string }[];
 };
 
+const JOB_TITLES = [
+  "Software Engineer",
+  "Frontend Developer",
+  "Backend Developer",
+  "Fullstack Developer",
+  "DevOps Engineer",
+  "Data Scientist",
+  "Product Manager",
+  "UI/UX Designer",
+  "QA Engineer",
+  "Mobile Developer",
+  "Cloud Architect",
+  "Security Engineer"
+];
+
 function EmployeeRegister() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [companies, setCompanies] = useState<Company[]>([]);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
   useEffect(() => {
     const fetchCompanies = async () => {
       try {
@@ -40,7 +58,21 @@ function EmployeeRegister() {
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+
+    if (name === "designation") {
+      if (value.trim()) {
+        const filtered = JOB_TITLES.filter(title =>
+          title.toLowerCase().includes(value.toLowerCase())
+        );
+        setSuggestions(filtered);
+        setShowSuggestions(true);
+      } else {
+        setSuggestions([]);
+        setShowSuggestions(false);
+      }
+    }
   };
 
   const handleNext = () => {
@@ -80,7 +112,6 @@ function EmployeeRegister() {
       alert("Registration failed");
     }
   };
-  const selectedCompany = companies.find((c) => c._id === form.company);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-sky-200 via-sky-100 to-white">
@@ -135,25 +166,36 @@ function EmployeeRegister() {
                 ))}
               </select>
 
-              <select
-                name="designation"
-                value={form.designation}
-                onChange={(e) =>
-                  setForm({ ...form, designation: e.target.value })
-                }
-                disabled={!form.company} 
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-              >
-                <option value="">
-                  {form.company ? "Select Job Role" : "Select company first"}
-                </option>
+              <div className="relative">
+                <input
+                  name="designation"
+                  value={form.designation}
+                  placeholder="Job Role (e.g. Fullstack Developer)"
+                  onChange={handleChange}
+                  onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                  onFocus={() => {
+                    if (form.designation.trim()) setShowSuggestions(true);
+                  }}
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                />
 
-                {selectedCompany?.jobs.map((job) => (
-                  <option key={job._id} value={job._id}>
-                    {job.title}
-                  </option>
-                ))}
-              </select>
+                {showSuggestions && suggestions.length > 0 && (
+                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                    {suggestions.map((title, idx) => (
+                      <div
+                        key={idx}
+                        onClick={() => {
+                          setForm({ ...form, designation: title });
+                          setShowSuggestions(false);
+                        }}
+                        className="px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 cursor-pointer transition-colors"
+                      >
+                        {title}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
 
               {/* <input
                 name="designation"

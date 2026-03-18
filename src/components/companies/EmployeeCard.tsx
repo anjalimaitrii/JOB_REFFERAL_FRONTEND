@@ -11,23 +11,16 @@ type Props = {
     isDetailView: boolean;
     employees: Employee[];
     empVisible: boolean[];
-    selectedCompany: any;
-
     setSelectedEmployee: (emp: Employee) => void;
     setShowModal: (value: boolean) => void;
-    setUseJobId: (value: boolean) => void;
-    setSelectedJobId: (value: string) => void;
     setManualJobId: (value: string) => void;
 };
 
 const EmployeeCard = ({ isDetailView,
     employees,
     empVisible,
-    selectedCompany,
     setSelectedEmployee,
     setShowModal,
-    setUseJobId,
-    setSelectedJobId,
     setManualJobId }: Props) => {
     return (
         <div>
@@ -45,7 +38,7 @@ const EmployeeCard = ({ isDetailView,
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                             {employees.map((emp, i) => {
-                                const jobTitle = selectedCompany?.jobs.find((job: any) => job._id === emp.designation)?.title;
+                                const jobTitle = emp.designation || (emp as any).jobTitle || "Employee";
                                 return (
                                     <div
                                         key={emp._id}
@@ -78,7 +71,7 @@ const EmployeeCard = ({ isDetailView,
                                                 </div>
                                             </div>
                                             <button
-                                                onClick={() => { setSelectedEmployee(emp); setShowModal(true); setUseJobId(false); setSelectedJobId(""); setManualJobId(""); }}
+                                                onClick={() => { setSelectedEmployee(emp); setShowModal(true); setManualJobId(""); }}
                                                 className="w-full py-2.5 rounded-xl text-xs font-semibold active:scale-95 transition-all duration-200 relative overflow-hidden"
                                                 style={{ background: "linear-gradient(135deg, #1a1a1a 0%, #000000 100%)", color: "white" }}
                                                 onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "linear-gradient(135deg, #FFC300 0%, #FF8C00 100%)"; (e.currentTarget as HTMLButtonElement).style.color = "#000"; }}

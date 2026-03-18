@@ -21,9 +21,6 @@ export default function EmployeeRequestModal({
     if (!isOpen || !request) return null;
 
     const sender = request?.sender;
-    const company = request?.company;
-
-    const job = company?.jobs?.find((j: any) => j._id === request?.role);
 
     const [open, setOpen] = useState(false);
     const [currentStatus, setCurrentStatus] = useState(request?.status);
@@ -79,14 +76,16 @@ export default function EmployeeRequestModal({
                     <div>
                         <p className="text-lg font-semibold">{sender?.name}</p>
 
-                        {/* Email & Job visible only after accept */}
+                        {/* Requested Role & Job ID */}
+                        <div className="grid grid-cols-1 mt-2 gap-1 text-sm">
+                            <Info label="Desired Role" value={request?.role} />
+                            <Info label="Job ID" value={request?.jobId} />
+                        </div>
+
+                        {/* Email visible only after payment/accept if needed, but for now let's keep it simple */}
                         {request?.paymentStatus === "paid" && (
-                            <div className="grid grid-cols-1 mt-2 gap-1 text-sm">
-                                <Info label="Email" value={sender?.email} />
-                                <Info
-                                    label="Requested Job ID"
-                                    value={job?._id}
-                                />
+                            <div className="grid grid-cols-1 mt-1 gap-1 text-sm">
+                                <Info label="Contact Email" value={sender?.email} />
                             </div>
                         )}
                     </div>
