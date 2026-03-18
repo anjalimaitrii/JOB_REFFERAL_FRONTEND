@@ -18,6 +18,8 @@ import Blog from "./blog";
 import LoadingScreen from "./loadingScreen";
 import ReviewFloater from "../../components/ui/ReviewFloater";
 import Header from "../../components/headers/index.jsx";
+import Hero from "./Hero";
+import MobileBottomNav from "../employee/bottomNavbar";
 
 // ── Mock Data ─────────────────────────────────────────────────
 const STATS = [
@@ -66,8 +68,10 @@ const StudentDashboard = () => {
         <main className="bg-rudra-black min-h-screen">
           <Header />
           <NotificationBell role="student" />
+          <Hero />
+          <MobileBottomNav />
           {/* ── HERO ───────────────────────────────────────────── */}
-          <div
+          {/* <div
             className="relative w-full h-72 sm:h-96 flex flex-col items-center justify-center overflow-hidden"
             style={{
               backgroundImage: `url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&auto=format&fit=crop&q=80')`,
@@ -101,10 +105,10 @@ const StudentDashboard = () => {
                 <div className="h-px w-10 bg-amber-400/50" />
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* ── STATS ──────────────────────────────────────────── */}
-          <div className="mt-14 px-4 sm:px-8 max-w-7xl mx-auto w-full">
+          {/* <div className="mt-14 px-4 sm:px-8 max-w-7xl mx-auto w-full">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {STATS.map(({ icon: Icon, label, value, color }) => (
                 <div
@@ -123,15 +127,15 @@ const StudentDashboard = () => {
                 </div>
               ))}
             </div>
-          </div>
+          </div> */}
 
-          <ApplyNow />
-          <HowItWorks />
-          <Alumni />
-          <Blog />
-          <SuccessStories />
-          <ReviewFloater />
-          <Footer />
+          {/* <ApplyNow /> */}
+          {/* <HowItWorks /> */}
+          {/* <Alumni /> */}
+          {/* <Blog /> */}
+          {/* <SuccessStories /> */}
+          {/* <ReviewFloater /> */}
+          {/* <Footer /> */}
         </main>
       </motion.div>
     </>

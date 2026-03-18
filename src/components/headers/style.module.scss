@@ -6,6 +6,10 @@
     z-index: 1000;
     transition: all 0.3s ease;
 
+    @media (max-width: 768px) {
+        display: none;
+    }
+
     .menu {
         width: 200px;
         height: 200px;
