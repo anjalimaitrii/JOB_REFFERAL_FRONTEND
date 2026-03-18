@@ -224,11 +224,6 @@ function Companies() {
       // employees set karo
       setEmployees(emps);
 
-      // first employee ki company detect karo
-      if (emps.length > 0) {
-        const company = companies.find(c => c._id === emps[0].company);
-        setModalCompany(company || null);
-      }
 
     } catch {
       setEmployees([]);
