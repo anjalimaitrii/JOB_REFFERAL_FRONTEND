@@ -1,0 +1,18 @@
+.header {
+    position: fixed;
+    right: 50px;
+    bottom: 40px;
+    color: white;
+    z-index: 1000;
+
+    .menu {
+        width: 200px;
+        height: 200px;
+        background-color: black;
+        border-radius: 25px;
+        position: relative;
+        border: 1px white solid;
+
+        color: white;
+    }
+}
