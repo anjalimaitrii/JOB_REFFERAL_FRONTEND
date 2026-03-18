@@ -8,6 +8,8 @@ import { LogOut } from "lucide-react";
 export default function index() {
 
     const navigate = useNavigate();
+    const role = localStorage.getItem("role") || "student";
+    const currentLinks = links[role] || links.student;
 
     const logout = () => {
         localStorage.clear();
@@ -20,7 +22,7 @@ export default function index() {
             {/* Links */}
             <div className={styles.body}>
                 {
-                    links.map((link, i) => {
+                    currentLinks.map((link, i) => {
                         const { title, href } = link;
                         return (
                             <div key={`b_${i}`} className={styles.linkContainer}>
@@ -44,14 +46,16 @@ export default function index() {
             {/* Bottom Section */}
             <div className={styles.footer}>
 
-                {/* Toggle */}
-                <button
-                    onClick={() => navigate("/student/dashboard")}
-                    className={styles.toggle}
-                    title="Switch to Student Dashboard"
-                >
-                    <span className={styles.circle}></span>
-                </button>
+                {/* Toggle - Only for employees who can switch modes */}
+                {role === "employee" && (
+                    <button
+                        onClick={() => navigate(window.location.pathname.includes("/student") ? "/employee/dashboard" : "/student/dashboard")}
+                        className={styles.toggle}
+                        title={window.location.pathname.includes("/student") ? "Switch to Employee Mode" : "Switch to Student Mode"}
+                    >
+                        <span className={styles.circle} style={{ transform: window.location.pathname.includes("/student") ? "translateX(24px)" : "translateX(0)" }}></span>
+                    </button>
+                )}
 
                 {/* Logout */}
                 <button
@@ -61,7 +65,6 @@ export default function index() {
                 >
                     <LogOut size={20} />
                 </button>
-
             </div>
 
         </div>

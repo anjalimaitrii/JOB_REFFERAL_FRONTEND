@@ -1,14 +1,8 @@
-import { useNavigate } from "react-router-dom";
 import {
-  LogOut,
-  User,
-  Mail,
-  Briefcase,
   TrendingUp,
   Users,
   Building2,
   Star,
-  Layout,
 } from "lucide-react";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -23,6 +17,7 @@ import Footer from "../../components/footer";
 import Blog from "./blog";
 import LoadingScreen from "./loadingScreen";
 import ReviewFloater from "../../components/ui/ReviewFloater";
+import Header from "../../components/headers/index.jsx";
 
 // ── Mock Data ─────────────────────────────────────────────────
 const STATS = [
@@ -49,13 +44,6 @@ const STATS = [
 
 // ── Component ─────────────────────────────────────────────────
 const StudentDashboard = () => {
-  const navigate = useNavigate();
-  const role = localStorage.getItem("role");
-
-  const logout = () => {
-    localStorage.clear();
-    navigate("/");
-  };
   const [isLoading, setIsLoading] = useState(
     localStorage.getItem("justLoggedIn") === "true",
   );
@@ -76,75 +64,8 @@ const StudentDashboard = () => {
           {isLoading && <LoadingScreen onComplete={() => setIsLoading(false)} />}
         </AnimatePresence>
         <main className="bg-rudra-black min-h-screen">
-          {/* ── NAVBAR ─────────────────────────────────────────── */}
-          <nav className="h-16 bg-black flex items-center justify-between px-4 sm:px-8 text-white sticky top-0 z-50 shadow-md">
-            <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-md bg-amber-400 flex items-center justify-center">
-                <Briefcase className="w-4 h-4 text-black" />
-              </div>
-              <h1 className="text-base font-semibold tracking-wide">
-                Job<span className="text-amber-400">Referral</span>
-              </h1>
-            </div>
-
-            <div className="flex items-center gap-1">
-              {role === "employee" && (
-                <div className="relative group flex items-center mr-2">
-                  <button
-                    onClick={() => navigate("/employee/dashboard")}
-                    className="relative w-14 h-7 flex items-center rounded-full bg-purple-600 transition-all duration-300"
-                  >
-                    <span className="absolute w-6 h-6 bg-white rounded-full shadow-md translate-x-7" />
-                  </button>
-
-                  <div
-                    className="absolute -top-1 -right-1 -translate-x-1/2 
-      whitespace-nowrap px-3 py-1.5 rounded-md 
-      text-white text-xs 
-      opacity-0 group-hover:opacity-100 
-      transition-opacity duration-200 pointer-events-none"
-                  >
-                    Switch to Employee Mode
-                  </div>
-                </div>
-              )}
-              <button
-                onClick={() => navigate("/profile")}
-                className="p-2 rounded-full hover:bg-white/10 transition-colors"
-                title="Profile"
-              >
-                <User className="w-4 h-4 sm:w-5 sm:h-5" />
-              </button>
-              <button
-                onClick={() => navigate("/student/posts")}
-                className="p-2 rounded-full hover:bg-white/10 transition-colors"
-                title="Activity Feed"
-              >
-                <Layout className="w-4 h-4 sm:w-5 sm:h-5" />
-              </button>
-
-              <button
-                onClick={() => navigate("/student/requests")}
-                className="p-2 rounded-full hover:bg-white/10 transition-colors"
-                title="My Requests"
-              >
-                <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
-              </button>
-
-              <NotificationBell role="student" />
-
-              <div className="w-px h-5 bg-white/20 mx-1" />
-
-              <button
-                onClick={logout}
-                className="p-2 rounded-full hover:bg-red-900/40 transition-colors"
-                title="Logout"
-              >
-                <LogOut className="w-4 h-4 sm:w-5 sm:h-5 text-red-400" />
-              </button>
-            </div>
-          </nav>
-
+          <Header />
+          <NotificationBell role="student" />
           {/* ── HERO ───────────────────────────────────────────── */}
           <div
             className="relative w-full h-72 sm:h-96 flex flex-col items-center justify-center overflow-hidden"
