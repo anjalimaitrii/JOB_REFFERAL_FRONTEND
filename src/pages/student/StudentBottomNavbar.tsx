@@ -2,7 +2,7 @@ import * as React from "react";
 import BottomNavigation from "@mui/material/BottomNavigation";
 import BottomNavigationAction from "@mui/material/BottomNavigationAction";
 import Box from "@mui/material/Box";
-import { Layout, User, Mail, LogOut, Home, Building2 } from "lucide-react";
+import { Layout, User, Mail, LogOut, Home, Building2, Coins } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function StudentBottomNav() {
@@ -15,6 +15,7 @@ export default function StudentBottomNav() {
         if (newValue === "feed") navigate("/student/posts");
         if (newValue === "companies") navigate("/student/companies");
         if (newValue === "requests") navigate("/student/requests");
+        if (newValue === "refunds") navigate("/wallet");
         if (newValue === "profile") navigate("/profile");
         if (newValue === "logout") {
             localStorage.clear();
@@ -53,6 +54,11 @@ export default function StudentBottomNav() {
                     label="Requests"
                     value="requests"
                     icon={<Mail size={20} />}
+                />
+                <BottomNavigationAction
+                    label="Refunds"
+                    value="refunds"
+                    icon={<Coins size={20} />}
                 />
                 <BottomNavigationAction
                     label="Profile"

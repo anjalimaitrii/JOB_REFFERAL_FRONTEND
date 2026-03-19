@@ -1,4 +1,4 @@
-import { LogOut, User, Mail, Layout } from "lucide-react";
+import { LogOut, User, Mail, Layout, Wallet } from "lucide-react";
 import NotificationBell from "../../components/NotificationBell";
 import { useNavigate } from "react-router-dom";
 
@@ -41,6 +41,13 @@ function Navbar() {
             title="My Referrals"
           >
             <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
+          </button>
+          <button
+            onClick={() => navigate("/wallet")}
+            className="p-2 rounded-full hover:bg-gray-800"
+            title="Wallet"
+          >
+            <Wallet className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
 
           <NotificationBell role="employee" />

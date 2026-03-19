@@ -23,11 +23,20 @@ import { AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
 import Feed from "./pages/student/Feed";
 import EmployeeFeed from "./pages/employee/EmployeeFeed";
+import Wallet from "./pages/Wallet";
+import NotificationBell from "./components/NotificationBell";
+import MobileBottomNav from "./pages/employee/bottomNavbar";
+import Header from "./components/headers/index.jsx";
 
 function App() {
   const location = useLocation();
+  const userString = localStorage.getItem("user");
+  const user = userString ? JSON.parse(userString) : null;
+  const role = localStorage.getItem("role") || user?.role;
+  const isAuthPage = ["", "/", "/register/student", "/register/employee", "/register/company", "/admin"].includes(location.pathname.replace(/\/$/, "")) || location.pathname.startsWith("/admin/");
+
   return (
-    <>
+    <div className={`relative min-h-screen ${!isAuthPage ? "pb-20 md:pb-0" : ""}`}>
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<Login />} />
@@ -106,6 +115,14 @@ function App() {
             }
           />
           <Route
+            path="/wallet"
+            element={
+              <ProtectedRoute allowedRole={["employee", "student"]}>
+                <Wallet />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/student/notifications"
             element={<NotificationsPage />}
           />
@@ -168,7 +185,15 @@ function App() {
           <Route path="*" element={<h2>NO ROUTE MATCHED</h2>} />
         </Routes>
       </AnimatePresence>
-    </>
+
+      {!isAuthPage && (role === "student" || role === "employee") && (
+        <div style={{ position: 'relative', zIndex: 9999 }}>
+          <Header />
+          <NotificationBell role={role} />
+          <MobileBottomNav />
+        </div>
+      )}
+    </div>
   );
 }
 

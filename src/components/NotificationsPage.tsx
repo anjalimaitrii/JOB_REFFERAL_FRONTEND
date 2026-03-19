@@ -22,14 +22,17 @@ interface Notification {
     avatar?: string;
   };
   type:
-    | "message"
-    | "request_accepted"
-    | "request_rejected"
-    | "request_received";
+  | "message"
+  | "request_accepted"
+  | "request_rejected"
+  | "request_received"
+  | "refund_received"
+  | "request_expired";
   request?: {
     _id: string;
   };
   text: string;
+  amount?: number;
   createdAt: string;
   isRead: boolean;
 }
@@ -56,48 +59,52 @@ const NotificationsPage = () => {
       setLoading(false);
     }
   };
-const handleNotifClick = async (notif: Notification) => {
-  try {
-    if (!notif.isRead) {
-      await markAsRead(notif._id);
+  const handleNotifClick = async (notif: Notification) => {
+    try {
+      if (!notif.isRead) {
+        await markAsRead(notif._id);
 
-      setNotifs((prev) =>
-        prev.map((n) =>
-          n._id === notif._id ? { ...n, isRead: true } : n
-        )
+        setNotifs((prev) =>
+          prev.map((n) =>
+            n._id === notif._id ? { ...n, isRead: true } : n
+          )
+        );
+      }
+
+      const user = JSON.parse(
+        atob(localStorage.getItem("token")!.split(".")[1])
       );
+
+      const isEmployee = user.role === "employee";
+
+      if (notif.type === "message" && notif.request?._id) {
+        navigate(
+          isEmployee ? "/employee/dashboard" : "/student/requests",
+          {
+            state: { openChatForRequestId: notif.request._id },
+          }
+        );
+      }
+
+
+      else if (
+        notif.type === "request_accepted" ||
+        notif.type === "request_rejected" ||
+        notif.type === "request_received" ||
+        notif.type === "request_expired"
+      ) {
+        navigate(
+          isEmployee ? "/employee/dashboard" : "/student/requests"
+        );
+      }
+      else if (notif.type === "refund_received") {
+        navigate("/wallet");
+      }
+
+    } catch (err) {
+      console.error("Notification click failed", err);
     }
-
-    const user = JSON.parse(
-      atob(localStorage.getItem("token")!.split(".")[1])
-    );
-
-    const isEmployee = user.role === "employee";
-
-    if (notif.type === "message" && notif.request?._id) {
-      navigate(
-        isEmployee ? "/employee/dashboard" : "/student/requests",
-        {
-          state: { openChatForRequestId: notif.request._id },
-        }
-      );
-    }
-
-   
-    else if (
-      notif.type === "request_accepted" ||
-      notif.type === "request_rejected" ||
-      notif.type === "request_received"
-    ) {
-      navigate(
-        isEmployee ? "/employee/dashboard" : "/student/requests"
-      );
-    }
-
-  } catch (err) {
-    console.error("Notification click failed", err);
-  }
-};
+  };
 
 
   useEffect(() => {
@@ -201,11 +208,10 @@ const handleNotifClick = async (notif: Notification) => {
                 <div
                   key={n._id}
                   onClick={() => handleNotifClick(n)}
-                  className={`relative flex items-start gap-3 px-4 py-3.5 cursor-pointer transition-colors ${
-                    !n.isRead ? "bg-amber-50/40" : "bg-white hover:bg-slate-50"
-                  }`}
+                  className={`relative flex items-start gap-3 px-4 py-3.5 cursor-pointer transition-colors ${!n.isRead ? "bg-amber-50/40" : "bg-white hover:bg-slate-50"
+                    }`}
                 >
-                
+
 
                   {/* Icon */}
                   <div className="mt-0.5">
@@ -226,7 +232,11 @@ const handleNotifClick = async (notif: Notification) => {
                           ? `You received a referral request from ${n.sender?.name}`
                           : n.type === "request_accepted"
                             ? `${n.sender?.name} accepted your referral request 🎉`
-                            : `${n.sender?.name} rejected your referral request ❌`}
+                            : n.type === "refund_received"
+                              ? `You received a refund of ₹${n.amount || ""} from ${n.sender?.name} 💰`
+                              : n.type === "request_expired"
+                                ? `Your referral request to ${n.sender?.name} has expired ⏳`
+                                : `${n.sender?.name} rejected your referral request ❌`}
                     </p>
                     <p className="flex items-center gap-1 text-[11px] text-slate-400 font-light mt-1.5">
                       <Clock className="w-3 h-3" /> {formatTime(n.createdAt)}
