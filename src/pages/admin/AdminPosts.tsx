@@ -7,7 +7,7 @@ import { deleteAdminPost, getAdminPosts } from "../../services/admin.service";
 import {
     Search,
     Trash2,
-    ArrowLeft,
+    ChevronsLeft,
     Building,
     Clock,
     MessageSquare,
@@ -87,7 +87,7 @@ function AdminPosts() {
                         onClick={() => navigate("/admin/dashboard")}
                         className="p-1.5 hover:bg-white/10 rounded-lg transition-all group"
                     >
-                        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+                        <ChevronsLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
                     </button>
                     <div>
                         <h1 className="text-xs font-bold tracking-[0.1em] uppercase">Feed Monitoring</h1>

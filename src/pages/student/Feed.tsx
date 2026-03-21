@@ -13,7 +13,7 @@ import {
   Building2,
   Star,
   ExternalLink,
-  ArrowLeft,
+  ChevronsLeft,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -203,7 +203,7 @@ const Feed = ({ companyId }: Props) => {
                     onClick={() => navigate("/student/dashboard")}
                     className="p-2.5 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-100 text-slate-500 hover:text-slate-900 transition-all group"
                   >
-                    <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+                    <ChevronsLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                   </button>
                   <div>
                     <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Activity Feed</h3>

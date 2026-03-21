@@ -8,7 +8,7 @@ import { Experience } from "../../components/profile/ExperienceSection";
 import { Skills } from "../../components/profile/SkillsSection";
 import { Projects } from "../../components/profile/ProjectsSection";
 import {
-  ArrowLeft, Camera, Save, User, GraduationCap, Briefcase,
+  ChevronsLeft, Camera, Save, User, GraduationCap, Briefcase,
   Sparkles, Clock, Code2, FolderGit2, CheckCircle2, Loader2,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -123,9 +123,9 @@ const Profile = () => {
         {/* Back button */}
         <button
           onClick={() => navigate(effectiveRole === "student" ? "/student/dashboard" : "/employee/dashboard")}
-          className="absolute top-4 left-4 z-20 flex items-center gap-2 bg-black/50 backdrop-blur-sm text-white text-xs font-medium px-3 py-2 rounded-full hover:bg-black/70 transition"
+          className="absolute top-4 left-4 z-20 flex items-center gap-2  backdrop-blur-sm text-white text-xs font-medium px-3 py-2 rounded-full hover:bg-black/70 transition"
         >
-          <ArrowLeft className="w-3.5 h-3.5" />
+          <ChevronsLeft className="w-3.5 h-3.5" />
 
         </button>
 
@@ -146,12 +146,12 @@ const Profile = () => {
           <div className="relative">
             <img
               src={user.profilePhoto || "/avatar.png"}
-              className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl border-4 border-white object-cover shadow-xl"
+              className="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-white object-cover shadow-xl"
             />
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="absolute -bottom-1.5 -right-1.5 w-8 h-8 bg-gray-900 text-white rounded-xl flex items-center justify-center hover:bg-gray-700 transition shadow-md"
+              className="absolute bottom-0 right-0 w-8 h-8 bg-gray-900 text-white rounded-xl flex items-center justify-center hover:bg-gray-700 transition shadow-md"
             >
               <Camera className="w-3.5 h-3.5" />
             </button>
@@ -190,7 +190,7 @@ const Profile = () => {
         </div>
 
         {/* ── TWO-COLUMN LAYOUT ── */}
-        <div className="flex gap-6 pb-12">
+        <div className="flex flex-col md:flex-row gap-6 pb-12">
 
           {/* LEFT: sticky tab sidebar */}
           <div className="hidden md:block w-52 shrink-0">
@@ -214,19 +214,19 @@ const Profile = () => {
             </div>
           </div>
 
-          {/* Mobile: horizontal tab scroll */}
-          <div className="md:hidden w-full mb-4">
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-2 flex gap-1 overflow-x-auto">
+          {/* Mobile: Tabs (Wrapped) */}
+          <div className="md:hidden w-full mb-6">
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-2.5 flex flex-wrap gap-2 justify-center">
               {TABS.map(({ key, icon: Icon }) => (
                 <button
                   key={key}
                   onClick={() => setActiveTab(key)}
-                  className={`shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all ${activeTab === key
-                    ? "bg-gray-900 text-white"
-                    : "text-gray-600 hover:bg-gray-50"
+                  className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-[11px] font-semibold transition-all border ${activeTab === key
+                    ? "bg-gray-900 text-white border-gray-900 shadow-md"
+                    : "bg-gray-50 text-gray-600 border-gray-100 hover:bg-gray-100"
                     }`}
                 >
-                  <Icon className="w-3.5 h-3.5" />
+                  <Icon className="w-3 h-3" />
                   {key}
                 </button>
               ))}

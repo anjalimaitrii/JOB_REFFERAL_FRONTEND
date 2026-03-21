@@ -25,7 +25,7 @@ export const Projects = ({
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
 
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4 sm:gap-0">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center">
             <FolderGit2 className="w-4 h-4 text-gray-600" />
@@ -67,15 +67,15 @@ export const Projects = ({
             className="border border-gray-100 rounded-2xl p-5 bg-gray-50/50"
           >
             {/* Card header */}
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-3 sm:gap-0">
+              <div className="flex flex-wrap items-center gap-2">
                 <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
                   Project {index + 1}
                 </span>
                 {project.name && (
                   <>
                     <span className="text-gray-300">·</span>
-                    <span className="text-xs text-gray-700 font-medium truncate max-w-[160px]">
+                    <span className="text-xs text-gray-700 font-medium truncate max-w-[120px] sm:max-w-[160px]">
                       {project.name}
                     </span>
                   </>

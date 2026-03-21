@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  ArrowLeft,
+  ChevronsLeft,
   Info,
   Clock,
   CheckCheck,
@@ -148,7 +148,7 @@ const NotificationsPage = () => {
             onClick={() => navigate(-1)}
             className="p-2 rounded-full hover:bg-white/10 transition-colors"
           >
-            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+            <ChevronsLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
           <span className="text-base font-semibold tracking-wide">
             Notifications

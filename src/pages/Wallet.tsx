@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getProfile } from "../services/user.service";
 import { getNotifications } from "../services/notification.service";
-import { Wallet as WalletIcon, ArrowLeft, TrendingUp, History, User, Coins } from "lucide-react";
+import { Wallet as WalletIcon, ChevronsLeft, TrendingUp, History, User, Coins } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -67,7 +67,7 @@ const Wallet = () => {
                         onClick={() => navigate(-1)}
                         className="p-1.5 rounded-xl transition-colors hover:bg-slate-200 text-slate-600"
                     >
-                        <ArrowLeft className="w-5 h-5" />
+                        <ChevronsLeft className="w-5 h-5" />
                     </button>
                     <h1 className="text-xl font-bold text-slate-800">
                         {isEmployee ? "My Wallet" : "My Refunds"}

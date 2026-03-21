@@ -1,4 +1,4 @@
-import { ArrowLeft, Search, X, Building2, GraduationCap } from "lucide-react";
+import { ChevronsLeft, Search, X, Building2, GraduationCap } from "lucide-react";
 
 
 type Props = {
@@ -90,7 +90,7 @@ const HeroHeader = ({
                         className="group flex items-center gap-2 text-white/50 hover:text-white transition-all duration-200 mb-6"
                     >
                         <span className="flex items-center justify-center w-8 h-8 rounded-full border border-white/10 group-hover:border-white/30 group-hover:bg-white/10 transition-all duration-200">
-                            <ArrowLeft className="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
+                            <ChevronsLeft className="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
                         </span>
                     </button>
 

@@ -4,7 +4,7 @@ import {
   Heart,
   Briefcase,
   MoreHorizontal,
-  ArrowLeft,
+  ChevronsLeft,
   Pencil,
   Trash2,
   Flag,
@@ -180,7 +180,7 @@ const EmployeeFeed = ({
                   onClick={() => navigate(-1)}
                   className="p-2 hover:bg-slate-100 rounded-2xl text-slate-400 transition-all border border-slate-100"
                 >
-                  <ArrowLeft className="w-5 h-5" />
+                  <ChevronsLeft className="w-5 h-5" />
                 </button>
                 <div>
                   <h2 className="text-2xl font-black text-slate-900 tracking-tight">Community Feed</h2>

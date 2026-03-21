@@ -25,7 +25,7 @@ export const Experience = ({
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
 
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4 sm:gap-0">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center">
             <Briefcase className="w-4 h-4 text-gray-600" />
