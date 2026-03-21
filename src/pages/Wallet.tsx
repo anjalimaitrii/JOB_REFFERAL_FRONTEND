@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getProfile } from "../services/user.service";
 import { getNotifications } from "../services/notification.service";
 import { Wallet as WalletIcon, ArrowLeft, TrendingUp, History, User, Coins } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 
 interface Transaction {
@@ -21,8 +21,10 @@ const Wallet = () => {
     const [notifications, setNotifications] = useState<Transaction[]>([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+    const location = useLocation();
     const role = localStorage.getItem("role") || "student";
-    const isEmployee = role === "employee";
+    const isStudentMode = role === "employee" && location.pathname.includes("/student");
+    const isEmployee = role === "employee" && !isStudentMode;
 
     useEffect(() => {
         const fetchData = async () => {

@@ -9,7 +9,9 @@ export default function index() {
 
     const navigate = useNavigate();
     const role = localStorage.getItem("role") || "student";
-    const currentLinks = links[role] || links.student;
+    const isStudentMode = role === "employee" && window.location.pathname.includes("/student");
+    const effectiveRole = isStudentMode ? "student" : role;
+    const currentLinks = links[effectiveRole] || links.student;
 
     const logout = () => {
         localStorage.clear();

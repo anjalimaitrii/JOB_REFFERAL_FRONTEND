@@ -9,6 +9,8 @@ export default function MobileBottomNav() {
     const navigate = useNavigate();
     const location = useLocation();
     const role = localStorage.getItem("role") || "student";
+    const isStudentMode = role === "employee" && location.pathname.includes("/student");
+    const effectiveRole = isStudentMode ? "student" : role;
     const [value, setValue] = React.useState("home");
 
     React.useEffect(() => {
@@ -21,10 +23,10 @@ export default function MobileBottomNav() {
     }, [location]);
 
     const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
-        if (newValue === "home") navigate(role === "employee" ? "/employee/dashboard" : "/student/dashboard");
-        if (newValue === "feed") navigate(role === "employee" ? "/employee/posts" : "/student/posts");
+        if (newValue === "home") navigate(effectiveRole === "employee" ? "/employee/dashboard" : "/student/dashboard");
+        if (newValue === "feed") navigate(effectiveRole === "employee" ? "/employee/posts" : "/student/posts");
         if (newValue === "profile") navigate("/profile");
-        if (newValue === "requests") navigate(role === "employee" ? "/employee/requests" : "/student/requests");
+        if (newValue === "requests") navigate(effectiveRole === "employee" ? "/employee/requests" : "/student/requests");
         if (newValue === "wallet") navigate("/wallet");
         if (newValue === "logout") {
             localStorage.clear();
@@ -61,7 +63,7 @@ export default function MobileBottomNav() {
                     icon={<Mail size={20} />}
                 />
                 <BottomNavigationAction
-                    label={role === "student" ? "Refunds" : "Wallet"}
+                    label={effectiveRole === "student" ? "Refunds" : "Wallet"}
                     value="wallet"
                     icon={<Wallet size={20} />}
                 />

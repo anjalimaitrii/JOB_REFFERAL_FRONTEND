@@ -11,7 +11,7 @@ import {
   ArrowLeft, Camera, Save, User, GraduationCap, Briefcase,
   Sparkles, Clock, Code2, FolderGit2, CheckCircle2, Loader2,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const STUDENT_TABS = [
   { key: "Personal Information", icon: User },
@@ -36,6 +36,7 @@ const Profile = () => {
   const [activeTab, setActiveTab] = useState("Personal Information");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => { fetchProfile(); }, []);
 
@@ -102,7 +103,9 @@ const Profile = () => {
     );
   }
 
-  const TABS = user.role === "student" ? STUDENT_TABS : EMPLOYEE_TABS;
+  const isStudentMode = user.role === "employee" && location.pathname.includes("/student");
+  const effectiveRole = isStudentMode ? "student" : user.role;
+  const TABS = effectiveRole === "student" ? STUDENT_TABS : EMPLOYEE_TABS;
 
   return (
     <div className="min-h-screen bg-slate-100">
@@ -119,7 +122,7 @@ const Profile = () => {
 
         {/* Back button */}
         <button
-          onClick={() => navigate(user.role === "student" ? "/student/dashboard" : "/employee/dashboard")}
+          onClick={() => navigate(effectiveRole === "student" ? "/student/dashboard" : "/employee/dashboard")}
           className="absolute top-4 left-4 z-20 flex items-center gap-2 bg-black/50 backdrop-blur-sm text-white text-xs font-medium px-3 py-2 rounded-full hover:bg-black/70 transition"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
@@ -129,7 +132,7 @@ const Profile = () => {
         {/* Role badge */}
         <div className="absolute top-4 right-4 z-20">
           <span className="bg-white/20 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1.5 rounded-full border border-white/30 capitalize">
-            {user.role}
+            {effectiveRole}
           </span>
         </div>
       </div>
@@ -178,7 +181,7 @@ const Profile = () => {
         {/* Name + role */}
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900">{user.name}</h1>
-          {user.role === "employee" && (
+          {effectiveRole === "employee" && (
             <p className="text-sm text-gray-500 mt-0.5">
               {user.jobTitle || user.designation || "—"}
               {user.companyName ? <span className="text-gray-400"> · {user.companyName}</span> : ""}
@@ -241,16 +244,16 @@ const Profile = () => {
                 onChange={(education) => setUser({ ...user, education })}
               />
             )}
-            {user.role === "employee" && activeTab === "Job Information" && (
+            {effectiveRole === "employee" && activeTab === "Job Information" && (
               <JobInformationSection data={user} onChange={setUser} />
             )}
-            {user.role === "employee" && activeTab === "Interest" && (
+            {effectiveRole === "employee" && activeTab === "Interest" && (
               <InterestSection
                 interests={user.interests || []}
                 onChange={(interests) => setUser({ ...user, interests })}
               />
             )}
-            {user.role === "employee" && activeTab === "Experience" && (
+            {effectiveRole === "employee" && activeTab === "Experience" && (
               <Experience
                 data={user.experience || []}
                 onChange={(experience) => setUser({ ...user, experience })}

@@ -115,9 +115,41 @@ function App() {
             }
           />
           <Route
+            path="/student/profile"
+            element={
+              <ProtectedRoute allowedRole={["employee", "student"]}>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/employee/profile"
+            element={
+              <ProtectedRoute allowedRole="employee">
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/wallet"
             element={
               <ProtectedRoute allowedRole={["employee", "student"]}>
+                <Wallet />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/student/wallet"
+            element={
+              <ProtectedRoute allowedRole={["employee", "student"]}>
+                <Wallet />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/employee/wallet"
+            element={
+              <ProtectedRoute allowedRole="employee">
                 <Wallet />
               </ProtectedRoute>
             }

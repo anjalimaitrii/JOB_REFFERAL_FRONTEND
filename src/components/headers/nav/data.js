@@ -1,13 +1,15 @@
 export const links = {
   employee: [
-    { title: "Profile", href: "/profile" },
-    { title: "Wallet", href: "/wallet" },
+    { title: "Home", href: "/employee/dashboard" },
+    { title: "Profile", href: "/employee/profile" },
+    { title: "Wallet", href: "/employee/wallet" },
     { title: "Activity Feed", href: "/employee/posts" },
     { title: "My Referrals", href: "/employee/requests" },
   ],
   student: [
-    { title: "Profile", href: "/profile" },
-    { title: "Refunds", href: "/wallet" },
+    { title: "Home", href: "/student/dashboard" },
+    { title: "Profile", href: "/student/profile" },
+    { title: "Refunds", href: "/student/wallet" },
     { title: "Activity Feed", href: "/student/posts" },
     { title: "My Requests", href: "/student/requests" },
   ]
