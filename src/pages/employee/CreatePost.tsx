@@ -48,7 +48,7 @@ const CreatePost = ({ onPostCreated }: { onPostCreated?: () => void }) => {
                 whileTap={{ scale: 0.9 }}
                 whileHover={{ scale: 1.05 }}
                 onClick={() => setIsExpanded(true)}
-                className="group fixed bottom-8 right-8 z-40 bg-amber-400 hover:bg-amber-500 text-black w-16 h-16 rounded-full shadow-xl flex items-center justify-center"
+                className="group fixed bottom-28 right-8 z-40 bg-amber-400 hover:bg-amber-500 text-black w-16 h-16 rounded-full shadow-xl flex items-center justify-center"
             >
                 <Layout className="w-6 h-6" />
 
