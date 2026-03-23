@@ -23,7 +23,7 @@ function CompanyCard({
                     <p className="text-[11px] text-slate-400 font-semibold mb-6 uppercase tracking-[3px]">
                         {visibleCompanies.length} Companies
                     </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-5">
                         {visibleCompanies.length === 0 ? (
                             <div className="col-span-full flex flex-col items-center justify-center py-24 text-slate-300">
                                 <Building2 className="w-14 h-14 mb-4 opacity-30" />
@@ -72,11 +72,7 @@ function CompanyCard({
                                             <span className="inline-flex items-center gap-1 text-xs text-slate-500 bg-slate-50 px-2.5 py-1 rounded-full border border-slate-100 group-hover:border-amber-100 group-hover:bg-amber-50/50 transition-colors duration-200">
                                                 <MapPin className="w-3 h-3" />{company.location}
                                             </span>
-                                            {company.jobs?.length ? (
-                                                <span className="inline-flex items-center gap-1 text-xs text-slate-500 bg-slate-50 px-2.5 py-1 rounded-full border border-slate-100 group-hover:border-amber-100 group-hover:bg-amber-50/50 transition-colors duration-200">
-                                                    <Briefcase className="w-3 h-3" />{company.jobs.length} {company.jobs.length === 1 ? "role" : "roles"}
-                                                </span>
-                                            ) : null}
+
                                         </div>
 
                                         {/* Footer */}

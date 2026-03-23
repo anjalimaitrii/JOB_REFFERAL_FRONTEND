@@ -22,7 +22,6 @@ type Props = {
     setDetailView: (view: "feed" | "employees") => void;
 };
 
-const FILTERS = ["All", "Remote", "Bengaluru", "Hyderabad", "Startup", "MNC", "Product"];
 
 const HeroHeader = ({
     visibleCompanies,
@@ -39,8 +38,6 @@ const HeroHeader = ({
     selectedCollege,
     employees,
     setFilteredResults,
-    activeFilter,
-    setActiveFilter,
     detailView,
     setDetailView
 }: Props) => {
@@ -238,23 +235,8 @@ const HeroHeader = ({
                         </div>
                     )}
 
-                    {/* Filter chips — company view only */}
-                    {!isDetailView && (
-                        <div className="flex flex-wrap gap-2 mt-4">
-                            {FILTERS.map((f) => (
-                                <button
-                                    key={f}
-                                    onClick={() => setActiveFilter(f)}
-                                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all duration-200 ${activeFilter === f
-                                        ? "bg-amber-400 text-black border-amber-400"
-                                        : "border-white/15 text-white/40 hover:border-white/30 hover:text-white/70"
-                                        }`}
-                                >
-                                    {f}
-                                </button>
-                            ))}
-                        </div>
-                    )}
+
+
                 </div>
             </div>
         </div >

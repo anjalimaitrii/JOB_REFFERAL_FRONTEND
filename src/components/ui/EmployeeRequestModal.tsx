@@ -76,11 +76,14 @@ export default function EmployeeRequestModal({
                     <div>
                         <p className="text-lg font-semibold">{sender?.name}</p>
 
-                        {/* Requested Role & Job ID */}
-                        <div className="grid grid-cols-1 mt-2 gap-1 text-sm">
-                            <Info label="Desired Role" value={request?.role} />
-                            <Info label="Job ID" value={request?.jobId} />
-                        </div>
+                        {/* Requested Role & Job ID (Visible only when accepted/completed) */}
+                        {(currentStatus === "accepted" || currentStatus === "completed") && (
+                            <div className="grid grid-cols-1 mt-2 gap-1 text-sm">
+                                <Info label="Email" value={sender?.email} />
+                                <Info label="Desired Role" value={request?.role} />
+                                <Info label="Job ID" value={request?.jobId} />
+                            </div>
+                        )}
 
                         {/* Email visible only after payment/accept if needed, but for now let's keep it simple */}
                         {request?.paymentStatus === "paid" && (

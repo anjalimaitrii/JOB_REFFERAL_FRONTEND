@@ -46,7 +46,7 @@ const CollegeCard = ({ viewMode, selectedCollege, colleges, collegeVisible, hand
                                         <div className="min-w-0 flex-1">
                                             <p className="font-semibold text-slate-800 truncate group-hover:text-amber-600 text-sm transition-colors duration-200">{college}</p>
                                             <p className="text-xs text-slate-400 font-light mt-0.5 flex items-center gap-1">
-                                                View alumni <ChevronRight className="w-3 h-3 transition-transform duration-200 group-hover:translate-x-1" />
+                                                View employees <ChevronRight className="w-3 h-3 transition-transform duration-200 group-hover:translate-x-1" />
                                             </p>
                                         </div>
                                     </div>
