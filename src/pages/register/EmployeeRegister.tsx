@@ -6,7 +6,6 @@ import { useEffect } from "react";
 type Company = {
   _id: string;
   name: string;
-  jobs: { _id: string; title: string }[];
 };
 
 const JOB_TITLES = [
@@ -38,6 +37,7 @@ function EmployeeRegister() {
           `${import.meta.env.VITE_API_BASE_URL}/api/company`,
         );
         const data = await res.json();
+        console.log(data, "companies")
         setCompanies(data.data);
       } catch (err) {
         console.error("Failed to fetch companies");

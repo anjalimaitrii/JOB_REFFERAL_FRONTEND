@@ -16,7 +16,7 @@ export const getCollegesWithEmployees = async () => {
     throw new Error("Failed to fetch colleges");
   }
 
-  return res.json(); 
+  return res.json();
 };
 
 export const getEmployeesByCollege = async (collegeName: string) => {
@@ -30,7 +30,7 @@ export const getEmployeesByCollege = async (collegeName: string) => {
     throw new Error("Failed to fetch employees by college");
   }
 
-  return res.json(); 
+  return res.json();
 };
 
 export const registerCompany = async (payload: {

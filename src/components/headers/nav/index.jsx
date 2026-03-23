@@ -50,13 +50,21 @@ export default function index() {
 
                 {/* Toggle - Only for employees who can switch modes */}
                 {role === "employee" && (
-                    <button
-                        onClick={() => navigate(window.location.pathname.includes("/student") ? "/employee/dashboard" : "/student/dashboard")}
-                        className={styles.toggle}
-                        title={window.location.pathname.includes("/student") ? "Switch to Employee Mode" : "Switch to Student Mode"}
-                    >
-                        <span className={styles.circle} style={{ transform: window.location.pathname.includes("/student") ? "translateX(24px)" : "translateX(0)" }}></span>
-                    </button>
+                    <div className="flex flex-col items-center">
+
+                        <span className="text-[10px] text-gray-500 mb-1">
+                            {window.location.pathname.includes("/student")
+                                ? "Switch to Employee Mode"
+                                : "Switch to Student Mode"}
+                        </span>
+
+                        <button
+                            onClick={() => navigate(window.location.pathname.includes("/student") ? "/employee/dashboard" : "/student/dashboard")}
+                            className={styles.toggle}
+                            title={window.location.pathname.includes("/student") ? "Switch to Employee Mode" : "Switch to Student Mode"}
+                        >
+                            <span className={styles.circle} style={{ transform: window.location.pathname.includes("/student") ? "translateX(24px)" : "translateX(0)" }}></span>
+                        </button> </div>
                 )}
 
                 {/* Logout */}

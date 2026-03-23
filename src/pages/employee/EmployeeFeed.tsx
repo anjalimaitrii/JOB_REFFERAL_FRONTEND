@@ -322,16 +322,24 @@ const EmployeeFeed = ({
                           <p className="text-slate-700 leading-relaxed text-[15px] whitespace-pre-wrap font-medium">
                             {post.content}
                           </p>
-                          {post.image && (
-                            <div className="mt-4 rounded-3xl overflow-hidden border border-slate-100 bg-slate-50 shadow-inner">
-                              <img
-                                src={post.image}
-                                alt="Post"
-                                onClick={() => setPreviewImage(post.image!)}
-                                className="w-full max-h-[400px] object-contain cursor-pointer transition-transform duration-300 hover:scale-[1.02]"
-                              />
-                            </div>
-                          )}
+                          {(() => {
+                            const postImages: string[] = Array.isArray(post.image) ? post.image : (typeof post.image === 'string' ? [post.image] : (post.images || []));
+                            if (postImages.length === 0) return null;
+
+                            return (
+                              <div className={`mt-4 grid gap-2 ${postImages.length === 1 ? 'grid-cols-1' : 'grid-cols-2'} rounded-3xl overflow-hidden border border-slate-100 bg-slate-50 shadow-inner`}>
+                                {postImages.map((img, idx) => (
+                                  <img
+                                    key={idx}
+                                    src={img}
+                                    alt={`Post image ${idx + 1}`}
+                                    onClick={() => setPreviewImage(img)}
+                                    className={`w-full object-cover cursor-pointer transition-transform duration-300 hover:scale-[1.02] ${postImages.length === 1 ? 'max-h-[400px] object-contain' : 'h-48'}`}
+                                  />
+                                ))}
+                              </div>
+                            );
+                          })()}
                         </div>
 
                         {/* Actions */}

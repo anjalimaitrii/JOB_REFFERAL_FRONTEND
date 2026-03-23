@@ -31,7 +31,8 @@ export interface Post {
         }[];
     };
     content: string;
-    image?: string;
+    image?: string | string[];
+    images?: string[];
     likes: string[];
     dislikes?: string[];
     comments: Comment[];
@@ -41,7 +42,7 @@ export interface Post {
 }
 
 /* Create a new post (Employees only) */
-export const createPost = async (content: string, image?: string) => {
+export const createPost = async (content: string, image?: string | string[]) => {
     const token = localStorage.getItem("token");
     const res = await fetch(`${BASE_URL}/api/posts`, {
         method: "POST",
@@ -178,7 +179,7 @@ export const deletePost = async (postId: string) => {
     return res.json();
 };
 
-export const updatePost = async (postId: string, content: string, image?: string) => {
+export const updatePost = async (postId: string, content: string, image?: string | string[]) => {
     const token = localStorage.getItem("token");
 
     const res = await fetch(`${BASE_URL}/api/posts/${postId}`, {
