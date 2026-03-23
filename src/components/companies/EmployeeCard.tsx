@@ -36,7 +36,7 @@ const EmployeeCard = ({ isDetailView,
                             <p className="text-xs text-slate-400 font-light mt-1">Try a different company or college</p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-5">
                             {employees.map((emp, i) => {
                                 const jobTitle = emp.designation || (emp as any).jobTitle || "Employee";
                                 return (

@@ -81,9 +81,9 @@ const CreatePost = ({ onPostCreated }: { onPostCreated?: () => void }) => {
                                 animate={{ scale: 1, opacity: 1 }}
                                 exit={{ scale: 0.9, opacity: 0 }}
                                 onClick={(e) => e.stopPropagation()}
-                                className="bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+                                className="bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden"
                             >
-                                <div className="flex items-center justify-between p-4 border-b shrink-0">
+                                <div className="flex items-center justify-between p-4 border-b">
                                     <h3 className="text-lg font-bold text-slate-800">Create a Post</h3>
                                     <button
                                         onClick={() => setIsExpanded(false)}
@@ -92,7 +92,7 @@ const CreatePost = ({ onPostCreated }: { onPostCreated?: () => void }) => {
                                         <X className="w-5 h-5" />
                                     </button>
                                 </div>
-                                <div className="p-4 overflow-y-auto">
+                                <div className="p-4">
                                     <div className="flex items-center gap-3 mb-4">
                                         <div className="w-10 h-10 rounded-full bg-amber-400 flex items-center justify-center text-black font-bold">
                                             {initial}
@@ -126,7 +126,7 @@ const CreatePost = ({ onPostCreated }: { onPostCreated?: () => void }) => {
                                         </div>
                                     )}
                                 </div>
-                                <div className="p-4 bg-slate-50 border-t flex items-center justify-between shrink-0">
+                                <div className="p-4 bg-slate-50 border-t flex items-center justify-between">
                                     <div className="flex items-center gap-2">
                                         <input
                                             type="file"

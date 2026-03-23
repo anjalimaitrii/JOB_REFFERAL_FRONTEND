@@ -49,14 +49,6 @@ export function FloatingDockDemo() {
         },
 
         {
-            title: "Stories",
-            icon: (
-                <IconBook className="h-full w-full text-white" />
-            ),
-            href: "/admin/stories",
-        },
-
-        {
             title: "Feed Posts",
             icon: (
                 <IconActivity className="h-full w-full text-white" />
