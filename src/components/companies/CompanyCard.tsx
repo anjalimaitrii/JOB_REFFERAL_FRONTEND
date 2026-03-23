@@ -1,4 +1,4 @@
-import { Building2, MapPin, Globe, Briefcase, ChevronRight } from "lucide-react";
+import { Building2, MapPin, Globe, ChevronRight } from "lucide-react";
 
 type Props = {
     viewMode: "company" | "college";

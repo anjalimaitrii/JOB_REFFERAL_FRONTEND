@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { type AdminStats, getAdminStats } from "../../services/admin.service";
 import { useNavigate } from "react-router-dom";
-import { Users, Building2, ChevronRight, LayoutDashboard, LogOut, Activity, MessageSquare } from "lucide-react";
+import { Users, Building2, ChevronRight, LayoutDashboard, LogOut, Activity } from "lucide-react";
 import { FloatingDockDemo } from "../../components/ui/dock";
 
 

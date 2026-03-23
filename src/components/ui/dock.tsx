@@ -3,7 +3,6 @@ import {
     IconLayoutDashboard,
     IconUsers,
     IconBuilding,
-    IconBook,
     IconActivity,
     IconLogout
 } from "@tabler/icons-react";
