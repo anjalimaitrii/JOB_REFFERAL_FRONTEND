@@ -2,8 +2,9 @@ import * as React from "react";
 import BottomNavigation from "@mui/material/BottomNavigation";
 import BottomNavigationAction from "@mui/material/BottomNavigationAction";
 import Box from "@mui/material/Box";
-import { Layout, User, Mail, Wallet } from "lucide-react";
+import { Layout, User, Mail, Wallet, LogOut, ToggleLeft } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import PositionedMenu from "@/components/ui/PositionedMenu";
 
 export default function MobileBottomNav() {
     const navigate = useNavigate();
@@ -25,9 +26,16 @@ export default function MobileBottomNav() {
     const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
         if (newValue === "home") navigate(effectiveRole === "employee" ? "/employee/dashboard" : "/student/dashboard");
         if (newValue === "feed") navigate(effectiveRole === "employee" ? "/employee/posts" : "/student/posts");
-        if (newValue === "profile") navigate("/profile");
+        if (newValue === "profile") navigate(effectiveRole === "employee" ? "/employee/profile" : "/student/profile");
         if (newValue === "requests") navigate(effectiveRole === "employee" ? "/employee/requests" : "/student/requests");
-        if (newValue === "wallet") navigate("/wallet");
+        if (newValue === "wallet") navigate(effectiveRole === "employee" ? "/employee/wallet" : "/student/wallet");
+        if (newValue === "switch") {
+            navigate(
+                window.location.pathname.includes("/student")
+                    ? "/employee/dashboard"
+                    : "/student/dashboard"
+            );
+        }
         if (newValue === "logout") {
             localStorage.clear();
             navigate("/");
@@ -72,6 +80,11 @@ export default function MobileBottomNav() {
                     value="profile"
                     icon={<User size={20} />}
                 />
+
+                <BottomNavigationAction
+
+                />
+                <PositionedMenu />
             </BottomNavigation>
         </Box>
     );

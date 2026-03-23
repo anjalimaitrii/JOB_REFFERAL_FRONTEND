@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import FloatingIcons from "./FloatingIcons";
 
 export default function Hero() {
     return (
@@ -19,7 +18,6 @@ export default function Hero() {
             <div className="absolute inset-0 bg-black/40" />
 
 
-            <FloatingIcons />
 
             <motion.div
                 className="relative z-10 flex flex-col items-center justify-center h-full text-center px-6"
