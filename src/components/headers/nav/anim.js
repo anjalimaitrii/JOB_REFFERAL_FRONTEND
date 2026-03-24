@@ -1,7 +1,7 @@
 export const perspective = {
     initial: {
         opacity: 0,
-        rotateX: 90,
+        // rotateX: 90,
         translateY: 80,
         translateX: -20,
     },

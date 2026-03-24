@@ -27,16 +27,18 @@ import Wallet from "./pages/Wallet";
 import NotificationBell from "./components/NotificationBell";
 import MobileBottomNav from "./pages/employee/bottomNavbar";
 import Header from "./components/headers/index.jsx";
+import { FloatingDockDemo } from "./components/ui/dock";
 
 function App() {
   const location = useLocation();
   const userString = localStorage.getItem("user");
   const user = userString ? JSON.parse(userString) : null;
   const role = localStorage.getItem("role") || user?.role;
-  const isAuthPage = ["", "/", "/register/student", "/register/employee", "/register/company", "/admin"].includes(location.pathname.replace(/\/$/, "")) || location.pathname.startsWith("/admin/");
+  const isAuthPage = ["", "/", "/register/student", "/register/employee", "/register/company", "/admin"].includes(location.pathname.replace(/\/$/, ""));
+  const isAdminPage = location.pathname.startsWith("/admin/");
 
   return (
-    <div className={`relative min-h-screen ${!isAuthPage ? "pb-20 md:pb-0" : ""}`}>
+    <div className={`relative min-h-screen ${isAdminPage ? "pb-24" : !isAuthPage ? "pb-20 md:pb-0" : ""}`}>
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<Login />} />
@@ -218,13 +220,15 @@ function App() {
         </Routes>
       </AnimatePresence>
 
-      {!isAuthPage && (role === "student" || role === "employee") && (
+      {!isAuthPage && !isAdminPage && (role === "student" || role === "employee") && (
         <div style={{ position: 'relative', zIndex: 9999 }}>
           <Header />
           <NotificationBell role={role} />
           <MobileBottomNav />
         </div>
       )}
+
+      {isAdminPage && <FloatingDockDemo />}
     </div>
   );
 }

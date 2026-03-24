@@ -62,7 +62,7 @@ export const JobInformationSection = ({
         <Input
           label="Company Name"
           icon={<Building2 className="w-4 h-4" />}
-          value={data.company || ""}
+          value={data.companyDetails.name || ""}
           placeholder="e.g. Google, Infosys"
           onChange={(e: any) => handleChange("company", e.target.value)}
         />

@@ -5,7 +5,9 @@ import { perspective } from "./anim";
 import { Link, useNavigate } from "react-router-dom";
 import { LogOut } from "lucide-react";
 
-export default function index() {
+
+
+export default function index({ closeMenu }) {
 
     const navigate = useNavigate();
     const role = localStorage.getItem("role") || "student";
@@ -16,6 +18,7 @@ export default function index() {
     const logout = () => {
         localStorage.clear();
         navigate("/");
+        closeMenu();
     };
 
     return (
@@ -35,7 +38,7 @@ export default function index() {
                                     animate="enter"
                                     exit="exit"
                                 >
-                                    <Link to={href}>
+                                    <Link to={href} onClick={closeMenu}>
                                         {title}
                                     </Link>
                                 </motion.div>
@@ -59,7 +62,8 @@ export default function index() {
                         </span>
 
                         <button
-                            onClick={() => navigate(window.location.pathname.includes("/student") ? "/employee/dashboard" : "/student/dashboard")}
+                            onClick={() => { navigate(window.location.pathname.includes("/student") ? "/employee/dashboard" : "/student/dashboard"); closeMenu(); }}
+
                             className={styles.toggle}
                             title={window.location.pathname.includes("/student") ? "Switch to Employee Mode" : "Switch to Student Mode"}
                         >

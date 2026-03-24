@@ -3,7 +3,8 @@ import styles from './style.module.scss';
 
 export default function Button({ isActive, toggleMenu }) {
     return (
-        <div className={styles.button}>
+        <div className={styles.button} >
+
             <motion.div
                 className={styles.slider}
                 animate={{ top: isActive ? "-100%" : "0%" }}
