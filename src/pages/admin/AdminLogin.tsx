@@ -1,13 +1,14 @@
 import { adminLogin } from '@/services/login.service'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { ShieldAlert, Lock, User, Loader2 } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 const AdminLogin = () => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
-
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -19,9 +20,8 @@ const AdminLogin = () => {
                 password
             })
 
-            // extra safety check
             if (data.role !== "admin") {
-                alert("Not an admin")
+                alert("Restricted: Admin access only.")
                 return
             }
 
@@ -32,67 +32,95 @@ const AdminLogin = () => {
             navigate("/admin/dashboard")
 
         } catch (err: any) {
-            alert(err.message)
+            alert(err.message || "Authentication failed")
         } finally {
             setLoading(false)
         }
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-900">
-            <div className="w-full max-w-md rounded-2xl bg-gray-800/50 backdrop-blur-xl shadow-2xl border border-gray-700 p-8">
-
-                <div className="text-center mb-8">
-                    <h2 className="text-3xl font-bold text-white mb-2">Admin Portal</h2>
-                    <p className="text-gray-400">Secure access for administrators</p>
+        <div className="min-h-screen flex items-center justify-center bg-[#f8fafc] font-sans selection:bg-indigo-100 px-4">
+            <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="w-full max-w-md"
+            >
+                <div className="text-center mb-10">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-[2rem] border border-slate-200 shadow-sm mb-6">
+                        <ShieldAlert className="w-7 h-7 text-indigo-600" />
+                    </div>
+                    <h2 className="text-2xl font-black text-slate-900 tracking-tight uppercase">Admin Management</h2>
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-2">Secure Gateway Authorization</p>
                 </div>
 
-                <form onSubmit={handleLogin} className="space-y-6">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                            Username
-                        </label>
-                        <input
-                            type="text"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            className="w-full px-4 py-3 rounded-lg bg-gray-700/50 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                            placeholder="Enter admin username"
-                        />
-                    </div>
+                <div className="bg-white rounded-[2.5rem] border border-slate-200 p-8 lg:p-10 shadow-2xl shadow-slate-200/50 relative overflow-hidden">
+                    <form onSubmit={handleLogin} className="space-y-6 relative z-10">
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+                                Administrator ID
+                            </label>
+                            <div className="relative group">
+                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-500 transition-colors">
+                                    <User className="w-4 h-4" />
+                                </div>
+                                <input
+                                    type="text"
+                                    required
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                    className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-slate-900 placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:bg-white focus:border-indigo-200 transition-all font-medium text-sm"
+                                    placeholder="admin@system.com"
+                                />
+                            </div>
+                        </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                            Password
-                        </label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-4 py-3 rounded-lg bg-gray-700/50 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                            placeholder="••••••••"
-                        />
-                    </div>
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+                                Access Key
+                            </label>
+                            <div className="relative group">
+                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-500 transition-colors">
+                                    <Lock className="w-4 h-4" />
+                                </div>
+                                <input
+                                    type="password"
+                                    required
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-slate-900 placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:bg-white focus:border-indigo-200 transition-all font-medium text-sm"
+                                    placeholder="••••••••"
+                                />
+                            </div>
+                        </div>
 
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full py-3.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-blue-500/20"
-                    >
-                        {loading ? (
-                            <span className="flex items-center justify-center gap-2">
-                                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                Verifying...
-                            </span>
-                        ) : (
-                            'Sign In'
-                        )}
-                    </button>
-                </form>
-            </div>
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full py-4 rounded-2xl bg-slate-900 text-white text-[11px] font-black uppercase tracking-[0.2em] shadow-xl shadow-slate-200 hover:bg-slate-800 active:scale-[0.98] disabled:opacity-70 disabled:grayscale transition-all flex items-center justify-center gap-3"
+                        >
+                            {loading ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 animate-spin text-indigo-400" />
+                                    Validating...
+                                </>
+                            ) : (
+                                "Authenticate"
+                            )}
+                        </button>
+                    </form>
+
+                    {/* Subtle decoration */}
+                    <div className="absolute -right-12 -bottom-12 opacity-[0.02] text-black pointer-events-none">
+                        <ShieldAlert size={200} />
+                    </div>
+                </div>
+
+                <div className="mt-8 text-center">
+                    <p className="text-[10px] text-slate-300 font-bold uppercase tracking-widest">
+                        Node-v24.3 // Secure System Kernel
+                    </p>
+                </div>
+            </motion.div>
         </div>
     )
 }

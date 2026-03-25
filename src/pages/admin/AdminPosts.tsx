@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import {
-
     type Post
 } from "../../services/post.service";
 import { deleteAdminPost, getAdminPosts } from "../../services/admin.service";
@@ -13,6 +12,7 @@ import {
     MessageSquare,
     Heart,
     Loader2,
+    Activity,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -69,121 +69,140 @@ function AdminPosts() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#fafafa] flex items-center justify-center">
-                <div className="flex flex-col items-center gap-4">
-                    <Loader2 className="w-8 h-8 text-black animate-spin" />
-                    <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Loading Post Registry...</p>
-                </div>
+            <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center">
+                <div className="w-10 h-10 border-2 border-slate-100 border-t-indigo-600 rounded-full animate-spin"></div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-[#fafafa] text-gray-900 font-sans">
+        <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans selection:bg-indigo-100">
             {/* Header Section */}
-            <header className="bg-black text-white px-6 py-4 sticky top-0 z-50 shadow-lg flex items-center justify-between">
-                <div className="flex items-center gap-3">
+            <nav className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-50 shadow-sm">
+                <div className="flex items-center gap-4">
                     <button
                         onClick={() => navigate("/admin/dashboard")}
-                        className="p-1.5 hover:bg-white/10 rounded-lg transition-all group"
+                        className="p-2 hover:bg-slate-100 rounded-xl transition-colors text-slate-500"
                     >
-                        <ChevronsLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+                        <ChevronsLeft className="w-5 h-5" />
                     </button>
-                    <div>
-                        <h1 className="text-xs font-bold tracking-[0.1em] uppercase">Feed Monitoring</h1>
-                        <p className="text-[8px] text-gray-500 font-bold uppercase">System Registry</p>
+                    <div className="flex items-center gap-2">
+                        <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
+                            <Activity className="w-4 h-4" />
+                        </div>
+                        <h1 className="text-sm font-bold tracking-tight text-slate-800 uppercase">Feed Monitoring</h1>
                     </div>
                 </div>
+                <div className="hidden md:flex items-center gap-3">
+                    <div className="px-3 py-1.5 bg-slate-50 border border-slate-100 rounded-full">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Global Activity</span>
+                    </div>
+                </div>
+            </nav>
 
-                <div className="flex items-center gap-4">
-                    <div className="bg-white/5 border border-white/10 rounded-full px-3.5 py-1.5 flex items-center gap-2.5 focus-within:border-white/30 transition-all">
-                        <Search className="w-3.5 h-3.5 text-gray-500" />
+            <main className="max-w-5xl mx-auto p-4 lg:p-8 space-y-8">
+                {/* Search and Metrics */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div className="relative flex-1 max-w-md">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
                         <input
                             type="text"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Filter activity..."
-                            className="bg-transparent border-none outline-none text-[11px] font-medium w-48 lg:w-64 placeholder:text-gray-600"
+                            placeholder="Search by keywords, user, or company..."
+                            className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-[1.2rem] text-sm focus:outline-none focus:ring-2 focus:ring-indigo-100 transition-all shadow-sm placeholder:text-slate-300"
                         />
                     </div>
-                    <div className="h-6 w-px bg-white/10 mx-1 hidden md:block" />
-                    <div className="text-right hidden md:block">
-                        <p className="text-lg font-black text-white leading-none">{filteredPosts.length}</p>
-                        <p className="text-[8px] text-gray-500 font-bold uppercase tracking-wider">Records</p>
+                    <div className="flex items-center gap-4 bg-white px-5 py-2.5 rounded-2xl border border-slate-100 shadow-sm">
+                        <div className="text-right">
+                            <p className="text-sm font-black text-slate-900 leading-none">{filteredPosts.length}</p>
+                            <p className="text-[8px] text-slate-400 font-bold uppercase tracking-wider mt-1 whitespace-nowrap">Logged Records</p>
+                        </div>
                     </div>
                 </div>
-            </header>
 
-            <main className="max-w-7xl mx-auto p-4 md:p-8 space-y-6">
-                <div className="grid grid-cols-1 gap-4">
+                {/* Posts List */}
+                <div className="grid grid-cols-1 gap-6">
                     <AnimatePresence mode="popLayout">
-                        {filteredPosts.map((post) => (
+                        {filteredPosts.map((post, idx) => (
                             <motion.div
                                 layout
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, scale: 0.95 }}
+                                exit={{ opacity: 0, scale: 0.98 }}
+                                transition={{ delay: Math.min(idx * 0.02, 0.5) }}
                                 key={post._id}
-                                className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all group"
+                                className="bg-gradient-to-br from-white to-slate-100 border border-slate-200 rounded-[2.5rem] p-6 lg:p-8 shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden relative group"
                             >
-                                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                                    {/* Author & Info */}
-                                    <div className="flex items-start gap-3 flex-1">
-                                        <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center border border-gray-100 text-xs font-bold text-gray-400">
-                                            {post.employee?.name?.charAt(0) || "U"}
+                                <div className="flex flex-col lg:flex-row gap-8 relative z-10">
+                                    {/* Author Profile */}
+                                    <div className="flex lg:flex-col items-center lg:items-start gap-4 lg:w-32 shrink-0">
+                                        <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center border border-indigo-100 text-indigo-600 font-black text-lg">
+                                            {post.employee?.name?.charAt(0)}
                                         </div>
-                                        <div className="space-y-0.5">
-                                            <div className="flex items-center gap-2">
-                                                <h3 className="text-xs font-bold text-gray-900">{post.employee?.name}</h3>
-                                                <span className="px-1.5 py-0.5 rounded-full bg-black text-white text-[8px] font-bold tracking-tighter uppercase">Contributor</span>
-                                            </div>
-                                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] font-medium text-gray-400">
-                                                <span className="flex items-center gap-1.5"><Building className="w-3 h-3" /> {post.company?.name}</span>
-                                                <span className="flex items-center gap-1.5"><Clock className="w-3 h-3" /> {new Date(post.createdAt).toLocaleDateString()}</span>
-                                                <span className="flex items-center gap-1.5"><Heart className="w-3 h-3" /> {post.likes?.length || 0}</span>
-                                                <span className="flex items-center gap-1.5"><MessageSquare className="w-3 h-3" /> {post.comments?.length || 0}</span>
-                                            </div>
+                                        <div>
+                                            <h3 className="text-xs font-bold text-slate-800 uppercase tracking-tight">{post.employee?.name}</h3>
+                                            <p className="text-[9px] text-slate-300 font-bold uppercase tracking-widest mt-0.5">Contributor</p>
                                         </div>
                                     </div>
 
-                                    {/* Post Content Preview */}
-                                    <div className="flex-[2] lg:px-4">
-                                        <p className="text-[11px] text-gray-600 line-clamp-2 leading-relaxed">
-                                            "{post.content}"
-                                        </p>
-                                        {post.image && (
-                                            <div className="mt-1.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-gray-50 border border-gray-100 text-[8px] font-bold text-gray-400 uppercase">
-                                                Attachment
+                                    {/* Main Content Area */}
+                                    <div className="flex-1 space-y-4">
+                                        <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+                                            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                                                <Building className="w-3 h-3 " />
+                                                <span className="text-slate-600">{post.company?.name || "N/A"}</span>
                                             </div>
-                                        )}
+                                            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                                                <Clock className="w-3 h-3 " />
+                                                <span className="text-slate-500">{new Date(post.createdAt).toLocaleDateString()}</span>
+                                            </div>
+
+                                        </div>
+
+                                        <div className="p-5 bg-white border border-slate-100 rounded-[1.5rem] shadow-sm">
+                                            <p className="text-sm text-slate-700 leading-relaxed italic">
+                                                "{post.content}"
+                                            </p>
+                                            {post.image && (
+                                                <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 bg-indigo-50 text-indigo-600 text-[9px] font-black uppercase tracking-widest rounded-full border border-indigo-100">
+                                                    <div className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-pulse" />
+                                                    Attachment Included
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
 
-                                    {/* Actions */}
-                                    <div className="flex items-center gap-2 justify-end">
+                                    {/* Dangerous Action */}
+                                    <div className="lg:w-16 flex items-center justify-end">
                                         <button
                                             disabled={deletingId === post._id}
                                             onClick={() => handleDelete(post._id)}
-                                            className="p-2 rounded-xl bg-red-50 text-red-400 border border-red-100 hover:bg-red-500 hover:text-white transition-all group/btn"
-                                            title="Delete Post"
+                                            className="p-3.5 rounded-2xl bg-white border border-slate-200 text-slate-300 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all active:scale-95 group/btn"
                                         >
                                             {deletingId === post._id ? (
-                                                <Loader2 className="w-4 h-4 animate-spin" />
+                                                <Loader2 className="w-5 h-5 animate-spin text-rose-600" />
                                             ) : (
-                                                <Trash2 className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
+                                                <Trash2 className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
                                             )}
                                         </button>
                                     </div>
+                                </div>
+
+                                {/* Decorative Background element */}
+                                <div className="absolute -right-6 -bottom-6 opacity-[0.02] text-black group-hover:scale-110 transition-transform duration-700 pointer-events-none">
+                                    <Activity size={160} />
                                 </div>
                             </motion.div>
                         ))}
                     </AnimatePresence>
 
                     {filteredPosts.length === 0 && (
-                        <div className="py-20 text-center space-y-4">
-                            <div className="w-16 h-16 bg-gray-50 border border-gray-100 rounded-3xl flex items-center justify-center mx-auto">
-                                <Search className="w-8 h-8 text-gray-200" />
+                        <div className="py-24 text-center bg-white border border-slate-200 rounded-[3rem] shadow-sm">
+                            <div className="w-16 h-16 bg-slate-50 border border-slate-100 rounded-[2rem] flex items-center justify-center mx-auto mb-6">
+                                <Search className="w-8 h-8 text-slate-200" />
                             </div>
-                            <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">No matching records found in the registry</p>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">No registry records found matching criteria</p>
                         </div>
                     )}
                 </div>

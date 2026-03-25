@@ -148,7 +148,7 @@ const AdminWallet = () => {
                         <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="bg-gradient-to-br from-white to-slate-200 rounded-[2.5rem] p-8 shadow-xl relative overflow-hidden text-white"
+                            className="bg-white border border-slate-200 bg-gradient-to-br from-white to-slate-100 rounded-[2.5rem] p-8 shadow-xl relative overflow-hidden text-white"
                         >
                             <div className="relative z-10">
                                 <div className="flex items-center justify-between mb-4">
@@ -175,7 +175,7 @@ const AdminWallet = () => {
                         </motion.div>
 
                         {/* Recent Transactions */}
-                        <div className="bg-gradient-to-br from-white to-slate-200 rounded-[2rem] p-6 shadow-sm overflow-hidden">
+                        <div className="bg-white border border-slate-200 bg-gradient-to-br from-white to-slate-100 rounded-[2rem] p-6 shadow-sm overflow-hidden">
                             <div className="flex items-center gap-2 mb-6 px-1">
                                 <History className="w-4 h-4 text-slate-400" />
                                 <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-500">System Activity</h3>
