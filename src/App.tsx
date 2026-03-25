@@ -17,6 +17,7 @@ import AdminLogin from "./pages/admin/AdminLogin";
 import AdminProtectedRoute from "./routes/AdminProtectedRoute";
 import AdminEmployees from "./pages/admin/AdminEmployees";
 import AdminSuccessStories from "./pages/admin/AdminSuccessStories";
+import AdminWallet from "./pages/admin/AdminWallet";
 import NotificationsPage from "./components/NotificationsPage";
 import RequestSection from "./pages/employee/request";
 import { AnimatePresence } from "framer-motion";
@@ -87,6 +88,14 @@ function App() {
             element={
               <AdminProtectedRoute>
                 <AdminSuccessStories />
+              </AdminProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/wallet"
+            element={
+              <AdminProtectedRoute>
+                <AdminWallet />
               </AdminProtectedRoute>
             }
           />

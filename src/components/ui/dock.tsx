@@ -4,7 +4,8 @@ import {
     IconUsers,
     IconBuilding,
     IconActivity,
-    IconLogout
+    IconLogout,
+    IconWallet
 } from "@tabler/icons-react";
 
 export function FloatingDockDemo() {
@@ -54,7 +55,13 @@ export function FloatingDockDemo() {
             ),
             href: "/admin/posts",
         },
-
+        {
+            title: "Wallet",
+            icon: (
+                <IconWallet className="h-full w-full text-white" />
+            ),
+            href: "/admin/wallet",
+        },
         {
             title: "Logout",
             icon: (

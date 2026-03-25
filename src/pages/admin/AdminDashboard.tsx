@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { type AdminStats, getAdminStats } from "../../services/admin.service";
 import { useNavigate } from "react-router-dom";
-import { Users, Building2, ChevronRight, LayoutDashboard, LogOut, Activity } from "lucide-react";
+import { Users, Building2, ChevronRight, LayoutDashboard, LogOut, Activity, Wallet } from "lucide-react";
 
 
 function AdminDashboard() {
@@ -102,6 +102,13 @@ function AdminDashboard() {
               icon={<Activity className="w-5 h-5" />}
               onClick={() => navigate("/admin/posts")}
               dark
+            />
+            <ModuleCard
+              title="System Wallet"
+              count={stats?.counts.employees || 0}
+              desc="Monitor system revenue and track employee performance."
+              icon={<Wallet className="w-5 h-5" />}
+              onClick={() => navigate("/admin/wallet")}
             />
           </div>
         </section>

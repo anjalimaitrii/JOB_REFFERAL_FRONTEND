@@ -25,6 +25,14 @@ export type AdminStats = {
     createdAt: string;
   }[];
 };
+export interface Transaction {
+  _id: string;
+  type: "credit" | "debit";
+  amount: number;
+  status: "pending" | "completed" | "failed";
+  createdAt: string;
+  description?: string;
+}
 
 export const getAdminStats = async (): Promise<{ data: AdminStats }> => {
   const token = localStorage.getItem("token");
@@ -69,6 +77,21 @@ export const deleteAdminPost = async (id: string) => {
   });
 
   if (!res.ok) throw new Error("Failed to delete post");
+
+  return res.json();
+};
+
+export const getAdminTransactions = async (): Promise<{ success: boolean; data: Transaction[] }> => {
+  const token = localStorage.getItem("token");
+  const res = await fetch(`${BASE_URL}/api/payment/all-transactions`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch transactions");
+  }
 
   return res.json();
 };
