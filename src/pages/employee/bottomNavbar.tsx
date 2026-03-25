@@ -125,7 +125,7 @@ export default function MobileBottomNav() {
                 )}
 
                 <MenuItem onClick={handleWalletNavigate} sx={{ fontSize: '14px', fontWeight: 500 }}>
-                    {effectiveRole === "student" ? "Refunds" : "Wallet"}
+                    Wallet
                 </MenuItem>
 
                 <MenuItem onClick={handleLogout} sx={{ fontSize: '14px', fontWeight: 500, color: '#dc2626' }}>

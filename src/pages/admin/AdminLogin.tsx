@@ -1,3 +1,4 @@
+import { adminLogin } from '@/services/login.service'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -7,23 +8,34 @@ const AdminLogin = () => {
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
 
+
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault()
         setLoading(true)
 
-        // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 800))
+        try {
+            const data = await adminLogin({
+                email: username,
+                password
+            })
 
-        if (username === 'admin' && password === '123') {
-            localStorage.setItem('token', 'admin-token')
-            localStorage.setItem('role', 'admin')
-            localStorage.setItem('user', JSON.stringify({ name: 'Admin User', role: 'admin' }))
+            // extra safety check
+            if (data.role !== "admin") {
+                alert("Not an admin")
+                return
+            }
 
-            navigate('/admin/dashboard')
-        } else {
-            alert('Invalid Admin Credentials')
+            localStorage.setItem("token", data.token)
+            localStorage.setItem("role", data.role)
+            localStorage.setItem("user", JSON.stringify(data.user))
+
+            navigate("/admin/dashboard")
+
+        } catch (err: any) {
+            alert(err.message)
+        } finally {
+            setLoading(false)
         }
-        setLoading(false)
     }
 
     return (

@@ -267,7 +267,7 @@ export default function EmployeeRequestModal({
                                         {edu.level || edu.degree}
                                     </p>
                                     <p className="text-gray-500">
-                                        {edu.school || edu.college}
+                                        {edu.school || edu.institute}
                                     </p>
                                     {edu.year && (
                                         <p className="text-xs text-gray-400">{edu.year}</p>

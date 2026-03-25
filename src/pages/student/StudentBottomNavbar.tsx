@@ -56,8 +56,8 @@ export default function StudentBottomNav() {
                     icon={<Mail size={20} />}
                 />
                 <BottomNavigationAction
-                    label="Refunds"
-                    value="refunds"
+                    label="Wallet"
+                    value="wallet"
                     icon={<Coins size={20} />}
                 />
                 <BottomNavigationAction
