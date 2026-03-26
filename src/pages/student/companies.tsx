@@ -68,6 +68,8 @@ function Companies() {
   const [selectedEmployee, setSelectedEmployee] = useState<any>(null);
   const [manualJobId, setManualJobId] = useState("");
   const [manualRole, setManualRole] = useState("");
+  const [manualDescription, setManualDescription] = useState("");
+  const [showRoleInput, setShowRoleInput] = useState(false);
   const [pageVisible, setPageVisible] = useState(false);
   const [detailView, setDetailView] = useState<"feed" | "employees">("employees");
   const [, setCompanyPosts] = useState<Post[]>([]);
@@ -230,13 +232,15 @@ function Companies() {
     }
   };
 
-  const handleSendRequest = async (employeeId: string, companyId: string, role: string, jobId?: string) => {
+  const handleSendRequest = async (employeeId: string, companyId: string, role: string, jobId?: string, description?: string) => {
     if (!role && !jobId) { alert("Please enter Job ID or Job Role"); return; }
     try {
-      await sendRequestToEmployee({ receiver: employeeId, company: companyId, role, jobId });
+      await sendRequestToEmployee({ receiver: employeeId, company: companyId, role: role || "", jobId, description });
       alert("Request sent");
       setManualRole("");
       setManualJobId("");
+      setManualDescription("");
+      setShowRoleInput(false);
       setShowModal(false);
     } catch (err: any) {
       alert(err.message || "Failed to send request");
@@ -446,7 +450,17 @@ function Companies() {
               </button>
             </div>
 
-            <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Job ID</label>
+            <div className="flex items-center justify-between">
+              <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Job ID</label>
+              {!showRoleInput && (
+                <button 
+                  onClick={() => setShowRoleInput(true)}
+                  className="text-[10px] font-bold text-amber-500 hover:text-amber-600 transition-colors uppercase tracking-wider bg-amber-50 px-2 py-0.5 rounded-md"
+                >
+                  + Add Job Role
+                </button>
+              )}
+            </div>
             <input
               value={manualJobId}
               onChange={(e) => setManualJobId(e.target.value)}
@@ -454,24 +468,45 @@ function Companies() {
               className="w-full mt-2 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-amber-400/30 focus:border-amber-300 bg-slate-50 transition-all font-mono"
             />
 
+            {showRoleInput && (
+              <div className="mt-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                <div className="flex items-center justify-between">
+                  <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Job Role</label>
+                  <button 
+                    onClick={() => { setShowRoleInput(false); setManualRole(""); }}
+                    className="text-[10px] font-bold text-slate-400 hover:text-slate-600 transition-colors uppercase tracking-wider"
+                  >
+                    Remove
+                  </button>
+                </div>
+                <input
+                  value={manualRole}
+                  onChange={(e) => setManualRole(e.target.value)}
+                  placeholder="e.g. Software Engineer"
+                  className="w-full mt-2 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-emerald-400/30 focus:border-emerald-300 bg-slate-50 transition-all"
+                />
+              </div>
+            )}
+
             <div className="mt-4">
-              <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Job Role <span className="text-slate-300 font-normal lowercase">(Optional)</span></label>
-              <input
-                value={manualRole}
-                onChange={(e) => setManualRole(e.target.value)}
-                placeholder="e.g. Software Engineer"
-                className="w-full mt-2 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-emerald-400/30 focus:border-emerald-300 bg-slate-50 transition-all"
+              <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Description <span className="text-slate-300 font-normal lowercase">(Optional)</span></label>
+              <textarea
+                value={manualDescription}
+                onChange={(e) => setManualDescription(e.target.value)}
+                placeholder="Briefly describe why you are requesting a referral..."
+                rows={3}
+                className="w-full mt-2 border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-amber-400/30 focus:border-amber-300 bg-slate-50 transition-all resize-none"
               />
             </div>
 
-            <div className="mt-4 p-3 bg-amber-50 rounded-xl border border-amber-100">
-              <p className="text-[10px] text-amber-700 leading-relaxed font-medium">
-                Please provide the correct Job ID from the company's career portal for faster referral processing.
+            <div className="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
+              <p className="text-[10px] text-slate-500 leading-relaxed font-medium">
+                Please provide the correct Job ID from the company's career portal for faster referral processing. {showRoleInput ? "Job Role helps employee identify the position." : ""}
               </p>
             </div>
 
             <button
-              onClick={() => handleSendRequest(selectedEmployee._id, selectedCompany?._id || selectedEmployee.company?._id || selectedEmployee.company, manualRole || "Referral Request", manualJobId)}
+              onClick={() => handleSendRequest(selectedEmployee._id, selectedCompany?._id || selectedEmployee.company?._id || selectedEmployee.company, manualRole, manualJobId, manualDescription)}
               disabled={!manualJobId && !manualRole}
               className="mt-5 w-full py-3.5 rounded-xl bg-black text-white font-semibold text-sm hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] transition-all duration-200"
             >

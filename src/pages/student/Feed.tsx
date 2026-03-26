@@ -541,7 +541,7 @@ const Feed = ({ companyId }: Props) => {
                         </p>
                       </div>
                     </div>
-                    <button
+                    {/* <button
                       onClick={() => handleFollowToggle(emp._id, !!emp.isFollowing)}
                       disabled={togglingFollow === emp._id}
                       className={`p-2 rounded-lg transition-all ${emp.isFollowing
@@ -555,7 +555,7 @@ const Feed = ({ companyId }: Props) => {
                       ) : (
                         <Plus className="w-4 h-4" />
                       )}
-                    </button>
+                    </button> */}
                   </div>
                 )) : (
                   <p className="text-slate-400 text-xs text-center py-4">Finding mentors...</p>

@@ -9,8 +9,6 @@ import {
     ChevronsLeft,
     Building,
     Clock,
-    MessageSquare,
-    Heart,
     Loader2,
     Activity,
 } from "lucide-react";

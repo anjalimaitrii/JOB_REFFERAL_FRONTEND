@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getAllCompaniesForAdmin, verifyCompany } from "../../services/company.service";
 import { useNavigate } from "react-router-dom";
-import { Building2, ChevronLeft, Search, Filter, CheckCircle2, XCircle, Globe, MapPin } from "lucide-react";
+import { Building2, ChevronLeft, Search, Filter, CheckCircle2, Globe, MapPin } from "lucide-react";
 import { motion } from "framer-motion";
 
 type Company = {
@@ -240,8 +240,8 @@ function StatCard({ label, count, isActive, onClick, icon, accent = "indigo" }: 
     <button
       onClick={onClick}
       className={`text-left p-6 rounded-[2rem] border transition-all duration-500 relative overflow-hidden group ${isActive
-          ? "bg-white border-slate-200 shadow-xl scale-[1.02]"
-          : "bg-slate-50 border-transparent hover:border-slate-200 opacity-70 grayscale hover:grayscale-0"
+        ? "bg-white border-slate-200 shadow-xl scale-[1.02]"
+        : "bg-slate-50 border-transparent hover:border-slate-200 opacity-70 grayscale hover:grayscale-0"
         }`}
     >
       <div className={`p-2.5 rounded-xl w-fit mb-4 transition-colors ${isActive ? accents[accent] : "bg-slate-200 text-slate-400"}`}>

@@ -58,7 +58,7 @@ export default function index({ closeMenu }) {
                         <span className="text-[10px] text-gray-500 mb-1">
                             {window.location.pathname.includes("/student")
                                 ? "Switch to Employee Mode"
-                                : "Switch to Student Mode"}
+                                : "Switch to Aspirant Mode"}
                         </span>
 
                         <button

@@ -1,6 +1,6 @@
 const BASE_URL = import.meta.env.VITE_API_BASE_URL
 
-export const sendRequestToEmployee = async (payload: { receiver: string, company: string, role: string, jobId?: string }) => {
+export const sendRequestToEmployee = async (payload: { receiver: string, company: string, role: string, jobId?: string, description?: string }) => {
   const token = localStorage.getItem("token")
 
   const res = await fetch(`${BASE_URL}/api/request`, {

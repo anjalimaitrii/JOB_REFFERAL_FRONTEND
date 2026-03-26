@@ -372,8 +372,6 @@ const StatCard = ({
 const RequestCard = ({
   companyName,
   companyLogo,
-  role,
-  jobId,
   senderName,
   status,
   onChat,
@@ -411,9 +409,6 @@ const RequestCard = ({
           <div className="min-w-0">
             <p className="font-bold text-gray-900 truncate text-sm">
               {companyName}
-            </p>
-            <p className="text-xs text-gray-400 truncate font-medium">
-              {role} {jobId && <span className="text-gray-300 font-normal ml-1">#{jobId}</span>}
             </p>
           </div>
         </div>

@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { getProfile } from "../services/user.service";
 import { getTransactions, withdrawAmount } from "../services/payment.service";
 import type { Transaction } from "../services/payment.service";
-import { Wallet as WalletIcon, ChevronsLeft, TrendingUp, History, User, Coins, ArrowUpRight, ArrowDownLeft, X, Loader2 } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Wallet as WalletIcon, ChevronsLeft, TrendingUp, History, User, Coins, ArrowUpRight, ArrowDownLeft, X, Loader2, Heart } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import PaymentModal from "@/components/ui/Paymentmodal";
 
 const Wallet = () => {
     const [user, setUser] = useState<any>(null);
@@ -13,11 +14,18 @@ const Wallet = () => {
     const [withdrawOpen, setWithdrawOpen] = useState(false);
     const [withdrawValue, setWithdrawValue] = useState("");
     const [withdrawLoading, setWithdrawLoading] = useState(false);
+    const [modalMode, setModalMode] = useState<"withdraw" | "donate">("withdraw");
     const navigate = useNavigate();
-    const location = useLocation();
     const role = localStorage.getItem("role") || "student";
     const isStudentMode = role === "employee" && location.pathname.includes("/student");
     const isEmployee = role === "employee" && !isStudentMode;
+    const [activePayment, setActivePayment] = useState<null | {
+        amount: string;
+        merchantName: string;
+        merchantInitial: string;
+        description: string;
+        orderId: string;
+    }>(null);
 
     useEffect(() => {
         fetchData();
@@ -60,6 +68,19 @@ const Wallet = () => {
         }
     };
 
+    const handleDonate = async () => {
+        const amt = parseFloat(withdrawValue);
+        if (!amt || amt <= 0) return alert("Please enter a valid amount to donate");
+
+        setActivePayment({
+            amount: amt.toFixed(2),
+            merchantName: "NGO Foundation",
+            merchantInitial: "N",
+            description: "Donation to support social causes",
+            orderId: `DON-${Date.now()}`,
+        });
+    };
+
     if (loading) {
         return (
             <div className="min-h-screen bg-slate-50 flex items-center justify-center">
@@ -100,19 +121,31 @@ const Wallet = () => {
                             </p>
                             <div className="flex items-baseline gap-2">
                                 <span className="text-4xl font-black tabular-nums tracking-tight">
-                                    ₹{user?.wallet || 0}
+                                    ₹{parseFloat(user?.wallet || 0).toFixed(2)}
                                 </span>
                                 <span className="text-sm font-bold opacity-60">INR</span>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-4">
+                        <div className="flex flex-wrap items-center gap-4">
                             {isEmployee && (
                                 <button
-                                    onClick={() => setWithdrawOpen(true)}
+                                    onClick={() => { setModalMode("withdraw"); setWithdrawOpen(true); }}
                                     className="px-6 py-3 bg-white text-indigo-600 rounded-2xl text-sm font-bold shadow-lg hover:scale-105 transition-transform active:scale-95"
                                 >
                                     Withdraw
+                                </button>
+                            )}
+                            {isEmployee && (
+                                <button
+                                    onClick={() => { setModalMode("donate"); setWithdrawOpen(true); }}
+                                    className={`px-6 py-3 rounded-2xl text-sm font-bold shadow-lg hover:scale-105 transition-transform active:scale-95 flex items-center gap-2 ${isEmployee
+                                        ? 'bg-indigo-500/20 text-white border border-white/20'
+                                        : 'bg-black/10 text-black border border-black/5'
+                                        }`}
+                                >
+                                    <Heart className="w-4 h-4" />
+                                    Donate to NGO
                                 </button>
                             )}
                             <div className={`p-3.5 rounded-2xl ${isEmployee ? 'bg-white/10' : 'bg-black/5'} backdrop-blur-md`}>
@@ -136,7 +169,7 @@ const Wallet = () => {
                             <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Performance</p>
                         </div>
                         <p className="text-xl font-bold text-slate-800 tracking-tight">
-                            ₹{user?.wallet || 0}
+                            ₹{parseFloat(user?.wallet || 0).toFixed(2)}
                         </p>
                         <p className="text-[10px] text-slate-400 mt-1">Total accumulated since registration</p>
                     </div>
@@ -230,11 +263,15 @@ const Wallet = () => {
                             </button>
 
                             <div className="flex flex-col items-center text-center">
-                                <div className="p-4 bg-indigo-50 text-indigo-500 rounded-3xl mb-4">
-                                    <Coins className="w-8 h-8" />
+                                <div className={`p-4 ${modalMode === "donate" ? "bg-rose-50 text-rose-500" : "bg-indigo-50 text-indigo-500"} rounded-3xl mb-4`}>
+                                    {modalMode === "donate" ? <Heart className="w-8 h-8" /> : <Coins className="w-8 h-8" />}
                                 </div>
-                                <h3 className="text-xl font-bold text-slate-800 mb-1">Withdraw Funds</h3>
-                                <p className="text-xs text-slate-400 font-medium px-4">Withdraw your hard-earned balance directly.</p>
+                                <h3 className="text-xl font-bold text-slate-800 mb-1">
+                                    {modalMode === "donate" ? "Donate to NGO" : "Withdraw Funds"}
+                                </h3>
+                                <p className="text-xs text-slate-400 font-medium px-4">
+                                    {modalMode === "donate" ? "Support social causes with a direct donation." : "Withdraw your hard-earned balance directly."}
+                                </p>
 
                                 <div className="w-full mt-8 space-y-4">
                                     <div className="relative">
@@ -254,13 +291,13 @@ const Wallet = () => {
                                     </div>
 
                                     <button
-                                        onClick={handleWithdraw}
+                                        onClick={modalMode === "donate" ? handleDonate : handleWithdraw}
                                         disabled={withdrawLoading || !withdrawValue}
-                                        className="w-full bg-indigo-600 text-white rounded-2xl py-4 font-bold text-sm shadow-xl shadow-indigo-200 hover:bg-indigo-700 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+                                        className={`w-full ${modalMode === "donate" ? "bg-rose-500 shadow-rose-200 hover:bg-rose-600" : "bg-indigo-600 shadow-indigo-200 hover:bg-indigo-700"} text-white rounded-2xl py-4 font-bold text-sm shadow-xl disabled:opacity-50 transition-all flex items-center justify-center gap-2`}
                                     >
                                         {withdrawLoading ? (
                                             <Loader2 className="w-5 h-5 animate-spin" />
-                                        ) : "Confirm Withdrawal"}
+                                        ) : modalMode === "donate" ? "Donate Now" : "Confirm Withdrawal"}
                                     </button>
                                 </div>
                             </div>
@@ -268,6 +305,27 @@ const Wallet = () => {
                     </div>
                 )}
             </AnimatePresence>
+
+            {activePayment && (
+                <PaymentModal
+                    amount={activePayment.amount}
+                    merchantName={activePayment.merchantName}
+                    merchantInitial={activePayment.merchantInitial}
+                    description={activePayment.description}
+                    orderId={activePayment.orderId}
+                    customerName={user?.name || "User"}
+                    customerEmail={user?.email || ""}
+                    onClose={() => setActivePayment(null)}
+                    onSuccess={async (txnId) => {
+                        console.log("Donation successful:", txnId);
+                        alert("Thank you for your generous donation!");
+                        setActivePayment(null);
+                        setWithdrawValue("");
+                        setWithdrawOpen(false);
+                        fetchData();
+                    }}
+                />
+            )}
         </div>
     );
 };

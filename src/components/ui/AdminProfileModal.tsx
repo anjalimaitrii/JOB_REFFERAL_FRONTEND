@@ -1,4 +1,4 @@
-import { X, Mail, Calendar, BookOpen, Briefcase, Code, FolderGit2, CheckCircle2, Phone, ExternalLink, Hash } from "lucide-react";
+import { X, Mail, Calendar, BookOpen, Briefcase, FolderGit2, CheckCircle2, Phone, ExternalLink, Hash } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface AdminProfileModalProps {

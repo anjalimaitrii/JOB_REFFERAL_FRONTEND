@@ -231,122 +231,138 @@ export default function EmployeeRequestModal({
                 </section>
 
                 {/* SKILLS */}
-                {sender?.skills?.length > 0 && (
-                    <section className="mb-6">
-                        <h3 className="text-sm font-bold text-gray-500 uppercase mb-3">
-                            Skills
-                        </h3>
 
-                        <div className="flex flex-wrap gap-2">
-                            {sender.skills.map((skill: string, i: number) => (
-                                <span
-                                    key={i}
-                                    className="px-3 py-1 bg-gray-100 text-xs rounded-full"
-                                >
-                                    {skill}
-                                </span>
-                            ))}
-                        </div>
-                    </section>
-                )}
+
+                {
+                    sender?.skills?.length > 0 && (
+                        <section className="mb-6">
+                            <h3 className="text-sm font-bold text-gray-500 uppercase mb-3">
+                                Skills
+                            </h3>
+
+                            <div className="flex flex-wrap gap-2">
+                                {sender.skills.map((skill: string, i: number) => (
+                                    <span
+                                        key={i}
+                                        className="px-3 py-1 bg-gray-100 text-xs rounded-full"
+                                    >
+                                        {skill}
+                                    </span>
+                                ))}
+                            </div>
+                        </section>
+                    )
+                }
 
                 {/* EDUCATION */}
-                {sender?.education?.length > 0 && (
-                    <section className="mb-6">
-                        <h3 className="text-sm font-bold text-gray-500 uppercase mb-3">
-                            Education
-                        </h3>
+                {
+                    sender?.education?.length > 0 && (
+                        <section className="mb-6">
+                            <h3 className="text-sm font-bold text-gray-500 uppercase mb-3">
+                                Education
+                            </h3>
 
-                        <div className="space-y-2">
-                            {sender.education.map((edu: any, i: number) => (
-                                <div
-                                    key={i}
-                                    className="border rounded-lg p-3 text-sm bg-gray-50"
-                                >
-                                    <p className="font-semibold">
-                                        {edu.level || edu.degree}
-                                    </p>
-                                    <p className="text-gray-500">
-                                        {edu.school || edu.institute}
-                                    </p>
-                                    {edu.year && (
-                                        <p className="text-xs text-gray-400">{edu.year}</p>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
-                    </section>
-                )}
+                            <div className="space-y-2">
+                                {sender.education.map((edu: any, i: number) => (
+                                    <div
+                                        key={i}
+                                        className="border rounded-lg p-3 text-sm bg-gray-50"
+                                    >
+                                        <p className="font-semibold">
+                                            {edu.level || edu.degree}
+                                        </p>
+                                        <p className="text-gray-500">
+                                            {edu.school || edu.institute}
+                                        </p>
+                                        {edu.year && (
+                                            <p className="text-xs text-gray-400">{edu.year}</p>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    )
+                }
 
                 {/* PROJECTS */}
-                {sender?.projects?.length > 0 && (
-                    <section className="mb-6">
-                        <h3 className="text-sm font-bold text-gray-500 uppercase mb-3">
-                            Projects
-                        </h3>
+                {
+                    sender?.projects?.length > 0 && (
+                        <section className="mb-6">
+                            <h3 className="text-sm font-bold text-gray-500 uppercase mb-3">
+                                Projects
+                            </h3>
 
-                        <div className="space-y-3">
-                            {sender.projects.map((project: any, i: number) => (
-                                <div key={i} className="border rounded-lg p-3 text-sm space-y-1">
+                            <div className="space-y-3">
+                                {sender.projects.map((project: any, i: number) => (
+                                    <div key={i} className="border rounded-lg p-3 text-sm space-y-1">
 
-                                    {/* Project Title */}
-                                    <p className="font-semibold text-gray-900">
-                                        {project.title}
-                                    </p>
-
-                                    {/* Project Name */}
-                                    {project.name && (
-                                        <p className="text-gray-700">
-                                            <span className="font-semibold">Name:</span> {project.name}
+                                        {/* Project Title */}
+                                        <p className="font-semibold text-gray-900">
+                                            {project.title}
                                         </p>
-                                    )}
 
-                                    {/* Description */}
-                                    {project.description && (
-                                        <p className="text-gray-500 text-xs">
-                                            {project.description}
-                                        </p>
-                                    )}
+                                        {/* Project Name */}
+                                        {project.name && (
+                                            <p className="text-gray-700">
+                                                <span className="font-semibold">Name:</span> {project.name}
+                                            </p>
+                                        )}
 
-                                    {/* Link */}
-                                    {project.link && (
-                                        <a
-                                            href={project.link}
-                                            target="_blank"
-                                            className="text-blue-500 text-xs hover:underline"
-                                        >
-                                            View Project
-                                        </a>
-                                    )}
+                                        {/* Description */}
+                                        {project.description && (
+                                            <p className="text-gray-500 text-xs">
+                                                {project.description}
+                                            </p>
+                                        )}
 
-                                </div>
-                            ))}
-                        </div>
-                    </section>
-                )}
+                                        {/* Link */}
+                                        {project.link && (
+                                            <a
+                                                href={project.link}
+                                                target="_blank"
+                                                className="text-blue-500 text-xs hover:underline"
+                                            >
+                                                View Project
+                                            </a>
+                                        )}
+
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    )
+                }
 
                 {/* EXPERIENCE */}
-                {sender?.experience?.length > 0 && (
-                    <section className="mb-6">
-                        <h3 className="text-sm font-bold text-gray-500 uppercase mb-3">
-                            Experience
-                        </h3>
+                {
+                    sender?.experience?.length > 0 && (
+                        <section className="mb-6">
+                            <h3 className="text-sm font-bold text-gray-500 uppercase mb-3">
+                                Experience
+                            </h3>
 
-                        {sender.experience.map((exp: any, i: number) => (
-                            <div
-                                key={i}
-                                className="border rounded-lg p-3 text-sm mb-2"
-                            >
-                                <p className="font-semibold">{exp.company}</p>
-                                {exp.role && (
-                                    <p className="text-gray-500 text-xs">{exp.role}</p>
-                                )}
-                            </div>
-                        ))}
-                    </section>
-                )}
-            </div>
-        </div>
+                            {sender.experience.map((exp: any, i: number) => (
+                                <div
+                                    key={i}
+                                    className="border rounded-lg p-3 text-sm mb-2"
+                                >
+                                    <p className="font-semibold">{exp.company}</p>
+                                    {exp.role && (
+                                        <p className="text-gray-500 text-xs">{exp.role}</p>
+                                    )}
+                                </div>
+                            ))}
+                        </section>
+                    )
+                }
+                <section>
+                    <h3 className="text-sm font-bold text-gray-500 uppercase mb-3">
+                        Description
+                    </h3>
+                    <div className="border rounded-lg p-3 text-sm mb-2 text-gray-900" >{request.description}</div>
+                </section>
+            </div >
+        </div >
     );
 }
 
