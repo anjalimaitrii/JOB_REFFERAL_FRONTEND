@@ -10,9 +10,11 @@ const SUGGESTED_SKILLS = [
 export const Skills = ({
   data = [],
   onChange,
+  themeColor = "indigo",
 }: {
   data?: string[];
   onChange: (skills: string[]) => void;
+  themeColor?: string;
 }) => {
   const [input, setInput] = useState("");
 
@@ -41,33 +43,45 @@ export const Skills = ({
     (s) => !data.includes(s) && s.toLowerCase().includes(input.toLowerCase())
   );
 
+  const theme = {
+    bg: `bg-${themeColor}-50`,
+    icon: `text-${themeColor}-600`,
+    text: `text-${themeColor}-600`,
+    ring: `ring-${themeColor}-50`,
+    focus: `focus-within:border-${themeColor}-400 focus-within:ring-${themeColor}-50`,
+    hoverBg: `hover:bg-${themeColor}-50`,
+    hoverText: `hover:text-${themeColor}-600`,
+    hoverBorder: `hover:border-${themeColor}-400`,
+    badge: `bg-${themeColor}-50 text-${themeColor}-600 border-${themeColor}-100`
+  };
+
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
 
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center">
-          <Code2 className="w-4 h-4 text-gray-600" />
+        <div className={`w-10 h-10 rounded-xl ${theme.bg} flex items-center justify-center`}>
+          <Code2 className={`w-5 h-5 ${theme.icon}`} />
         </div>
         <div>
-          <h3 className="font-semibold text-gray-900">Skills</h3>
-          <p className="text-xs text-gray-400">Type and press Enter to add a skill</p>
+          <h3 className="text-lg font-bold text-slate-900 tracking-tight leading-none mb-1">Toolkit & Expertise</h3>
+          <p className="text-xs text-slate-500 font-medium">Highlight your technical stack</p>
         </div>
       </div>
 
       {/* Tag input box */}
-      <div className="border border-gray-200 rounded-xl p-3 bg-gray-50 focus-within:bg-white focus-within:border-gray-400 focus-within:ring-2 focus-within:ring-gray-100 transition-all min-h-[56px] flex flex-wrap gap-2">
+      <div className={`border border-slate-200 rounded-xl p-3.5 bg-slate-50/50 focus-within:bg-white ${theme.focus} transition-all min-h-[56px] flex flex-wrap gap-2 shadow-inner group`}>
         {/* Existing skill tags */}
         {data.map((skill, index) => (
           <span
             key={index}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-900 text-white text-xs font-medium rounded-lg"
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 text-white text-[11px] font-bold rounded-lg animate-in fade-in zoom-in-95 duration-200 shadow-md shadow-slate-100 ring-4 ${theme.ring}`}
           >
             {skill}
             <button
               type="button"
               onClick={() => removeSkill(index)}
-              className="hover:text-gray-300 transition"
+              className="text-slate-400 hover:text-white transition-colors p-0.5 rounded-md hover:bg-white/10"
             >
               <X className="w-3 h-3" />
             </button>
@@ -79,27 +93,28 @@ export const Skills = ({
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={data.length === 0 ? "e.g. React, Python, SQL..." : "Add more..."}
-          className="flex-1 min-w-[120px] bg-transparent outline-none text-sm text-gray-800 placeholder-gray-400"
+          placeholder={data.length === 0 ? "Search skills (e.g. React, Python...)" : "Add skill..."}
+          className="flex-1 min-w-[150px] bg-transparent outline-none text-sm font-semibold text-slate-800 placeholder-slate-400"
         />
       </div>
 
-      <p className="text-xs text-gray-400 mt-1.5 ml-1">
-        Press <kbd className="px-1 py-0.5 bg-gray-100 border border-gray-200 rounded text-[10px]">Enter</kbd> or{" "}
-        <kbd className="px-1 py-0.5 bg-gray-100 border border-gray-200 rounded text-[10px]">,</kbd> to add
-      </p>
+      <div className="flex items-center gap-2 mt-2.5 ml-1 text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-none">
+        <span>Press</span>
+        <kbd className="px-1.5 py-0.5 bg-white border border-slate-200 rounded text-slate-500 shadow-sm leading-none">Enter</kbd>
+        <span>to sync</span>
+      </div>
 
       {/* Suggestions */}
       {input && suggestions.length > 0 && (
-        <div className="mt-3">
-          <p className="text-xs text-gray-400 mb-2">Suggestions</p>
+        <div className="mt-5 animate-in slide-in-from-top-1 duration-200">
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2.5 ml-1 leading-none">Matching Toolkit</p>
           <div className="flex flex-wrap gap-2">
-            {suggestions.slice(0, 6).map((s) => (
+            {suggestions.slice(0, 8).map((s) => (
               <button
                 key={s}
                 type="button"
                 onClick={() => addSkill(s)}
-                className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium border border-dashed border-gray-300 text-gray-600 rounded-lg hover:border-gray-500 hover:text-gray-900 transition"
+                className={`flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold border border-slate-200 text-slate-600 rounded-lg ${theme.hoverBorder} ${theme.hoverText} ${theme.hoverBg} transition-all bg-white shadow-sm`}
               >
                 <Plus className="w-3 h-3" />
                 {s}
@@ -109,19 +124,19 @@ export const Skills = ({
         </div>
       )}
 
-      {/* Quick-add suggestions (when input is empty) */}
-      {!input && data.length < 5 && (
-        <div className="mt-4">
-          <p className="text-xs text-gray-400 mb-2">Quick add</p>
+      {/* Quick-add suggestions */}
+      {!input && (
+        <div className="mt-6">
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2.5 ml-1 leading-none">Suggested Expertise</p>
           <div className="flex flex-wrap gap-2">
-            {SUGGESTED_SKILLS.filter((s) => !data.includes(s)).slice(0, 8).map((s) => (
+            {SUGGESTED_SKILLS.filter((s) => !data.includes(s)).slice(0, 10).map((s) => (
               <button
                 key={s}
                 type="button"
                 onClick={() => addSkill(s)}
-                className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium border border-dashed border-gray-200 text-gray-500 rounded-lg hover:border-gray-400 hover:text-gray-800 transition"
+                className={`flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold bg-white border border-slate-200 text-slate-500 rounded-lg ${theme.hoverBorder} ${theme.hoverText} hover:shadow-md transition-all shadow-sm`}
               >
-                <Plus className="w-3 h-3" />
+                <Plus className={`w-3 h-3 text-slate-300`} />
                 {s}
               </button>
             ))}
@@ -129,11 +144,18 @@ export const Skills = ({
         </div>
       )}
 
-      {/* Count */}
+      {/* Persistence Info */}
       {data.length > 0 && (
-        <p className="text-xs text-gray-400 mt-3">
-          {data.length} skill{data.length !== 1 ? "s" : ""} added
-        </p>
+        <div className="mt-6 pt-5 border-t border-slate-100 flex items-center justify-between">
+          <p className="text-[11px] font-bold text-slate-400 uppercase">
+            {data.length} Experts Identified
+          </p>
+          {data.length >= 5 ? (
+            <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-100">Strong Toolkit</span>
+          ) : (
+            <span className={`text-[9px] font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-lg border border-amber-100`}>Needs {5 - data.length} more skills</span>
+          )}
+        </div>
       )}
     </div>
   );

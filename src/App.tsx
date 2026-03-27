@@ -29,12 +29,34 @@ import NotificationBell from "./components/NotificationBell";
 import MobileBottomNav from "./pages/employee/bottomNavbar";
 import Header from "./components/headers/index.jsx";
 import { FloatingDockDemo } from "./components/ui/dock";
+import { useState, useEffect } from "react";
 
 function App() {
   const location = useLocation();
-  const userString = localStorage.getItem("user");
-  const user = userString ? JSON.parse(userString) : null;
-  const role = localStorage.getItem("role") || user?.role;
+  const [role, setRole] = useState<string | null>(null);
+  const [isInitialLoading, setIsInitialLoading] = useState(false);
+
+  useEffect(() => {
+    const userString = localStorage.getItem("user");
+    const userData = userString ? JSON.parse(userString) : null;
+    const roleData = localStorage.getItem("role") || userData?.role;
+    setRole(roleData);
+
+    if (localStorage.getItem("justLoggedIn") === "true" && roleData === "student") {
+      setIsInitialLoading(true);
+    } else {
+      setIsInitialLoading(false);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const handleDashboardLoaded = () => {
+      setIsInitialLoading(false);
+    };
+    window.addEventListener("dashboardLoaded", handleDashboardLoaded);
+    return () => window.removeEventListener("dashboardLoaded", handleDashboardLoaded);
+  }, []);
+
   const isAuthPage = ["", "/", "/register/student", "/register/employee", "/register/company", "/admin"].includes(location.pathname.replace(/\/$/, ""));
   const isAdminPage = location.pathname.startsWith("/admin/");
 
@@ -229,7 +251,7 @@ function App() {
         </Routes>
       </AnimatePresence>
 
-      {!isAuthPage && !isAdminPage && (role === "student" || role === "employee") && (
+      {!isAuthPage && !isAdminPage && (role === "student" || role === "employee") && !isInitialLoading && (
         <div style={{ position: 'relative', zIndex: 9999 }}>
           <Header />
           <NotificationBell role={role} />

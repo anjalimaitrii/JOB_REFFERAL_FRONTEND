@@ -129,15 +129,17 @@ const HeroHeader = ({
 
                             {/* Detail View Filters: Post & Emp */}
                             <div className="flex flex-wrap gap-2 mt-4">
-                                <button
-                                    onClick={() => setDetailView("feed")}
-                                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all duration-200 ${detailView === "feed"
-                                        ? "bg-amber-400 text-black border-amber-400"
-                                        : "border-white/15 text-white/40 hover:border-white/30 hover:text-white/70"
-                                        }`}
-                                >
-                                    Post
-                                </button>
+                                {selectedCompany && (
+                                    <button
+                                        onClick={() => setDetailView("feed")}
+                                        className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all duration-200 ${detailView === "feed"
+                                            ? "bg-amber-400 text-black border-amber-400"
+                                            : "border-white/15 text-white/40 hover:border-white/30 hover:text-white/70"
+                                            }`}
+                                    >
+                                        Post
+                                    </button>
+                                )}
                                 <button
                                     onClick={() => setDetailView("employees")}
                                     className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all duration-200 ${detailView === "employees"

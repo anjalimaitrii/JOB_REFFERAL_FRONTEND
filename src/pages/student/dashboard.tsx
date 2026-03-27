@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import LoadingScreen from "./loadingScreen";
 import Hero from "./Hero";
@@ -8,11 +8,11 @@ const StudentDashboard = () => {
     localStorage.getItem("justLoggedIn") === "true",
   );
 
-  useEffect(() => {
-    if (isLoading) {
-      localStorage.removeItem("justLoggedIn");
-    }
-  }, [isLoading]);
+  const handleLoadingComplete = () => {
+    setIsLoading(false);
+    localStorage.removeItem("justLoggedIn");
+    window.dispatchEvent(new CustomEvent("dashboardLoaded"));
+  };
 
   return (
     <>
@@ -23,7 +23,7 @@ const StudentDashboard = () => {
         transition={{ duration: 0.3 }}
       >
         <AnimatePresence mode="wait">
-          {isLoading && <LoadingScreen onComplete={() => setIsLoading(false)} />}
+          {isLoading && <LoadingScreen onComplete={handleLoadingComplete} />}
         </AnimatePresence>
         <main className="bg-rudra-black min-h-screen">
           <Hero />

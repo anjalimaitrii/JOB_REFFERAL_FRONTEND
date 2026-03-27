@@ -218,6 +218,7 @@ function Companies() {
   const handleCollegeClick = async (collegeName: string) => {
     setSelectedCollege(collegeName);
     setSelectedCompany(null);
+    setDetailView("employees");
 
     try {
       const res = await getEmployeesByCollege(collegeName);
@@ -453,7 +454,7 @@ function Companies() {
             <div className="flex items-center justify-between">
               <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Job ID</label>
               {!showRoleInput && (
-                <button 
+                <button
                   onClick={() => setShowRoleInput(true)}
                   className="text-[10px] font-bold text-amber-500 hover:text-amber-600 transition-colors uppercase tracking-wider bg-amber-50 px-2 py-0.5 rounded-md"
                 >
@@ -472,7 +473,7 @@ function Companies() {
               <div className="mt-4 animate-in fade-in slide-in-from-top-2 duration-300">
                 <div className="flex items-center justify-between">
                   <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Job Role</label>
-                  <button 
+                  <button
                     onClick={() => { setShowRoleInput(false); setManualRole(""); }}
                     className="text-[10px] font-bold text-slate-400 hover:text-slate-600 transition-colors uppercase tracking-wider"
                   >

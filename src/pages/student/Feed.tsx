@@ -28,7 +28,7 @@ import {
   followEmployee,
   unfollowEmployee,
 } from "../../services/follow.service";
-import { getAllEmployees } from "../../services/employee.service";
+import { getEmployeesByCompany, getAllEmployees } from "../../services/employee.service";
 import { getCompanies } from "../../services/company.service";
 
 type Props = {
@@ -64,14 +64,19 @@ const Feed = ({ companyId }: Props) => {
   const fetchSidebarData = async () => {
     try {
       const [empRes, compRes] = await Promise.all([
-        getAllEmployees(),
+        companyId ? getEmployeesByCompany(companyId) : getAllEmployees(),
         getCompanies()
       ]);
 
       const employees = Array.isArray(empRes.data) ? empRes.data : (Array.isArray(empRes) ? empRes : []);
       const companies = Array.isArray(compRes.data) ? compRes.data : (Array.isArray(compRes) ? compRes : []);
 
-      setSuggestedEmployees(employees.slice(0, 4));
+      // Sort by wallet amount and slice to top 4
+      const sortedMentors = [...employees]
+        .sort((a: any, b: any) => (b.wallet || 0) - (a.wallet || 0))
+        .slice(0, 4);
+
+      setSuggestedEmployees(sortedMentors);
       setTrendingCompanies(companies.slice(0, 2));
     } catch (error) {
       console.error("Failed to fetch sidebar data", error);
@@ -117,7 +122,7 @@ const Feed = ({ companyId }: Props) => {
   useEffect(() => {
     fetchPosts();
     fetchSidebarData();
-  }, [filter]);
+  }, [filter, companyId]);
 
   const handleLike = async (postId: string) => {
     try {
