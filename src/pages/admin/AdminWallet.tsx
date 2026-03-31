@@ -15,9 +15,6 @@ import {
     CreditCard,
     FileText,
     CheckCircle2,
-    XCircle,
-    TrendingDown,
-    Activity
 } from "lucide-react";
 import { getProfile } from "../../services/user.service";
 import { getAdminTransactions, getAdminRequests } from "../../services/admin.service";
@@ -55,7 +52,10 @@ const AdminWallet = () => {
         expectedFulfillments: 0,
         actualFulfillments: 0,
         totalExpectedRevenue: 0,
-        actualRevenue: 0
+        actualRevenue: 0,
+        refundedReferrals: 0,
+        refundedAmount: 0
+
     });
 
     useEffect(() => {
@@ -99,7 +99,10 @@ const AdminWallet = () => {
                 expectedFulfillments: successfulPmts,
                 actualFulfillments: actualFulfills,
                 totalExpectedRevenue: totalExpectedRev,
-                actualRevenue: actualRev
+                actualRevenue: actualRev,
+                refundedReferrals: reqs.filter((r: any) => r.status === "refunded" && r.paymentStatus === "refunded").length,
+                refundedAmount: reqs.filter((r: any) => r.status === "refunded" && r.paymentStatus === "refunded").reduce((sum: number, r: any) => sum + (Number(r.amount) || 0), 0) * 0.60
+
             });
         } catch (err) {
             console.error("Failed to fetch admin wallet data", err);
@@ -188,7 +191,7 @@ const AdminWallet = () => {
 
             <main className="max-w-7xl mx-auto p-4 lg:p-8 space-y-8">
                 {/* Metrics Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                     {/* Card 1: Acceptance Rate */}
                     <motion.div
                         initial={{ opacity: 0, y: 10 }}
@@ -247,7 +250,8 @@ const AdminWallet = () => {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col relative overflow-hidden group hover:border-amber-200 transition-colors"
+                        onClick={() => navigate('/admin/referrals')}
+                        className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col relative overflow-hidden group hover:border-amber-200 transition-colors cursor-pointer"
                     >
                         <div className="flex justify-between items-start mb-4 relative z-10">
                             <div>
@@ -273,6 +277,32 @@ const AdminWallet = () => {
                         <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-amber-50 rounded-full blur-2xl -z-0 group-hover:bg-amber-100 transition-colors duration-500" />
                     </motion.div>
 
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col relative overflow-hidden group hover:border-amber-200 transition-colors cursor-pointer"
+                    >
+                        <div className="flex justify-between items-start mb-4 relative z-10">
+                            <div>
+                                <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Refunded Referrals</h3>
+                                <p className="text-3xl font-black text-slate-800 mt-1 tracking-tight">
+                                    {requestStats.refundedReferrals}
+                                </p>
+                            </div>
+                            <div className="p-3 bg-amber-50 text-amber-600 rounded-2xl group-hover:scale-110 transition-transform">
+                                <CheckCircle2 className="w-5 h-5" />
+                            </div>
+                        </div>
+                        <div className="mt-auto pt-4 border-t border-slate-50 flex flex-col gap-1 relative z-10">
+                            <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-medium text-slate-500 uppercase">Refunded Amount</span>
+                                <span className="text-xs font-bold text-slate-700">₹{parseFloat(requestStats.refundedAmount.toString()).toFixed(2)}</span>
+                            </div>
+
+                        </div>
+                        <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-amber-50 rounded-full blur-2xl -z-0 group-hover:bg-amber-100 transition-colors duration-500" />
+                    </motion.div>
 
                 </div>
 

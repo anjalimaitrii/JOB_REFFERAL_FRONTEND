@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { fakePaymentSuccess, getMySentRequests } from "../../services/request.service";
 import Chat from "../../components/chat";
 import { useNavigate } from "react-router-dom";
-import { ChevronsLeft, MessageCircle, Inbox, Clock, CheckCircle2, XCircle, X, Briefcase, Search, CreditCard, Activity, FileText } from "lucide-react";
+import { ChevronsLeft, MessageCircle, Inbox, Clock, CheckCircle2, XCircle, X, Briefcase, Search, CreditCard, Activity } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import PaymentModal from "@/components/ui/Paymentmodal";
 

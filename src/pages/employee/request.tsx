@@ -370,8 +370,6 @@ const StatCard = ({
 
 /* ── REQUEST CARD (Admin Dashboard Style) ── */
 const RequestCard = ({
-  companyName,
-  companyLogo,
   senderName,
   status,
   onChat,
@@ -389,60 +387,37 @@ const RequestCard = ({
   return (
     <div className="group bg-gradient-to-br from-white via-[#fcfcfc] to-[#f5f5f5] rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 px-5 py-4 flex flex-col gap-3">
 
-      {/* Top row */}
-      <div className="flex items-center justify-between gap-3 w-full">
+      <div className="flex items-center justify-between gap-3">
 
-        {/* Left side */}
-        <div className="flex items-center gap-3 min-w-0 flex-1">
-          {companyLogo ? (
-            <img
-              src={companyLogo}
-              alt={companyName}
-              className="w-10 h-10 rounded-xl object-contain border border-gray-100 bg-gray-50 p-1 shrink-0"
-            />
-          ) : (
-            <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-sm font-bold text-gray-400 shrink-0">
-              {companyName.charAt(0)}
-            </div>
-          )}
+        {/* LEFT SIDE */}
+        <div className="flex items-center gap-3">
 
-          <div className="min-w-0">
-            <p className="font-bold text-gray-900 truncate text-sm">
-              {companyName}
+          {/* Avatar */}
+          <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-sm font-bold text-gray-500">
+            {senderName?.charAt(0) || "?"}
+          </div>
+
+          {/* Text */}
+          <div>
+            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+              Request From
+            </p>
+
+            <p className="text-sm font-semibold text-gray-900">
+              {senderName}
             </p>
           </div>
-        </div>
-
-        {/* Right side */}
-        <div className="flex items-center gap-2 shrink-0">
-
-
-
-          {/* View button */}
-          <button
-            onClick={onView}
-            className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-tighter transition-all duration-200"
-          >
-            View
-          </button>
 
         </div>
 
-      </div>
+        {/* RIGHT SIDE ACTION */}
+        <button
+          onClick={onView}
+          className="text-[10px] font-bold uppercase text-gray-500 hover:text-black transition"
+        >
+          View
+        </button>
 
-      <div className="border-t border-gray-100 my-1" />
-
-      {/* Sender */}
-      <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-xl bg-gray-50 flex items-center justify-center text-xs font-bold text-gray-500 shrink-0">
-          {senderName?.charAt(0) || "?"}
-        </div>
-        <div>
-          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
-            Request From
-          </p>
-          <p className="text-sm font-semibold text-gray-900">{senderName}</p>
-        </div>
       </div>
 
       {/* Chat Button */}
