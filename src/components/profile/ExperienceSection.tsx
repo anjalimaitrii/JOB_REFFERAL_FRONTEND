@@ -49,7 +49,7 @@ export const Experience = ({
 
         <button
           onClick={addExperience}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 active:scale-95 transition-all shadow-md"
+          className="bg-gradient-to-br from-[#1a1a1a] via-[#333] to-[#444] text-white border-gray-800 shadow-xl p-6 rounded-[2rem] border flex items-center justify-center gap-2 px-4 py-2 bg-slate-900 text-xs font-bold  hover:bg-slate-800 active:scale-95 transition-all "
         >
           <Plus className="w-3.5 h-3.5" />
           Add Experience

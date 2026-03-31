@@ -59,7 +59,7 @@ const Wallet = () => {
                 alert("Withdrawal request submitted successfully!");
                 setWithdrawOpen(false);
                 setWithdrawValue("");
-                fetchData(); // Refresh balance and transactions
+                fetchData();
             }
         } catch (err: any) {
             alert(err.message || "Withdrawal failed");
@@ -69,16 +69,9 @@ const Wallet = () => {
     };
 
     const handleDonate = async () => {
-        const amt = parseFloat(withdrawValue);
-        if (!amt || amt <= 0) return alert("Please enter a valid amount to donate");
+        alert("Successfull Donated");
+        setWithdrawOpen(false);
 
-        setActivePayment({
-            amount: amt.toFixed(2),
-            merchantName: "NGO Foundation",
-            merchantInitial: "N",
-            description: "Donation to support social causes",
-            orderId: `DON-${Date.now()}`,
-        });
     };
 
     if (loading) {
@@ -90,98 +83,73 @@ const Wallet = () => {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 text-slate-900 p-4 sm:p-8 font-sans selection:bg-amber-100 pb-24">
-            <div className="max-w-4xl mx-auto">
-                {/* Header */}
-                <div className="flex items-center gap-4 mb-6">
+        <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-amber-100 pb-24">
+            {/* Header / Navbar */}
+            <nav className="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between sticky top-0 z-50 shadow-sm">
+                <div className="flex items-center gap-3">
                     <button
                         onClick={() => navigate(-1)}
-                        className="p-1.5 rounded-xl transition-colors hover:bg-slate-200 text-slate-600"
+                        className="p-2 text-gray-400 hover:text-black hover:bg-gray-100 rounded-lg transition-all"
                     >
                         <ChevronsLeft className="w-5 h-5" />
                     </button>
-                    <h1 className="text-xl font-bold text-slate-800">
+                    <div className="p-1.5 bg-gray-100 rounded-lg">
+                        <WalletIcon className="w-5 h-5 text-black" />
+                    </div>
+                    <h1 className="text-sm font-bold tracking-widest text-black uppercase sm:block hidden">
                         My Wallet
                     </h1>
                 </div>
 
+                <div className="flex items-center gap-3">
+                    {isEmployee && (
+                        <>
+                            <button
+                                onClick={() => { setModalMode("withdraw"); setWithdrawOpen(true); }}
+                                className="px-4 py-2 bg-black text-white rounded-full text-[11px] font-bold uppercase tracking-widest shadow-sm hover:bg-gray-800 transition-all active:scale-95"
+                            >
+                                Withdraw
+                            </button>
+                            <button
+                                onClick={() => { setModalMode("donate"); setWithdrawOpen(true); }}
+                                className="flex items-center gap-2 px-4 py-2 bg-gray-50 border border-gray-200 text-black rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-gray-100 transition-all active:scale-95"
+                            >
+                                <Heart className="w-4 h-4 text-rose-500" />
+                                <span className="hidden sm:inline">Donate to NGO</span>
+                                <span className="sm:hidden">Donate</span>
+                            </button>
+                        </>
+                    )}
+                </div>
+            </nav>
+
+            <div className="max-w-4xl mx-auto p-4 sm:p-8 mt-4">
                 {/* Main Card */}
-                <motion.div
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className={`relative overflow-hidden rounded-3xl p-7 mb-6 shadow-xl ${isEmployee
-                        ? 'bg-gradient-to-br from-indigo-600 to-violet-700 text-white'
-                        : 'bg-gradient-to-br from-amber-400 to-orange-500 text-black'
-                        }`}
-                >
-                    <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                        <div className="flex-1">
-                            <p className={`text-[10px] font-bold opacity-70 mb-1 tracking-widest uppercase`}>
-                                {isEmployee ? "Total Balance" : "Total Refunded"}
-                            </p>
-                            <div className="flex items-baseline gap-2">
-                                <span className="text-4xl font-black tabular-nums tracking-tight">
-                                    ₹{parseFloat(user?.wallet || 0).toFixed(2)}
-                                </span>
-                                <span className="text-sm font-bold opacity-60">INR</span>
-                            </div>
-                        </div>
 
-                        <div className="flex flex-wrap items-center gap-4">
-                            {isEmployee && (
-                                <button
-                                    onClick={() => { setModalMode("withdraw"); setWithdrawOpen(true); }}
-                                    className="px-6 py-3 bg-white text-indigo-600 rounded-2xl text-sm font-bold shadow-lg hover:scale-105 transition-transform active:scale-95"
-                                >
-                                    Withdraw
-                                </button>
-                            )}
-                            {isEmployee && (
-                                <button
-                                    onClick={() => { setModalMode("donate"); setWithdrawOpen(true); }}
-                                    className={`px-6 py-3 rounded-2xl text-sm font-bold shadow-lg hover:scale-105 transition-transform active:scale-95 flex items-center gap-2 ${isEmployee
-                                        ? 'bg-indigo-500/20 text-white border border-white/20'
-                                        : 'bg-black/10 text-black border border-black/5'
-                                        }`}
-                                >
-                                    <Heart className="w-4 h-4" />
-                                    Donate to NGO
-                                </button>
-                            )}
-                            <div className={`p-3.5 rounded-2xl ${isEmployee ? 'bg-white/10' : 'bg-black/5'} backdrop-blur-md`}>
-                                <WalletIcon className="w-9 h-9" />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Decorative Circles */}
-                    <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
-                    <div className="absolute bottom-0 left-0 w-32 h-32 bg-black/5 rounded-full translate-y-1/2 -translate-x-1/4 blur-xl" />
-                </motion.div>
 
                 {/* Stats/Info Section */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                    <div className="p-5 rounded-3xl border bg-white border-slate-200 shadow-sm">
-                        <div className="flex items-center gap-2.5 mb-3">
-                            <div className="p-1.5 rounded-lg bg-amber-50 text-amber-500">
-                                <TrendingUp className="w-4 h-4" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+                    <div className="p-6 rounded-[2rem] border bg-white border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="p-2 rounded-xl bg-amber-50 text-amber-500">
+                                <TrendingUp className="w-5 h-5" />
                             </div>
-                            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Performance</p>
+                            <p className="text-[11px] font-bold text-amber-400 uppercase tracking-widest">Total Balance</p>
                         </div>
-                        <p className="text-xl font-bold text-slate-800 tracking-tight">
+                        <p className="text-2xl font-black text-slate-800 tracking-tight">
                             ₹{parseFloat(user?.wallet || 0).toFixed(2)}
                         </p>
-                        <p className="text-[10px] text-slate-400 mt-1">Total accumulated since registration</p>
+                        <p className="text-xs text-slate-400 mt-1 font-medium">Total accumulated since registration</p>
                     </div>
 
-                    <div className="p-5 rounded-3xl border bg-white border-slate-200 shadow-sm">
-                        <div className="flex items-center gap-2.5 mb-3">
-                            <div className="p-1.5 rounded-lg bg-emerald-50 text-emerald-500">
-                                <User className="w-4 h-4" />
+                    <div className="bg-gradient-to-br from-[#1a1a1a] via-[#333] to-[#444] text-white border-gray-800 shadow-xl p-6 rounded-[2rem] border ">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="p-2 rounded-xl bg-emerald-50 text-emerald-500">
+                                <User className="w-5 h-5" />
                             </div>
-                            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Account</p>
+                            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Account Status</p>
                         </div>
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest bg-emerald-50 text-emerald-600 border border-emerald-100">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em] bg-emerald-50 text-emerald-600 border border-emerald-100 mt-1">
                             Verified
                         </span>
                     </div>
@@ -189,14 +157,14 @@ const Wallet = () => {
 
                 {/* History Section */}
                 <div className="mb-20">
-                    <div className="flex items-center gap-2 mb-5 ml-1">
-                        <History className="w-4 h-4 text-amber-500" />
-                        <h2 className="text-sm font-bold text-slate-700 uppercase tracking-[0.15em]">
+                    <div className="flex items-center gap-2 mb-6 ml-2">
+                        <div className="w-1 h-1 bg-black rounded-full"></div>
+                        <h2 className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em]">
                             Recent Activity
                         </h2>
                     </div>
 
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                         {transactions.length > 0 ? (
                             transactions.map((t, idx) => (
                                 <motion.div
@@ -204,34 +172,38 @@ const Wallet = () => {
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: idx * 0.05 }}
                                     key={t._id}
-                                    className="flex items-center justify-between p-4 rounded-2xl border transition-all hover:bg-slate-50 bg-white border-slate-100 shadow-sm"
+                                    className="flex items-center justify-between p-5 rounded-[2rem] border transition-all hover:bg-slate-50 hover:shadow-md bg-white border-slate-100 shadow-sm"
                                 >
-                                    <div className="flex items-center gap-3">
-                                        <div className={`p-2.5 rounded-xl border ${t.type === 'credit'
+                                    <div className="flex items-center gap-4">
+                                        <div className={`p-3 rounded-2xl border ${t.type === 'credit'
                                             ? 'bg-emerald-50 text-emerald-500 border-emerald-100'
                                             : 'bg-rose-50 text-rose-500 border-rose-100'
                                             }`}>
-                                            {t.type === 'credit' ? <ArrowDownLeft className="w-4 h-4" /> : <ArrowUpRight className="w-4 h-4" />}
+                                            {t.type === 'credit' ? <ArrowDownLeft className="w-5 h-5" /> : <ArrowUpRight className="w-5 h-5" />}
                                         </div>
                                         <div>
-                                            <p className="font-bold text-[13px] text-slate-800 tracking-wide">
+                                            <p className="font-bold text-sm text-slate-900 tracking-wide mb-0.5">
                                                 {t.type === "credit" ? "Credited" : "Debited"}
                                             </p>
-                                            <p className="text-[10px] text-slate-400 font-medium mt-0.5 uppercase tracking-widest">
+                                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
                                                 {t.status} • {new Date(t.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}
                                             </p>
                                         </div>
                                     </div>
                                     <div className="text-right">
-                                        <p className={`font-black text-sm tracking-tight ${t.type === 'credit' ? 'text-emerald-600' : 'text-rose-600'}`}>
-                                            {t.type === 'credit' ? '+' : '-'}₹{t.amount}
+                                        <p className={`font-black text-lg tracking-tight ${t.type === 'credit' ? 'text-emerald-600' : 'text-rose-600'}`}>
+                                            {t.type === 'credit' ? '+' : '-'}₹{parseFloat(t.amount).toFixed(2)}
                                         </p>
                                     </div>
                                 </motion.div>
                             ))
                         ) : (
-                            <div className="text-center py-16 rounded-2xl border border-dashed border-slate-200 text-slate-400 bg-white">
-                                <p className="text-xs font-medium uppercase tracking-widest">No transactions found</p>
+                            <div className="text-center py-16 rounded-[2rem] border border-dashed border-slate-200 text-slate-400 bg-white shadow-sm">
+                                <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <History className="w-6 h-6 text-slate-300" />
+                                </div>
+                                <p className="text-xs font-bold uppercase tracking-widest mb-1">No transactions</p>
+                                <p className="text-sm text-slate-400 font-medium">Your activity will appear here</p>
                             </div>
                         )}
                     </div>
@@ -263,17 +235,17 @@ const Wallet = () => {
                             </button>
 
                             <div className="flex flex-col items-center text-center">
-                                <div className={`p-4 ${modalMode === "donate" ? "bg-rose-50 text-rose-500" : "bg-indigo-50 text-indigo-500"} rounded-3xl mb-4`}>
+                                <div className={`p-4 ${modalMode === "donate" ? "bg-rose-50 text-rose-500" : "bg-gray-100 text-gray-800"} rounded-3xl mb-4`}>
                                     {modalMode === "donate" ? <Heart className="w-8 h-8" /> : <Coins className="w-8 h-8" />}
                                 </div>
-                                <h3 className="text-xl font-bold text-slate-800 mb-1">
+                                <h3 className="text-xl font-black text-slate-900 mb-2">
                                     {modalMode === "donate" ? "Donate to NGO" : "Withdraw Funds"}
                                 </h3>
-                                <p className="text-xs text-slate-400 font-medium px-4">
-                                    {modalMode === "donate" ? "Support social causes with a direct donation." : "Withdraw your hard-earned balance directly."}
+                                <p className="text-xs text-slate-500 font-medium px-4 leading-relaxed">
+                                    {modalMode === "donate" ? "Support social causes with a direct donation from your balance." : "Withdraw your available balance directly to your account."}
                                 </p>
 
-                                <div className="w-full mt-8 space-y-4">
+                                <div className="w-full mt-8 space-y-5">
                                     <div className="relative">
                                         <span className="absolute left-5 top-1/2 -translate-y-1/2 text-lg font-bold text-slate-400">₹</span>
                                         <input
@@ -281,23 +253,23 @@ const Wallet = () => {
                                             placeholder="0.00"
                                             value={withdrawValue}
                                             onChange={(e) => setWithdrawValue(e.target.value)}
-                                            className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 pl-10 pr-6 text-lg font-black focus:border-indigo-500 outline-none transition-all placeholder:text-slate-300"
+                                            className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 pl-10 pr-6 text-xl font-black focus:border-black outline-none transition-all placeholder:text-slate-300"
                                         />
                                     </div>
 
-                                    <div className="flex justify-between items-center px-2">
+                                    <div className="flex justify-between items-center px-1">
                                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Available Balance</p>
-                                        <p className="text-xs font-black text-indigo-600">₹{user?.wallet || 0}</p>
+                                        <p className="text-sm font-black text-gray-900">₹{parseFloat(user?.wallet || 0).toFixed(2)}</p>
                                     </div>
 
                                     <button
                                         onClick={modalMode === "donate" ? handleDonate : handleWithdraw}
                                         disabled={withdrawLoading || !withdrawValue}
-                                        className={`w-full ${modalMode === "donate" ? "bg-rose-500 shadow-rose-200 hover:bg-rose-600" : "bg-indigo-600 shadow-indigo-200 hover:bg-indigo-700"} text-white rounded-2xl py-4 font-bold text-sm shadow-xl disabled:opacity-50 transition-all flex items-center justify-center gap-2`}
+                                        className={`w-full ${modalMode === "donate" ? "bg-rose-500 shadow-rose-200 hover:bg-rose-600" : "bg-black shadow-gray-200 hover:bg-gray-800"} text-white rounded-2xl py-4 font-bold text-sm shadow-xl disabled:opacity-50 transition-all flex items-center justify-center gap-2`}
                                     >
                                         {withdrawLoading ? (
                                             <Loader2 className="w-5 h-5 animate-spin" />
-                                        ) : modalMode === "donate" ? "Donate Now" : "Confirm Withdrawal"}
+                                        ) : modalMode === "donate" ? "Confirm Donation" : "Confirm Withdrawal"}
                                     </button>
                                 </div>
                             </div>

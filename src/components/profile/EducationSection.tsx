@@ -113,7 +113,7 @@ export const EducationSection = ({
       <div className="space-y-5">
         {education.map((edu, index) => (
           <div key={index} className="group border border-slate-100 rounded-2xl p-5 bg-slate-50/50 relative hover:border-slate-200 transition-all">
-            
+
             {/* Card top */}
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-2">

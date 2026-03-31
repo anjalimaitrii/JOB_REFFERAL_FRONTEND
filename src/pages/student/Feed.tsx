@@ -193,58 +193,54 @@ const Feed = ({ companyId }: Props) => {
   });
 
   return (
-    <section className="min-h-screen bg-slate-50 pt-24 px-4 sm:px-6 lg:px-8 pb-12 overflow-y-auto selection:bg-amber-100">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <div className="min-h-screen bg-slate-50 overflow-y-auto selection:bg-amber-100">
+      {/* Sticky Top Navbar */}
+      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-sm w-full">
+        <div className=" mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => navigate("/student/dashboard")}
+                className="p-2.5  hover:bg-slate-100 rounded-xl  text-slate-500 hover:text-slate-900 transition-all group"
+              >
+                <ChevronsLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+              </button>
+              <div>
+                <h2 className="text-xl font-bold text-slate-900 tracking-tight leading-tight">Activity Feed</h2>
+              </div>
+            </div>
 
+            <div className="flex items-center bg-slate-50 rounded-2xl border border-slate-100 px-4 py-2 flex-1 md:max-w-md shadow-inner">
+              <Search className="w-4 h-4 text-slate-400 mr-2" />
+              <input
+                type="text"
+                placeholder="Search community..."
+                className="bg-transparent border-none outline-none text-slate-800 text-sm w-full placeholder:text-slate-400 font-medium"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left Column - Main Feed */}
           <div className="lg:col-span-8 space-y-6">
 
-            {/* Header & Search */}
-            <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm mb-8 transition-shadow hover:shadow-md">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  <button
-                    onClick={() => navigate("/student/dashboard")}
-                    className="p-2.5 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-100 text-slate-500 hover:text-slate-900 transition-all group"
-                  >
-                    <ChevronsLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-                  </button>
-                  <div>
-                    <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Activity Feed</h3>
-                    <p className="text-slate-500 text-sm mt-1">
-                      Stay updated with latest opportunities and stories
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center bg-slate-50 rounded-2xl border border-slate-100 px-4 py-2 flex-1 md:max-w-md">
-                  <Search className="w-4 h-4 text-slate-400 mr-2" />
-                  <input
-                    type="text"
-                    placeholder="Search posts, people, or companies..."
-                    className="bg-transparent border-none outline-none text-slate-800 text-sm w-full placeholder:text-slate-400"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="flex gap-2 mt-6">
+            {/* Feed Filters */}
+            <div className="flex justify-end">
+              <div className="flex items-center gap-2 bg-white border border-slate-200 p-1.5 rounded-xl shadow-sm">
                 <button
                   onClick={() => setFilter("recent")}
-                  className={`px-6 py-2.5 rounded-xl border text-sm font-semibold transition-all duration-300 ${filter === "recent"
-                    ? "bg-amber-400 border-amber-400 text-black shadow-lg shadow-amber-400/20"
-                    : "border-slate-100 text-slate-500 hover:bg-slate-50 hover:border-slate-200"
-                    }`}
+                  className={`text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-lg transition-all ${filter === "recent" ? "bg-amber-400 text-white shadow-md shadow-slate-200" : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"}`}
                 >
                   Following
                 </button>
                 <button
                   onClick={() => setFilter("explore")}
-                  className={`px-6 py-2.5 rounded-xl border text-sm font-semibold transition-all duration-300 ${filter === "explore"
-                    ? "bg-amber-400 border-amber-400 text-black shadow-lg shadow-amber-400/20"
-                    : "border-slate-100 text-slate-500 hover:bg-slate-50 hover:border-slate-200"
-                    }`}
+                  className={`text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-lg transition-all ${filter === "explore" ? "bg-amber-400 text-white shadow-md shadow-slate-200" : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"}`}
                 >
                   Explore
                 </button>
@@ -303,18 +299,18 @@ const Feed = ({ companyId }: Props) => {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      className="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-md hover:border-slate-200 transition-all group"
+                      className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-all group"
                     >
-                      <div className="p-6">
+                      <div className="p-4 sm:p-5">
                         {/* Header */}
-                        <div className="flex items-center justify-between mb-6">
-                          <div className="flex items-center gap-4">
-                            <div className="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-500 font-bold text-xl shadow-sm border border-amber-100">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-sm shadow-inner shrink-0 border border-slate-200">
                               {getAuthorInitial(post.employee?.name)}
                             </div>
                             <div>
                               <div className="flex items-center gap-2">
-                                <h4 className="text-slate-900 font-bold hover:text-amber-500 transition-colors cursor-pointer">
+                                <h4 className="text-slate-900 text-sm font-bold hover:text-amber-500 transition-colors cursor-pointer">
                                   {post.employee?.name}
                                 </h4>
                                 <div className="h-1 w-1 rounded-full bg-slate-300" />
@@ -361,8 +357,8 @@ const Feed = ({ companyId }: Props) => {
                         </div>
 
                         {/* Content */}
-                        <div className="mb-6">
-                          <p className="text-slate-700 leading-relaxed text-[15px] whitespace-pre-wrap">
+                        <div className="mb-4">
+                          <p className="text-slate-700 leading-relaxed text-sm whitespace-pre-wrap">
                             {post.content}
                           </p>
                           {(() => {
@@ -386,7 +382,7 @@ const Feed = ({ companyId }: Props) => {
                         </div>
 
                         {/* Actions */}
-                        <div className="pt-5 border-t border-slate-50 flex items-center gap-8">
+                        <div className="pt-4 border-t border-slate-100 flex items-center gap-6">
                           <button
                             onClick={() => handleLike(post._id)}
                             className={`flex items-center gap-2.5 transition-all duration-300 group ${isLiked
@@ -427,7 +423,7 @@ const Feed = ({ companyId }: Props) => {
                           <motion.div
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: "auto" }}
-                            className="mt-6 pt-6 border-t border-slate-50"
+                            className="mt-4 pt-4 border-t border-slate-100"
                           >
                             <div className="flex gap-3 mb-6">
                               <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-sm font-bold text-amber-500 shrink-0 border border-slate-100">
@@ -485,96 +481,81 @@ const Feed = ({ companyId }: Props) => {
           </div>
 
           {/* Right Column - Sidebar */}
-          <div className="lg:col-span-4 space-y-8 hidden lg:block">
+          <div className="lg:col-span-4 space-y-5 hidden lg:block">
 
             {/* User Perspective Card */}
-            <div className="bg-white rounded-3xl border border-slate-100 p-8 relative overflow-hidden shadow-sm transition-shadow hover:shadow-md group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-amber-400/5 blur-[60px] rounded-full pointer-events-none" />
-              <div className="relative z-10">
-                <div className="w-20 h-20 rounded-3xl bg-amber-400 flex items-center justify-center text-black text-3xl font-black mb-6 shadow-xl shadow-amber-400/20 mx-auto">
+            <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-amber-400/5 blur-2xl rounded-full" />
+              <div className="relative z-10 text-center">
+                <div className="w-16 h-16 rounded-2xl bg-amber-400 flex items-center justify-center text-black text-2xl font-black mb-4 shadow-lg shadow-amber-200 mx-auto transform group-hover:rotate-3 transition-transform">
                   {userInitial}
                 </div>
-                <div className="text-center">
-                  <h4 className="text-xl font-bold text-slate-900 mb-1">Hello, {userName}!</h4>
-                  <p className="text-slate-500 text-sm mb-6">Aspirant Access</p>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-slate-50/50 p-4 rounded-2xl border border-slate-100 text-center">
-                      <p className="text-amber-500 font-bold text-lg">{posts.length}</p>
-                      <p className="text-[10px] text-slate-400 uppercase tracking-widest font-black">Feed</p>
-                    </div>
-                    <div className="bg-slate-50/50 p-4 rounded-2xl border border-slate-100 text-center">
-                      <p className="text-emerald-500 font-bold text-lg">Active</p>
-                      <p className="text-[10px] text-slate-400 uppercase tracking-widest font-black">Status</p>
-                    </div>
+                <h4 className="text-lg font-black text-slate-900 tracking-tight">Hello, {userName}!</h4>
+                <p className="text-slate-500 font-bold text-[11px] mb-5">Aspirant Access</p>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                    <p className="text-amber-500 font-black text-xl">{posts.length}</p>
+                    <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest mt-0.5">Feed</p>
                   </div>
-                  <button
-                    onClick={() => navigate("/profile")}
-                    className="w-full mt-6 py-3 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold rounded-2xl border border-slate-200 transition-all"
-                  >
-                    View My Profile
-                  </button>
+                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                    <p className="text-emerald-500 font-black text-xl">Active</p>
+                    <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest mt-0.5">Status</p>
+                  </div>
                 </div>
+
+                <button
+                  onClick={() => navigate("/profile")}
+                  className="w-full mt-5 py-2.5 bg-slate-900 hover:bg-black text-white text-[10px] font-black uppercase tracking-widest rounded-xl border border-slate-800 transition-all shadow-md shadow-slate-200"
+                >
+                  View My Profile
+                </button>
               </div>
             </div>
 
             {/* Suggested Employees */}
-            <div className="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm">
-              <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+            <div className="bg-gradient-to-br from-[#1a1a1a] via-[#333] to-[#444] text-white rounded-2xl border border-gray-800 overflow-hidden shadow-xl">
+              <div className="p-5 border-b border-gray-800/50 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-emerald-500" />
-                  <h5 className="text-sm font-bold text-slate-700 uppercase tracking-widest">Top Mentors</h5>
+                  <Users className="w-4 h-4 text-emerald-400" />
+                  <h5 className="text-xs font-bold text-white uppercase tracking-widest">Top Mentors</h5>
                 </div>
-
               </div>
-              <div className="p-6 space-y-6">
+              <div className="p-5 space-y-5">
                 {suggestedEmployees.length > 0 ? suggestedEmployees.map((emp, idx) => (
                   <div key={emp._id} className="flex items-center justify-between group">
                     <div className="flex items-center gap-3">
                       <div className="relative">
-                        <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 font-bold text-sm border border-emerald-100">
+                        <div className="w-10 h-10 rounded-xl bg-gray-800 flex items-center justify-center text-emerald-400 font-bold text-sm border border-gray-700">
                           {getAuthorInitial(emp.name)}
                         </div>
-                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white" />
+                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-gray-800" />
                       </div>
                       <div>
                         <div className="flex items-center gap-1.5">
-                          <p className="text-slate-900 text-sm font-bold leading-none group-hover:text-emerald-500 transition-colors cursor-pointer">{emp.name}</p>
-                          {idx === 0 && <span className="text-[8px] bg-amber-100 text-amber-600 px-1 rounded uppercase font-black">Top</span>}
+                          <p className="text-white text-sm font-bold leading-none group-hover:text-emerald-400 transition-colors cursor-pointer">{emp.name}</p>
+                          {idx === 0 && <span className="text-[8px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-1 rounded uppercase font-black">Top</span>}
                         </div>
-                        <p className="text-[10px] text-slate-400 font-medium">
+                        <p className="text-[10px] text-gray-400 font-medium mt-1">
                           {emp.company?.name || "Verified Professional"}
                         </p>
                       </div>
                     </div>
-                    {/* <button
-                      onClick={() => handleFollowToggle(emp._id, !!emp.isFollowing)}
-                      disabled={togglingFollow === emp._id}
-                      className={`p-2 rounded-lg transition-all ${emp.isFollowing
-                        ? "bg-emerald-50 text-emerald-600 border border-emerald-100"
-                        : "bg-slate-50 hover:bg-slate-100 text-slate-400"}`}
-                    >
-                      {togglingFollow === emp._id ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : emp.isFollowing ? (
-                        <Check className="w-4 h-4" />
-                      ) : (
-                        <Plus className="w-4 h-4" />
-                      )}
-                    </button> */}
                   </div>
                 )) : (
-                  <p className="text-slate-400 text-xs text-center py-4">Finding mentors...</p>
+                  <p className="text-gray-400 text-xs text-center py-4">Finding mentors...</p>
                 )}
               </div>
             </div>
 
             {/* Trending Companies */}
-            <div className="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm">
-              <div className="p-6 border-b border-slate-100 flex items-center gap-2">
+            {/* Trending Companies */}
+            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+              <div className="p-5 border-b border-slate-100 flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-sky-500" />
-                <h5 className="text-sm font-bold text-slate-700 uppercase tracking-widest">Trending Companies</h5>
+                <h5 className="text-xs font-bold text-slate-700 uppercase tracking-widest">Trending Companies</h5>
               </div>
-              <div className="p-6 space-y-5">
+              <div className="p-5 space-y-5">
                 {trendingCompanies.length > 0 ? trendingCompanies.slice(0, 2).map((company, idx) => (
                   <div key={company._id} className="flex items-center gap-4 group cursor-pointer" onClick={() => navigate("/student/companies")}>
                     <div className="text-slate-300 font-black italic text-lg">{idx + 1}</div>
@@ -599,17 +580,18 @@ const Feed = ({ companyId }: Props) => {
             </div>
 
             {/* Platform Stats Small */}
-            <div className="bg-gradient-to-br from-amber-400 to-amber-600 rounded-3xl p-6 shadow-xl shadow-amber-400/20">
+            {/* Platform Stats Small */}
+            <div className="bg-gradient-to-br from-[#1a1a1a] via-[#333] to-[#444] text-white border-gray-800 shadow-xl rounded-2xl p-6 border">
               <div className="flex items-center gap-3 mb-4">
-                <Star className="w-5 h-5 text-black fill-current" />
-                <h5 className="text-black font-black text-sm uppercase">Join the Elite</h5>
+                <Star className="w-5 h-5 text-amber-400 fill-current" />
+                <h5 className="text-white font-black text-sm uppercase lg:tracking-wider">Join the Elite</h5>
               </div>
-              <p className="text-black/80 text-xs font-bold leading-relaxed mb-6">
-                Connect with 2k+ verified employees from top tier companies globally.
+              <p className="text-slate-400 text-[11px] font-medium leading-relaxed mb-5">
+                Connect with verified employees from top tier companies globally.
               </p>
               <button
                 onClick={() => navigate("/student/requests")}
-                className="w-full py-3 bg-black text-white text-xs font-black uppercase tracking-widest rounded-2xl shadow-xl hover:scale-[1.02] transition-all"
+                className="w-full py-2.5 bg-white text-black text-[9px] font-black uppercase tracking-[0.15em] rounded-xl hover:bg-slate-100 transition-all shadow-sm"
               >
                 Request a Referral
               </button>
@@ -617,7 +599,8 @@ const Feed = ({ companyId }: Props) => {
 
           </div>
         </div>
-      </div>
+      </main>
+
       {previewImage && (
         <div
           className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-6 animate-fadeIn"
@@ -637,14 +620,14 @@ const Feed = ({ companyId }: Props) => {
 
             {/* Image */}
             <img
-              src={previewImage}
+              src={previewImage || undefined}
               alt="Preview"
               className="max-h-[90vh] w-auto max-w-full object-contain rounded-xl shadow-2xl"
             />
           </div>
         </div>
       )}
-    </section>
+    </div>
   );
 };
 

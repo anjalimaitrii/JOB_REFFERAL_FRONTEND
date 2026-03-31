@@ -151,7 +151,7 @@ const Profile = () => {
             <div className={`w-9 h-9 bg-gradient-to-br ${theme.gradient} rounded-lg flex items-center justify-center text-white shadow-lg ${theme.shadow}`}>
               <Puzzle className="w-5 h-5" />
             </div>
-            <span className="text-lg font-extrabold text-slate-900 tracking-tight italic">Referral<span className={`text-${theme.primary}-600`}>Portal</span></span>
+            <span className="text-lg font-extrabold text-slate-900 tracking-tight italic">Referral Portal</span>
           </div>
 
           <div className="flex-1 overflow-y-auto px-3.5 py-4 space-y-5">
@@ -197,7 +197,7 @@ const Profile = () => {
                   key={key}
                   onClick={() => { setActiveTab(key); setIsSidebarOpen(false); }}
                   className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-[13px] font-semibold transition-all duration-200 group ${activeTab === key
-                    ? `bg-slate-900 text-white shadow-md shadow-slate-200`
+                    ? `bg-gradient-to-br from-[#1a1a1a] via-[#333] to-[#444] text-white border-gray-800 shadow-xl p-6 rounded-[2rem] border  shadow-slate-200`
                     : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
                     }`}
                 >
@@ -239,7 +239,7 @@ const Profile = () => {
             <button
               onClick={() => {
                 localStorage.clear();
-                navigate("/login");
+                navigate("/");
               }}
               className="w-full flex items-center gap-2.5 px-3.5 py-2.5 bg-rose-50 text-rose-600 rounded-xl text-[13px] font-bold hover:bg-rose-100 transition-colors"
             >
@@ -277,7 +277,7 @@ const Profile = () => {
               disabled={loading}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold shadow-md transition-all active:scale-95 ${saved
                 ? "bg-emerald-500 text-white shadow-emerald-50"
-                : `bg-slate-900 text-white hover:bg-slate-800 shadow-slate-100`
+                : `bg-gradient-to-br from-[#1a1a1a] via-[#333] to-[#444] text-white border-gray-800 shadow-xl p-6 rounded-[2rem]  hover:bg-slate-800 shadow-slate-100`
                 }`}
             >
               {loading ? (
@@ -315,7 +315,7 @@ const Profile = () => {
                 </div>
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="absolute -bottom-1 -right-1 p-2 bg-slate-900 text-white rounded-xl shadow-xl hover:scale-110 active:scale-95 transition-all border-2 border-white"
+                  className="absolute -bottom-1 -right-1 p-2 bg-gradient-to-br from-[#1a1a1a] via-[#333] to-[#444] text-white border-gray-800 shadow-xl  rounded-[2rem] border hover:scale-110 active:scale-95 transition-all "
                 >
                   <Camera className="w-4 h-4" />
                 </button>
@@ -334,16 +334,11 @@ const Profile = () => {
                 <div className="flex flex-wrap justify-center sm:justify-start gap-2.5">
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className={`text-[11px] font-bold px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-all active:scale-95`}
+                    className={`bg-gradient-to-br from-[#1a1a1a] via-[#333] to-[#444] text-white border-gray-800 shadow-xl text-[11px] font-bold px-4 py-2 rounded-lg hover:bg-slate-800 transition-all active:scale-95`}
                   >
                     Upload New
                   </button>
-                  <button
-                    onClick={() => setUser((prev: any) => ({ ...prev, profilePhoto: null }))}
-                    className="text-[11px] font-bold px-4 py-2 bg-white border border-slate-200 text-slate-500 rounded-lg hover:bg-slate-50 transition-all"
-                  >
-                    Remove
-                  </button>
+
                 </div>
               </div>
             </div>

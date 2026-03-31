@@ -49,7 +49,7 @@ export const Projects = ({
 
         <button
           onClick={addProject}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 active:scale-95 transition-all shadow-md"
+          className="bg-gradient-to-br from-[#1a1a1a] via-[#333] to-[#444] text-white border-gray-800 shadow-xl p-6 rounded-[2rem] border flex items-center justify-center gap-2 px-4 py-2 bg-slate-900 text-xs font-bold  hover:bg-slate-800 active:scale-95 transition-all "
         >
           <Plus className="w-3.5 h-3.5" />
           Add Project
@@ -140,7 +140,7 @@ export const Projects = ({
                     href={project.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`absolute top-0 right-0 inline-flex items-center gap-1 text-[9px] font-bold ${theme.text} hover:opacity-80 ${theme.bg} px-2 py-1 rounded-lg border ${theme.border} shadow-sm transition-all`}
+                    className={`absolute top-0 right-0 inline-flex items-center gap-1 text-[9px] font-bold ${theme.text} hover:opacity-80 ${theme.bg} px-2 py-1 rounded-lg border  shadow-sm transition-all`}
                   >
                     <ExternalLink className="w-2.5 h-2.5" />
                     Preview

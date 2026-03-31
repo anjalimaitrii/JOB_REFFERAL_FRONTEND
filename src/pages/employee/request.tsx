@@ -7,7 +7,7 @@ import {
 import Chat from "../../components/chat";
 import { useNavigate } from "react-router-dom";
 import {
-  ChevronLeft,
+  ChevronsLeft,
   MessageCircle,
   Inbox,
   Clock,
@@ -110,25 +110,25 @@ const RequestSection = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#fafafa] text-gray-900 font-sans selection:bg-gray-200">
+    <div className="min-h-screen bg-white text-gray-900 font-sans selection:bg-gray-200">
 
-      {/* NAVBAR — Admin Style */}
-      <nav className="bg-black border-b border-gray-800 px-6 py-4 flex items-center justify-between sticky top-0 z-50 shadow-md">
+      {/* NAVBAR */}
+      <nav className="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between sticky top-0 z-50 shadow-sm">
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate("/employee/dashboard")}
-            className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-all"
+            className="p-2 text-gray-400 hover:text-black hover:bg-gray-100 rounded-lg transition-all"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronsLeft className="w-5 h-5" />
           </button>
-          <div className="p-1.5 bg-white/10 rounded-lg">
-            <FileText className="w-5 h-5 text-white" />
+          <div className="p-1.5 bg-gray-100 rounded-lg">
+            <FileText className="w-5 h-5 text-black" />
           </div>
-          <h1 className="text-sm font-bold tracking-widest text-white uppercase">Received Requests</h1>
+          <h1 className="text-sm font-bold tracking-widest text-black uppercase">Received Requests</h1>
         </div>
-        <div className="flex items-center gap-3 bg-white/5 border border-gray-700 px-4 py-2 rounded-full">
-          <Activity className="w-4 h-4 text-gray-500" />
-          <span className="text-[11px] font-bold uppercase tracking-widest text-gray-400">{requests.length} Total</span>
+        <div className="flex items-center gap-3 bg-gray-50 border border-gray-200 px-4 py-2 rounded-full hidden sm:flex">
+          <Activity className="w-4 h-4 text-gray-400" />
+          <span className="text-[11px] font-bold uppercase tracking-widest text-gray-500">{requests.length} Total</span>
         </div>
       </nav>
 
@@ -449,7 +449,7 @@ const RequestCard = ({
       {status === "Approved" && (
         <button
           onClick={onChat}
-          className="flex items-center justify-center gap-2 w-full py-2 rounded-xl bg-black text-white text-[11px] font-bold uppercase tracking-widest hover:bg-gray-800 active:scale-95 transition-all"
+          className=" bg-gradient-to-br from-[#1a1a1a] via-[#333] to-[#444]  border-gray-800 shadow-xl flex items-center justify-center gap-2 w-full py-2 rounded-xl bg-black text-white text-[11px] font-bold uppercase tracking-widest hover:bg-gray-800 active:scale-95 transition-all"
         >
           <MessageCircle className="w-4 h-4" />
           Chat with Student

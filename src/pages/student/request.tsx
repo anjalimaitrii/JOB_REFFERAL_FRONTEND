@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { fakePaymentSuccess, getMySentRequests } from "../../services/request.service";
 import Chat from "../../components/chat";
 import { useNavigate } from "react-router-dom";
-import { ChevronLeft, MessageCircle, Inbox, Clock, CheckCircle2, XCircle, X, Briefcase, Search, CreditCard } from "lucide-react";
+import { ChevronsLeft, MessageCircle, Inbox, Clock, CheckCircle2, XCircle, X, Briefcase, Search, CreditCard, Activity, FileText } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import PaymentModal from "@/components/ui/Paymentmodal";
 
@@ -68,104 +68,97 @@ const Request = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-rudra-black flex items-center justify-center">
-        <div className="w-10 h-10 border-2 border-gray-800 border-t-amber-400 rounded-full animate-spin"></div>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="w-10 h-10 border-2 border-gray-100 border-t-black rounded-full animate-spin"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-rudra-black text-white font-sans selection:bg-amber-400/20">
+    <div className="min-h-screen bg-white text-gray-900 font-sans selection:bg-gray-200">
 
-      {/* NAVBAR — Student Style */}
-      <nav className="h-16 bg-black flex items-center justify-between px-4 sm:px-8 text-white sticky top-0 z-50 shadow-md">
-        <div className="flex items-center gap-2.5">
+      {/* NAVBAR */}
+      <nav className="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between sticky top-0 z-50 shadow-sm">
+        <div className="flex items-center gap-3">
           <button
             onClick={() => navigate("/student/dashboard")}
-            className="p-2 rounded-full hover:bg-white/10 transition-colors"
+            className="p-2 text-gray-400 hover:text-black hover:bg-gray-100 rounded-lg transition-all"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronsLeft className="w-5 h-5" />
           </button>
-          <div className="w-7 h-7 rounded-md bg-amber-400 flex items-center justify-center">
-            <Briefcase className="w-4 h-4 text-black" />
+          <div className="p-1.5 bg-gray-100 rounded-lg">
+            <Briefcase className="w-5 h-5 text-black" />
           </div>
-          <h1 className="text-base font-semibold tracking-wide">
-            My<span className="text-amber-400">Requests</span>
-          </h1>
+          <h1 className="text-sm font-bold tracking-widest text-black uppercase">Sent Requests</h1>
         </div>
-        <div className="flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-1.5 rounded-full">
-          <span className="text-xs font-medium text-gray-400">{requests.length} total</span>
+        <div className="flex items-center gap-3 bg-gray-50 border border-gray-200 px-4 py-2 rounded-full hidden sm:flex">
+          <Activity className="w-4 h-4 text-gray-400" />
+          <span className="text-[11px] font-bold uppercase tracking-widest text-gray-500">{requests.length} Total</span>
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-8 py-10 space-y-10">
+      <main className="max-w-7xl mx-auto p-8 lg:p-12 space-y-12">
 
-        {/* HEADER + SEARCH */}
-        <header className="flex flex-col md:flex-row md:items-center justify-between gap-5 border-b border-white/5 pb-8">
-          <div>
-            <p className="text-amber-400 text-xs font-medium tracking-[0.2em] uppercase mb-1.5">Referral Tracker</p>
-            <h2 className="text-2xl sm:text-3xl font-semibold text-white leading-tight">My Referral Requests</h2>
-            <p className="text-sm text-gray-500 font-light mt-1">Track all your sent referral requests in one place.</p>
+        {/* HEADER */}
+        <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-gray-100 pb-10">
+          <div className="space-y-1">
+            <h2 className="text-2xl font-semibold text-gray-900">My <span className="text-amber-400">Referrals</span></h2>
+            <p className="text-sm text-gray-500 font-medium">Track all your sent referral requests in one place.</p>
           </div>
           <div className="flex items-center gap-3">
             <div className="relative">
-              <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+              <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search by name, company, role..."
-                className="pl-11 pr-4 py-2.5 bg-white/5 border border-gray-400 placeholder:text-gray-400 rounded-full text-sm text-black  focus:outline-none focus:border-amber-400/50 focus:ring-2 focus:ring-amber-400/10 w-64 transition-all"
+                className="pl-11 pr-4 py-2.5 bg-white border border-gray-200 rounded-full text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-gray-400 focus:ring-2 focus:ring-black/5 w-64 transition-all"
               />
             </div>
             {filterStatus !== "all" && (
               <button
                 onClick={() => setFilterStatus("all")}
-                className="text-xs font-medium text-gray-500 hover:text-amber-400 transition px-4 py-2.5 rounded-full border border-white/10 hover:border-amber-400/30"
+                className="text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-black transition px-4 py-2.5 rounded-full border border-gray-200 hover:border-gray-400"
               >
-                Clear
+                Clear Filter
               </button>
             )}
           </div>
         </header>
 
         {/* STAT FILTER CARDS */}
-        <section className="space-y-5">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-amber-400" />
-            <p className="text-amber-400 text-xs font-medium tracking-[0.2em] uppercase">Overview</p>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <section className="space-y-6">
+          <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400 flex items-center gap-2">
+            <div className="w-1 h-1 bg-black rounded-full"></div> Overview
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             <StatCard
-              icon={<Inbox className="w-5 h-5" />}
+              icon={<Inbox className="w-6 h-6" />}
               title="Total"
               count={requests.length}
-              color="text-amber-500"
               isActive={filterStatus === "all"}
               onClick={() => setFilterStatus("all")}
             />
             <StatCard
-              icon={<Clock className="w-5 h-5" />}
+              icon={<Clock className="w-6 h-6" />}
               title="Pending"
               count={pending}
-              color="text-amber-500"
               isActive={filterStatus === "pending"}
               onClick={() => setFilterStatus("pending")}
-              accent
+              dark
             />
             <StatCard
-              icon={<CheckCircle2 className="w-5 h-5" />}
+              icon={<CheckCircle2 className="w-6 h-6" />}
               title="Approved"
               count={approved}
-              color="text-emerald-500"
               isActive={filterStatus === "accepted"}
               onClick={() => setFilterStatus("accepted")}
             />
             <StatCard
-              icon={<XCircle className="w-5 h-5" />}
+              icon={<XCircle className="w-6 h-6" />}
               title="Rejected"
               count={rejected}
-              color="text-rose-400"
               isActive={filterStatus === "rejected"}
               onClick={() => setFilterStatus("rejected")}
             />
@@ -173,24 +166,24 @@ const Request = () => {
         </section>
 
         {/* REQUEST LIST */}
-        <section className="space-y-5">
-          <div className="flex items-center gap-2 border-b border-white/5 pb-4">
-            <div className="h-px flex-1 bg-white/5" />
-            <p className="text-xs font-medium text-gray-600 uppercase tracking-widest">Request History</p>
-            <div className="h-px flex-1 bg-white/5" />
+        <section className="space-y-6">
+          <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+            <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400 flex items-center gap-2">
+              <div className="w-1 h-1 bg-black rounded-full"></div> Request History
+            </h3>
           </div>
 
           {/* EMPTY STATE */}
           {!loading && requests.length === 0 && (
-            <div className="bg-white/[0.03] border border-white/5 rounded-2xl p-14 text-center">
-              <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Inbox className="w-7 h-7 text-gray-600" />
+            <div className="bg-gradient-to-br from-white via-[#fcfcfc] to-[#f5f5f5] border border-gray-100 rounded-[2rem] p-14 text-center shadow-sm">
+              <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Inbox className="w-7 h-7 text-gray-300" />
               </div>
-              <p className="text-white font-semibold">No referral requests yet</p>
-              <p className="text-sm text-gray-500 mt-1">Send your first request to get started</p>
+              <p className="text-gray-600 font-semibold">No referral requests yet</p>
+              <p className="text-sm text-gray-400 mt-1">Send your first request to get started</p>
               <button
-                onClick={() => navigate("/student/dashboard")}
-                className="mt-6 px-6 py-2.5 bg-amber-400 text-black text-xs font-semibold uppercase tracking-widest rounded-full hover:bg-amber-300 active:scale-95 transition-all"
+                onClick={() => navigate("/student/companies")}
+                className="mt-6 px-8 py-3 bg-amber-400 text-white text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-gray-800 active:scale-95 transition-all shadow-md"
               >
                 Browse Companies
               </button>
@@ -199,14 +192,14 @@ const Request = () => {
 
           {/* NO FILTER RESULTS */}
           {!loading && requests.length > 0 && filteredRequests.length === 0 && (
-            <div className="bg-white/[0.03] border border-white/5 rounded-2xl p-10 text-center">
-              <p className="text-sm text-gray-500 font-medium">No {filterStatus} requests found.</p>
+            <div className="bg-gradient-to-br from-white via-[#fcfcfc] to-[#f5f5f5] border border-gray-100 rounded-[2rem] p-10 text-center shadow-sm">
+              <p className="text-sm text-gray-400 font-medium">No {filterStatus} requests found.</p>
             </div>
           )}
 
           {/* CARDS */}
           {!loading && filteredRequests.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredRequests.map((req) => {
                 return (
                   <RequestCard
@@ -301,44 +294,65 @@ const Request = () => {
   );
 };
 
-/* ── STAT CARD (Student Theme) ── */
+/* ── STAT CARD (Admin Dashboard Style) ── */
 const StatCard = ({
-  icon, title, count, color, isActive, onClick, accent = false,
+  icon, title, count, isActive, onClick, dark = false,
 }: {
   icon: React.ReactNode;
   title: string;
   count: number;
-  color: string;
   isActive: boolean;
   onClick: () => void;
-  accent?: boolean;
+  dark?: boolean;
 }) => {
   return (
-    <div
+    <button
       onClick={onClick}
-      className={`
-        bg-white rounded-2xl border shadow-sm px-5 py-4 cursor-pointer
-        transition-all duration-200
-        hover:shadow-xl hover:-translate-y-0.5
-        ${isActive
-          ? accent
-            ? "border-amber-400 shadow-amber-400/10 ring-1 ring-amber-400/30"
-            : "border-slate-300 shadow-md"
-          : "border-slate-100"
-        }
-      `}
+      className={`group relative text-left px-5 py-4 rounded-[2rem] border transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 ${dark
+        ? 'bg-gradient-to-br from-[#1a1a1a] via-[#333] to-[#444] text-white border-gray-800 shadow-xl'
+        : 'bg-gradient-to-br from-white via-[#fcfcfc] to-[#f5f5f5] text-gray-900 border-gray-100 shadow-sm'
+        } ${isActive
+          ? dark
+            ? 'ring-2 ring-white/30'
+            : 'ring-2 ring-black/20'
+          : ''
+        }`}
     >
-      <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 ${accent ? "bg-amber-50 text-amber-500" : `bg-slate-50 ${color}`
-        }`}>
-        {icon}
+      <div className="flex items-center justify-between mb-3">
+        <div
+          className={`w-9 h-9 rounded-xl flex items-center justify-center ${dark
+            ? 'bg-white/10'
+            : 'bg-gray-50 group-hover:bg-black group-hover:text-white'
+            } transition-colors duration-300`}
+        >
+          {icon}
+        </div>
+
+        <span
+          className={`text-2xl font-semibold tracking-tight ${dark ? 'text-white' : 'text-gray-900'
+            }`}
+        >
+          {count}
+        </span>
       </div>
-      <p className="text-2xl font-semibold text-slate-800 leading-tight">{count}</p>
-      <p className="text-xs text-slate-400 font-light mt-0.5">{title}</p>
-    </div>
+
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-wide">{title}</p>
+        <p
+          className={`text-[11px] leading-relaxed ${dark ? 'text-gray-400' : 'text-gray-500'
+            }`}
+        >
+          {title === "Total" && "All sent referral requests."}
+          {title === "Pending" && "Awaiting response."}
+          {title === "Approved" && "Requests accepted."}
+          {title === "Rejected" && "Requests declined."}
+        </p>
+      </div>
+    </button>
   );
 };
 
-/* ── REQUEST CARD (Student Theme) ── */
+/* ── REQUEST CARD (Admin Dashboard Style) ── */
 const RequestCard = ({
   companyName, companyLogo, role, jobId, receiverName, status, onChat, onPay
 }: {
@@ -351,76 +365,85 @@ const RequestCard = ({
   onChat?: () => void;
   onPay?: () => void;
 }) => {
-  const statusConfig = {
-    Approved: { bg: "bg-emerald-50", text: "text-emerald-600", border: "border-emerald-200", dot: "bg-emerald-500" },
-    Rejected: { bg: "bg-red-50", text: "text-red-500", border: "border-red-200", dot: "bg-red-500" },
-    Pending: { bg: "bg-amber-50", text: "text-amber-600", border: "border-amber-200", dot: "bg-amber-400 animate-pulse" },
-    Completed: { bg: "bg-green-50", text: "text-green-600", border: "border-green-200", dot: "bg-green-500" },
-  }[status];
-
   return (
-    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-200 p-5 flex flex-col gap-4">
+    <div className="group bg-gradient-to-br from-white via-[#fcfcfc] to-[#f5f5f5] rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 px-5 py-4 flex flex-col gap-3">
 
-      {/* Top: Company + Status */}
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex items-center gap-3 min-w-0">
+      {/* Top row */}
+      <div className="flex items-center justify-between gap-3 w-full">
+
+        {/* Left side */}
+        <div className="flex items-center gap-3 min-w-0 flex-1">
           {companyLogo ? (
             <img
               src={companyLogo}
               alt={companyName}
-              className="w-10 h-10 rounded-xl object-contain border border-slate-100 bg-slate-50 p-1 shrink-0"
+              className="w-10 h-10 rounded-xl object-contain border border-gray-100 bg-gray-50 p-1 shrink-0"
             />
           ) : (
-            <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-sm font-bold text-amber-600 shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-sm font-bold text-gray-400 shrink-0">
               {companyName.charAt(0)}
             </div>
           )}
+
           <div className="min-w-0">
-            <p className="font-semibold text-slate-800 truncate text-sm">{companyName}</p>
-            <p className="text-xs text-slate-400 truncate">
-              {role} {jobId && <span className="text-slate-300 font-normal ml-1">#{jobId}</span>}
+            <p className="font-bold text-gray-900 truncate text-sm">
+              {companyName}
+            </p>
+            <p className="text-[11px] text-gray-500 truncate mt-0.5">
+              {role} {jobId && <span className="text-gray-400 font-normal ml-1">#{jobId}</span>}
             </p>
           </div>
         </div>
 
-        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium shrink-0 ${statusConfig.bg} ${statusConfig.text} border ${statusConfig.border}`}>
-          <span className={`w-1.5 h-1.5 rounded-full ${statusConfig.dot}`} />
-          {status}
-        </span>
+        {/* Right side */}
+        <div className="flex items-center gap-2 shrink-0">
+          <span className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${status === "Approved" ? "bg-emerald-50 text-emerald-600 border border-emerald-100" :
+            status === "Rejected" ? "bg-rose-50 text-rose-600 border border-rose-100" :
+              status === "Completed" ? "bg-blue-50 text-blue-600 border border-blue-100" :
+                "bg-amber-50 text-amber-600 border border-amber-100"
+            }`}>
+            {status}
+          </span>
+        </div>
+
       </div>
+
+      <div className="border-t border-gray-100 my-1" />
+
+      {/* Receiver */}
+      <div className="flex items-center gap-3">
+        <div className="w-8 h-8 rounded-xl bg-gray-50 flex items-center justify-center text-xs font-bold text-gray-500 shrink-0">
+          {receiverName?.charAt(0) || "?"}
+        </div>
+        <div>
+          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+            Referral Sent To
+          </p>
+          <p className="text-sm font-semibold text-gray-900">{receiverName}</p>
+        </div>
+      </div>
+
       {status === "Approved" && (
         <button
           onClick={onPay}
-          className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-emerald-500 text-emerald-600 text-sm font-semibold hover:bg-emerald-50 active:scale-95 transition-all"
+          className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-emerald-500 text-emerald-600 text-[11px] font-bold uppercase tracking-widest hover:bg-emerald-50 active:scale-95 transition-all mt-1"
         >
           <CreditCard className="w-4 h-4" />
           Pay Referral Fee
         </button>
       )}
 
-      <div className="border-t border-slate-50" />
-
-      {/* Receiver */}
-      <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center text-xs font-bold text-amber-600 shrink-0">
-          {receiverName.charAt(0)}
-        </div>
-        <div>
-          <p className="text-xs text-slate-400">Referral sent to</p>
-          <p className="text-sm font-medium text-slate-700">{receiverName}</p>
-        </div>
-      </div>
-
       {/* Chat Button */}
-      {status === "Approved" && (
+      {(status === "Approved" || status === "Completed") && (
         <button
           onClick={onChat}
-          className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-amber-400 text-black text-sm font-semibold hover:bg-amber-300 active:scale-95 transition-all"
+          className="bg-gradient-to-br from-[#1a1a1a] via-[#333] to-[#444] border-gray-800 shadow-xl flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-white text-[11px] font-bold uppercase tracking-widest hover:bg-gray-800 active:scale-95 transition-all"
         >
           <MessageCircle className="w-4 h-4" />
           Chat with Referrer
         </button>
       )}
+
     </div>
   );
 };

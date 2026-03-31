@@ -49,21 +49,25 @@ const CreatePost = ({ onPostCreated }: { onPostCreated?: () => void }) => {
     };
 
     return (
-        <div className="max-w-3xl mx-auto mt-8 px-4 w-full relative z-30">
-            <motion.button
-                whileTap={{ scale: 0.9 }}
-                whileHover={{ scale: 1.05 }}
-                onClick={() => setIsExpanded(true)}
-                className="group fixed bottom-28 right-8 z-40 bg-amber-400 hover:bg-amber-500 text-black w-16 h-16 rounded-full shadow-xl flex items-center justify-center"
-            >
-                <Layout className="w-6 h-6" />
+        <div className="w-full relative z-30">
+            <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm group mb-6">
+                <div className="flex gap-3 items-center">
+                    <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600 font-bold text-sm shadow-inner shrink-0">
+                        {initial}
+                    </div>
+                    <div
+                        className="flex-1 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 cursor-pointer transition-all flex items-center justify-between"
+                        onClick={() => setIsExpanded(true)}
+                    >
+                        <p className="text-slate-400 text-sm font-medium">What's on your mind, {name}?</p>
+                        <button className="bg-white text-slate-500 hover:text-slate-800 p-1.5 rounded-lg shadow-sm border border-slate-200">
+                            <Image className="w-4 h-4" />
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-                {/* Tooltip */}
-                <span className="absolute right-20 opacity-0 group-hover:opacity-100 transition-opacity bg-black text-white text-xs px-3 py-1 rounded-md whitespace-nowrap">
-                    Create a new post
-                </span>
 
-            </motion.button>
 
             {/* Modal for creating post */}
             <AnimatePresence>

@@ -3,7 +3,7 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export interface Transaction {
     _id: string;
     type: "credit" | "debit";
-    amount: number;
+    amount: string;
     status: "pending" | "completed" | "failed";
     createdAt: string;
     description?: string;

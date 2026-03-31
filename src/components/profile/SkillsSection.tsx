@@ -75,7 +75,7 @@ export const Skills = ({
         {data.map((skill, index) => (
           <span
             key={index}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 text-white text-[11px] font-bold rounded-lg animate-in fade-in zoom-in-95 duration-200 shadow-md shadow-slate-100 ring-4 ${theme.ring}`}
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-br from-[#1a1a1a] via-[#333] to-[#444] text-white border-gray-800 shadow-xl p-6 rounded-[2rem] border text-[11px] font-bold animate-in fade-in zoom-in-95 duration-200 shadow-slate-100 ring-4 ${theme.ring}`}
           >
             {skill}
             <button

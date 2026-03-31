@@ -94,4 +94,19 @@ export const getAdminTransactions = async (): Promise<{ success: boolean; data: 
   }
 
   return res.json();
+  };
+
+export const getAdminRequests = async (): Promise<{ success: boolean; data: any[] }> => {
+  const token = localStorage.getItem("token");
+  const res = await fetch(`${BASE_URL}/api/admin/requests`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch requests");
+  }
+
+  return res.json();
 };

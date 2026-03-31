@@ -12,10 +12,15 @@ import {
     Building2,
     Award,
     TrendingUp,
-    CreditCard
+    CreditCard,
+    FileText,
+    CheckCircle2,
+    XCircle,
+    TrendingDown,
+    Activity
 } from "lucide-react";
 import { getProfile } from "../../services/user.service";
-import { getAdminTransactions } from "../../services/admin.service";
+import { getAdminTransactions, getAdminRequests } from "../../services/admin.service";
 import { getCompanies } from "../../services/company.service";
 import { motion } from "framer-motion";
 import {
@@ -41,6 +46,18 @@ const AdminWallet = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 8;
 
+    // Dynamic data for request ratios
+    const [requestStats, setRequestStats] = useState({
+        totalRequests: 0,
+        acceptedRequests: 0,
+        expectedPayments: 0,
+        successfulPayments: 0,
+        expectedFulfillments: 0,
+        actualFulfillments: 0,
+        totalExpectedRevenue: 0,
+        actualRevenue: 0
+    });
+
     useEffect(() => {
         fetchData();
     }, []);
@@ -48,15 +65,42 @@ const AdminWallet = () => {
     const fetchData = async () => {
         try {
             setLoading(true);
-            const [profileRes, transRes, companiesRes] = await Promise.all([
+            const [profileRes, transRes, companiesRes, requestsRes] = await Promise.all([
                 getProfile(),
                 getAdminTransactions(),
-                getCompanies()
+                getCompanies(),
+                getAdminRequests()
             ]);
 
             setAdminProfile(profileRes);
             setTransactions(transRes.data || []);
             setCompanies(companiesRes.data || []);
+
+            // Calculate request stats dynamically
+            const reqs = requestsRes.data || [];
+            let totalReqs = reqs.length;
+            let acceptedReqs = reqs.filter((r: any) => ["accepted", "completed", "refunded"].includes(r.status)).length;
+            let successfulPmts = reqs.filter((r: any) => ["accepted", "completed"].includes(r.status) && r.paymentStatus === "paid").length;
+            let actualFulfills = reqs.filter((r: any) => r.status === "completed").length;
+
+            // Expected Revenue: Sum of amounts for all accepted requests
+            let totalExpectedRev = reqs.filter((r: any) => ["accepted", "completed"].includes(r.status) && r.paymentStatus === "paid")
+                .reduce((sum: number, r: any) => sum + (Number(r.amount) || 0), 0) * 0.60;
+
+            // Actual Revenue: Sum of amounts for completed requests
+            let actualRev = reqs.filter((r: any) => r.status === "completed")
+                .reduce((sum: number, r: any) => sum + (Number(r.amount) || 0), 0) * 0.60;
+
+            setRequestStats({
+                totalRequests: totalReqs,
+                acceptedRequests: acceptedReqs,
+                expectedPayments: acceptedReqs,
+                successfulPayments: successfulPmts,
+                expectedFulfillments: successfulPmts,
+                actualFulfillments: actualFulfills,
+                totalExpectedRevenue: totalExpectedRev,
+                actualRevenue: actualRev
+            });
         } catch (err) {
             console.error("Failed to fetch admin wallet data", err);
         } finally {
@@ -140,7 +184,98 @@ const AdminWallet = () => {
                 </div>
             </nav>
 
+
+
             <main className="max-w-7xl mx-auto p-4 lg:p-8 space-y-8">
+                {/* Metrics Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* Card 1: Acceptance Rate */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col relative overflow-hidden group hover:border-indigo-200 transition-colors"
+                    >
+                        <div className="flex justify-between items-start mb-4 relative z-10">
+                            <div>
+                                <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Acceptance Rate</h3>
+                                <p className="text-3xl font-black text-slate-800 mt-1 tracking-tight">
+                                    {requestStats.acceptedRequests}<span className="text-lg text-slate-400 font-medium">/{requestStats.totalRequests}</span>
+                                </p>
+                            </div>
+                            <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl group-hover:scale-110 transition-transform">
+                                <FileText className="w-5 h-5" />
+                            </div>
+                        </div>
+                        <div className="mt-auto pt-4 border-t border-slate-50 flex items-center justify-between relative z-10">
+                            <span className="text-[10px] font-medium text-slate-500 uppercase">Requests Accepted</span>
+                            <div className="px-2 py-1 bg-indigo-50 rounded-lg">
+                                <span className="text-[10px] font-bold text-indigo-600">{Math.round((requestStats.acceptedRequests / (requestStats.totalRequests || 1)) * 100)}% Conversion</span>
+                            </div>
+                        </div>
+                        <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-indigo-50 rounded-full blur-2xl -z-0 group-hover:bg-indigo-100 transition-colors duration-500" />
+                    </motion.div>
+
+                    {/* Card 2: Payment Completion */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 }}
+                        className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col relative overflow-hidden group hover:border-emerald-200 transition-colors"
+                    >
+                        <div className="flex justify-between items-start mb-4 relative z-10">
+                            <div>
+                                <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Payment Rate</h3>
+                                <p className="text-3xl font-black text-slate-800 mt-1 tracking-tight">
+                                    {requestStats.successfulPayments}<span className="text-lg text-slate-400 font-medium">/{requestStats.expectedPayments}</span>
+                                </p>
+                            </div>
+                            <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl group-hover:scale-110 transition-transform">
+                                <CreditCard className="w-5 h-5" />
+                            </div>
+                        </div>
+                        <div className="mt-auto pt-4 border-t border-slate-50 flex items-center justify-between relative z-10">
+                            <span className="text-[10px] font-medium text-slate-500 uppercase">Payments Received</span>
+                            <div className="px-2 py-1 bg-emerald-50 rounded-lg">
+                                <span className="text-[10px] font-bold text-emerald-600">{Math.round((requestStats.successfulPayments / (requestStats.expectedPayments || 1)) * 100)}% Paid</span>
+                            </div>
+                        </div>
+                        <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-emerald-50 rounded-full blur-2xl -z-0 group-hover:bg-emerald-100 transition-colors duration-500" />
+                    </motion.div>
+
+                    {/* Card 3: Fulfillment & Revenue */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex flex-col relative overflow-hidden group hover:border-amber-200 transition-colors"
+                    >
+                        <div className="flex justify-between items-start mb-4 relative z-10">
+                            <div>
+                                <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Completed Referrals</h3>
+                                <p className="text-3xl font-black text-slate-800 mt-1 tracking-tight">
+                                    {requestStats.actualFulfillments}<span className="text-lg text-slate-400 font-medium">/{requestStats.expectedFulfillments}</span>
+                                </p>
+                            </div>
+                            <div className="p-3 bg-amber-50 text-amber-600 rounded-2xl group-hover:scale-110 transition-transform">
+                                <CheckCircle2 className="w-5 h-5" />
+                            </div>
+                        </div>
+                        <div className="mt-auto pt-4 border-t border-slate-50 flex flex-col gap-1 relative z-10">
+                            <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-medium text-slate-500 uppercase">Actual Revenue</span>
+                                <span className="text-xs font-bold text-slate-700">₹{parseFloat(requestStats.actualRevenue.toString()).toFixed(2)}</span>
+                            </div>
+                            <div className="flex items-center justify-between opacity-50">
+                                <span className="text-[9px] font-medium text-slate-500 uppercase">Expected Revenue</span>
+                                <span className="text-[10px] font-medium text-slate-700 line-through">₹{parseFloat(requestStats.totalExpectedRevenue.toString()).toFixed(2)}</span>
+                            </div>
+                        </div>
+                        <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-amber-50 rounded-full blur-2xl -z-0 group-hover:bg-amber-100 transition-colors duration-500" />
+                    </motion.div>
+
+
+                </div>
+
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                     {/* Left Column (4 cols) */}
                     <div className="lg:col-span-4 space-y-6">
@@ -396,6 +531,7 @@ const AdminWallet = () => {
                         </div>
                     </div>
                 </div>
+
             </main>
         </div>
     );

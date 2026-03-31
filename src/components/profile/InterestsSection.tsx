@@ -1,16 +1,16 @@
 import { Sparkles, Check, X } from "lucide-react";
 
 const ROLES = [
-  { label: "Frontend Developer",     emoji: "🎨" },
-  { label: "Backend Developer",      emoji: "⚙️" },
-  { label: "Full Stack Developer",   emoji: "🧩" },
-  { label: "MERN Stack Developer",   emoji: "🟢" },
-  { label: "Java Developer",         emoji: "☕" },
-  { label: "DevOps Engineer",        emoji: "🔧" },
-  { label: "Data Scientist",         emoji: "📊" },
-  { label: "UI/UX Designer",        emoji: "✏️" },
-  { label: "Mobile Developer",       emoji: "📱" },
-  { label: "Cloud Engineer",         emoji: "☁️" },
+  { label: "Frontend Developer", emoji: "🎨" },
+  { label: "Backend Developer", emoji: "⚙️" },
+  { label: "Full Stack Developer", emoji: "🧩" },
+  { label: "MERN Stack Developer", emoji: "🟢" },
+  { label: "Java Developer", emoji: "☕" },
+  { label: "DevOps Engineer", emoji: "🔧" },
+  { label: "Data Scientist", emoji: "📊" },
+  { label: "UI/UX Designer", emoji: "✏️" },
+  { label: "Mobile Developer", emoji: "📱" },
+  { label: "Cloud Engineer", emoji: "☁️" },
 ];
 
 export const InterestSection = ({
@@ -49,13 +49,13 @@ export const InterestSection = ({
             <Sparkles className={`w-5 h-5 ${theme.icon}`} />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-slate-900 tracking-tight leading-none mb-1">Preferred Roles</h3>
+            <h3 className="text-lg font-bold text-slate-900 tracking-tight leading-none mb-1"> Roles</h3>
             <p className="text-xs text-slate-500 font-medium">Select target referral positions</p>
           </div>
         </div>
 
         {interests.length > 0 && (
-          <span className="text-[9px] font-bold bg-slate-900 text-white px-3 py-1 rounded-full shadow-md uppercase tracking-widest">
+          <span className="bg-gradient-to-br from-[#1a1a1a] via-[#333] to-[#444] text-white border-gray-800 shadow-xl p-6 rounded-[2rem] border text-[9px] font-bold bg-slate-900 px-3 py-1 uppercase tracking-widest">
             {interests.length} selected
           </span>
         )}
@@ -70,11 +70,10 @@ export const InterestSection = ({
               key={label}
               type="button"
               onClick={() => toggleRole(label)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold border transition-all active:scale-95 ${
-                isSelected
-                  ? `bg-slate-900 text-white border-slate-800 shadow-lg shadow-slate-100 ring-4 ${theme.ring}`
-                  : "bg-white text-slate-600 border-slate-200 hover:border-slate-400 shadow-sm"
-              }`}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold border transition-all active:scale-95 ${isSelected
+                ? `bg-gradient-to-br from-[#1a1a1a] via-[#333] to-[#444] text-white border-gray-800 shadow-xl p-6 rounded-[2rem] borderbg-slate-900  shadow-slate-100 ring-4`
+                : "bg-white text-slate-600 border-slate-200 hover:border-slate-400 shadow-sm"
+                }`}
             >
               <span className="text-base transition-all">{emoji}</span>
               {label}
