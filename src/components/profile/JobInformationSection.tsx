@@ -102,7 +102,7 @@ export const JobInformationSection = ({
       setLoading(true);
       setError("");
 
-      // Now send the OTP - Backend will handle pendingEmail
+      // Now send the OTP - Backenwill handle pendingEmail
       await sendOtp(newEmail);
       setModalStage("otp");
     } catch (err: any) {
