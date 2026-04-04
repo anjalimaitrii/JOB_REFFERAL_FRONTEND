@@ -55,7 +55,19 @@ const Profile = () => {
   const handleUpdate = async () => {
     try {
       setLoading(true);
-      const res = await updateProfile(user);
+      // Strip out company/companyDetails if null/empty so we never send invalid ObjectId
+      const { company, companyDetails, ...rest } = user;
+      const payload = { ...rest };
+      if (company && typeof company === "object" && company._id) {
+        // company is a populated object from backend — send just the _id
+        payload.company = company._id;
+      } else if (company && typeof company === "string" && company.length > 0) {
+        // company is already a raw ObjectId string
+        payload.company = company;
+      }
+      // If company is null/undefined/"" — don't include it in payload at all
+
+      const res = await updateProfile(payload);
       if (res.user) {
         setUser(res.user);
       }

@@ -25,7 +25,7 @@ export const JobInformationSection = ({
   const [allCompanies, setAllCompanies] = useState<any[]>([]);
   const [companySuggestions, setCompanySuggestions] = useState<any[]>([]);
   const [showCompanySuggestions, setShowCompanySuggestions] = useState(false);
-  const [companySearch, setCompanySearch] = useState("");
+  const [companySearch, setCompanySearch] = useState(data?.company?.name || "");
 
   // Job Update Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -40,7 +40,11 @@ export const JobInformationSection = ({
     const fetchCompanies = async () => {
       try {
         const res = await getCompanies();
-        setAllCompanies(res || []);
+        console.log("Fetched companies:", res);
+        // Handle both { companies: [...] } and direct array response
+        const list = Array.isArray(res) ? res : (res?.companies || res?.data || []);
+        console.log("Companies list:", list);
+        setAllCompanies(list);
       } catch (err) {
         console.error("Failed to fetch companies", err);
       }
@@ -49,6 +53,22 @@ export const JobInformationSection = ({
   }, []);
 
   const handleChange = (field: string, value: string) => {
+    // Handle company search separately — don't call generic onChange for it
+    if (field === "companyName") {
+      setCompanySearch(value);
+      if (value?.trim()) {
+        const filtered = allCompanies.filter(c =>
+          c.name?.toLowerCase().includes(value.toLowerCase())
+        );
+        setCompanySuggestions(filtered);
+        setShowCompanySuggestions(true);
+      } else {
+        setCompanySuggestions([]);
+        setShowCompanySuggestions(false);
+      }
+      return;
+    }
+
     onChange({ ...data, [field]: value });
 
     if (field === "designation") {
@@ -61,20 +81,6 @@ export const JobInformationSection = ({
       } else {
         setSuggestions([]);
         setShowSuggestions(false);
-      }
-    }
-
-    if (field === "companyName") {
-      setCompanySearch(value);
-      if (value?.trim()) {
-        const filtered = allCompanies.filter(c =>
-          c.name.toLowerCase().includes(value.toLowerCase())
-        );
-        setCompanySuggestions(filtered);
-        setShowCompanySuggestions(true);
-      } else {
-        setCompanySuggestions([]);
-        setShowCompanySuggestions(false);
       }
     }
   };
@@ -96,17 +102,7 @@ export const JobInformationSection = ({
       setLoading(true);
       setError("");
 
-      // Update profile with the new email first so it exists in DB for OTP service
-      const updatedUser = {
-        ...data,
-        email: newEmail,
-        isEmailVerified: false,
-        ...(updateType === "unemployed" ? { companyName: "" } : {})
-      };
-      await updateProfile(updatedUser);
-      onChange(updatedUser);
-
-      // Now send the OTP
+      // Now send the OTP - Backend will handle pendingEmail
       await sendOtp(newEmail);
       setModalStage("otp");
     } catch (err: any) {
@@ -123,10 +119,41 @@ export const JobInformationSection = ({
       setError("");
       await verifyOtp(newEmail, otp);
 
-      // Mark as verified in DB
-      const verifiedUser = { ...data, isEmailVerified: true };
-      await updateProfile(verifiedUser);
-      onChange(verifiedUser);
+      // Successfully verified. Now we can update the profile state locally and in DB
+      // Note: Backend has already updated the email and set isEmailVerified to true
+      if (updateType === "unemployed") {
+        // Build a clean payload for backend — remove `company` field entirely
+        // so we never send null/empty string for an ObjectId reference
+        const { company, companyDetails, ...rest } = data;
+        const backendPayload = {
+          ...rest,
+          email: newEmail,
+          isEmailVerified: true,
+          companyName: "",
+          designation: "",
+          department: "",
+          experienceLevel: "",
+          employmentType: "",
+        };
+        await updateProfile(backendPayload);
+
+        // For local UI state, also clear company so fields appear empty
+        onChange({
+          ...backendPayload,
+          company: null,
+          companyDetails: null,
+        });
+      } else {
+        // "switch" flow — just update email
+        const updatedData = {
+          ...data,
+          email: newEmail,
+          isEmailVerified: true,
+        };
+        await updateProfile(updatedData);
+        onChange(updatedData);
+      }
+
 
       setIsModalOpen(false);
       setModalStage("choice");
@@ -170,11 +197,17 @@ export const JobInformationSection = ({
           <Input
             label="Current Company"
             icon={<Building2 className="w-3.5 h-3.5" />}
-            value={data?.company?.name || companySearch}
+            value={companySearch}
             placeholder="Search company..."
             onChange={(e: any) => handleChange("companyName", e.target.value)}
             onFocus={() => {
-              if (data?.companyName?.trim()) setShowCompanySuggestions(true);
+              if (companySearch?.trim()) {
+                const filtered = allCompanies.filter(c =>
+                  c.name.toLowerCase().includes(companySearch.toLowerCase())
+                );
+                setCompanySuggestions(filtered);
+                setShowCompanySuggestions(true);
+              }
             }}
             onBlur={() => setTimeout(() => setShowCompanySuggestions(false), 200)}
             themeColor={themeColor}
@@ -183,9 +216,9 @@ export const JobInformationSection = ({
             <div className="absolute z-50 w-full mt-2 bg-white border border-slate-200 rounded-xl shadow-xl max-h-52 overflow-y-auto p-1.5">
               {companySuggestions.map((c, idx) => (
                 <div
-                  key={c.id || idx}
+                  key={c._id || c.id || idx}
                   onMouseDown={() => {
-                    handleChange("companyName", c.name);
+                    onChange({ ...data, companyName: c.name, company: c._id || c.id });
                     setCompanySearch(c.name);
                     setShowCompanySuggestions(false);
                   }}

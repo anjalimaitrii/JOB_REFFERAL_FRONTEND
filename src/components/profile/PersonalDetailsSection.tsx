@@ -35,11 +35,9 @@ export const PersonalDetailsSection = ({
     try {
       setLoading(true);
       setError("");
-      
-      // Save new email to DB first so OTP service works for new addresses
-      await updateProfile({ ...data, isEmailVerified: false });
-      
+
       await sendOtp(data.email);
+
       setShowOtpField(true);
       alert("OTP sent to your email!");
     } catch (err: any) {
@@ -55,12 +53,12 @@ export const PersonalDetailsSection = ({
       setLoading(true);
       setError("");
       await verifyOtp(data.email, otp);
-      
+
       // Mark as verified in DB
       const verifiedData = { ...data, isEmailVerified: true };
       await updateProfile(verifiedData);
       onChange(verifiedData);
-      
+
       setShowOtpField(false);
       setOtp("");
       alert("Email verified successfully!");
@@ -102,6 +100,7 @@ export const PersonalDetailsSection = ({
             placeholder="anjiali@example.com"
             type="email"
             onChange={(e: any) => handleChange("email", e.target.value)}
+            disabled
             themeColor={themeColor}
           />
           <div className="absolute top-0 right-0">
@@ -197,6 +196,7 @@ const Input = ({
   type = "text",
   icon,
   themeColor = "indigo",
+  disabled = false,
 }: {
   label: string;
   value: string;
@@ -205,6 +205,7 @@ const Input = ({
   type?: string;
   icon?: React.ReactNode;
   themeColor?: string;
+  disabled?: boolean;
 }) => (
   <div>
     <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">{label}</p>
@@ -216,6 +217,7 @@ const Input = ({
         onChange={onChange}
         placeholder={placeholder || label}
         className="flex-1 bg-transparent outline-none text-sm font-semibold text-slate-800 placeholder-slate-300"
+        disabled={disabled}
       />
     </div>
   </div>
