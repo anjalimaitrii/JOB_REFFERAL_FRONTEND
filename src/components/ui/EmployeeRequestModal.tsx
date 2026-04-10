@@ -37,12 +37,6 @@ export default function EmployeeRequestModal({
                     ? "Completed"
                     : "Rejected";
 
-    const statusBadge = {
-        Approved: "bg-black text-white",
-        Rejected: "bg-gray-200 text-gray-600",
-        Pending: "bg-gray-100 text-gray-500",
-        Completed: "bg-green-100 text-green-600",
-    }[status];
 
     return (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">

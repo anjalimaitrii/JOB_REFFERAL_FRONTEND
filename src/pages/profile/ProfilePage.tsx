@@ -40,7 +40,6 @@ const Profile = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => { fetchProfile(); }, []);
 
