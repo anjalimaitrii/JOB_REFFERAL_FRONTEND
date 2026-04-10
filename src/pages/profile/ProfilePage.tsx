@@ -12,7 +12,7 @@ import {
   Sparkles, Clock, Code2, FolderGit2, CheckCircle2, Loader2,
   LogOut, Wallet, Menu, Puzzle
 } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const STUDENT_TABS = [
   { key: "Personal Information", icon: User },

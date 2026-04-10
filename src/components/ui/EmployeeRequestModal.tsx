@@ -348,9 +348,3 @@ export default function EmployeeRequestModal({
     );
 }
 
-const Info = ({ label, value }: { label: string; value: any }) => (
-    <div className="flex justify-between border-b border-gray-100 pb-1">
-        <span className="text-gray-500">{label}</span>
-        <span className="ml-2 font-medium">{value || "N/A"}</span>
-    </div>
-);
