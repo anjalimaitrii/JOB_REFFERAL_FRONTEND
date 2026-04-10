@@ -18,6 +18,7 @@ const STUDENT_TABS = [
   { key: "Personal Information", icon: User },
   { key: "Education", icon: GraduationCap },
   { key: "Skills", icon: Code2 },
+  { key: "Experience", icon: Clock },
   { key: "Projects", icon: FolderGit2 },
 ];
 
@@ -128,8 +129,8 @@ const Profile = () => {
     );
   }
 
-  const isStudentMode = user.role === "employee" && location.pathname.includes("/student");
-  const effectiveRole = isStudentMode ? "student" : user.role;
+  // const isStudentMode = user.role === "employee" && location.pathname.includes("/student");
+  const effectiveRole = user.role;
   const TABS = effectiveRole === "student" ? STUDENT_TABS : EMPLOYEE_TABS;
   const completionPercent = calcCompletion();
 
@@ -378,7 +379,7 @@ const Profile = () => {
                 themeColor={themeColor}
               />
             )}
-            {effectiveRole === "employee" && activeTab === "Experience" && (
+            {activeTab === "Experience" && (
               <Experience
                 data={user.experience || []}
                 onChange={(experience) => setUser({ ...user, experience })}

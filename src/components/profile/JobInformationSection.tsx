@@ -121,40 +121,16 @@ export const JobInformationSection = ({
 
       // Successfully verified. Now we can update the profile state locally and in DB
       // Note: Backend has already updated the email and set isEmailVerified to true
-      if (updateType === "unemployed") {
-        // Build a clean payload for backend — remove `company` field entirely
-        // so we never send null/empty string for an ObjectId reference
-        const { company, companyDetails, ...rest } = data;
-        const backendPayload = {
-          ...rest,
-          email: newEmail,
-          isEmailVerified: true,
-          companyName: "",
-          designation: "",
-          department: "",
-          experienceLevel: "",
-          employmentType: "",
-        };
-        await updateProfile(backendPayload);
-
-        // For local UI state, also clear company so fields appear empty
-        onChange({
-          ...backendPayload,
-          company: null,
-          companyDetails: null,
-        });
-      } else {
-        // "switch" flow — just update email
-        const updatedData = {
-          ...data,
-          email: newEmail,
-          isEmailVerified: true,
-        };
-        await updateProfile(updatedData);
-        onChange(updatedData);
-      }
 
 
+      const updatedData = {
+        ...data,
+        email: newEmail,
+        isEmailVerified: true,
+      };
+
+      await updateProfile(updatedData);
+      onChange(updatedData);
       setIsModalOpen(false);
       setModalStage("choice");
       setNewEmail("");

@@ -21,8 +21,6 @@ export default function EmployeeRequestModal({
     if (!isOpen || !request) return null;
 
     const sender = request?.sender;
-
-    const [open, setOpen] = useState(false);
     const [currentStatus, setCurrentStatus] = useState(request?.status);
 
     useEffect(() => {
@@ -61,37 +59,38 @@ export default function EmployeeRequestModal({
                 <h2 className="text-xl font-bold mb-6">Aspirant Request Details</h2>
 
                 {/* PROFILE */}
-                <div className="flex items-center gap-4 mb-6">
-                    {sender?.profilePhoto ? (
-                        <img
-                            src={sender.profilePhoto}
-                            className="w-16 h-16 rounded-full object-cover border"
-                        />
-                    ) : (
-                        <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center font-bold text-lg">
-                            {sender?.name?.charAt(0)}
+                <div className="flex items-center justify-between mb-6">
+
+                    {/* LEFT SIDE */}
+                    <div className="flex items-center gap-4">
+                        {sender?.profilePhoto ? (
+                            <img
+                                src={sender.profilePhoto}
+                                className="w-16 h-16 rounded-full object-cover border"
+                            />
+                        ) : (
+                            <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center font-bold text-lg">
+                                {sender?.name?.charAt(0)}
+                            </div>
+                        )}
+
+                        <div>
+                            <p className="text-lg font-semibold">{sender?.name}</p>
                         </div>
-                    )}
-
-                    <div>
-                        <p className="text-lg font-semibold">{sender?.name}</p>
-
-                        {/* Requested Role & Job ID (Visible only when accepted/completed) */}
-                        {(currentStatus === "accepted" || currentStatus === "completed") && (
-                            <div className="grid grid-cols-1 mt-2 gap-1 text-sm">
-                                <Info label="Email" value={sender?.email} />
-                                <Info label="Desired Role" value={request?.role} />
-                                <Info label="Job ID" value={request?.jobId} />
-                            </div>
-                        )}
-
-                        {/* Email visible only after payment/accept if needed, but for now let's keep it simple */}
-                        {request?.paymentStatus === "paid" && (
-                            <div className="grid grid-cols-1 mt-1 gap-1 text-sm">
-                                <Info label="Contact Email" value={sender?.email} />
-                            </div>
-                        )}
                     </div>
+
+                    {/* ✅ STATUS BADGE RIGHT SIDE */}
+                    <span className={`text-xs px-3 py-1 rounded-full font-bold uppercase ${currentStatus === "pending"
+                        ? "bg-yellow-50 text-yellow-700"
+                        : currentStatus === "accepted"
+                            ? "bg-green-50 text-green-700"
+                            : currentStatus === "completed"
+                                ? "bg-blue-50 text-blue-700"
+                                : "bg-red-50 text-red-700"
+                        }`}>
+                        {status}
+                    </span>
+
                 </div>
 
                 {/* BASIC DETAILS */}
@@ -100,81 +99,8 @@ export default function EmployeeRequestModal({
                         <h3 className="text-sm font-bold text-gray-500 uppercase">
                             Basic Details
                         </h3>
-                        <div
-                            onClick={() =>
-                                (currentStatus === "pending" || currentStatus === "accepted") &&
-                                setOpen(!open)
-                            }
-                            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-tighter transition-all duration-200
-  ${statusBadge}
-  ${(currentStatus === "pending" || currentStatus === "accepted") ? "cursor-pointer hover:scale-105 active:scale-95" : ""}`}
-                        >
-                            {status}
 
-                            {(currentStatus === "pending" || currentStatus === "accepted") && (
-                                <svg
-                                    className={`w-3 h-3 transition-transform ${open ? "rotate-180" : ""}`}
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path d="M19 9l-7 7-7-7" />
-                                </svg>
-                            )}
-                        </div>
-                        {/* STATUS DROPDOWN */}
-                        {open && (currentStatus === "pending" || currentStatus === "accepted") && (
-                            <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-100 rounded-xl shadow-xl overflow-hidden z-50">
 
-                                {currentStatus === "pending" && (
-                                    <>
-                                        <button
-                                            onClick={() => {
-                                                onAccept();
-                                                setCurrentStatus("accepted");
-                                                setOpen(false);
-                                            }}
-                                            className="w-full text-left px-4 py-2 text-xs font-bold uppercase hover:bg-gray-50"
-                                        >
-                                            Approve
-                                        </button>
-
-                                        <button
-                                            onClick={() => {
-                                                onReject();
-                                                setCurrentStatus("rejected");
-                                                setOpen(false);
-                                            }}
-                                            className="w-full text-left px-4 py-2 text-xs font-bold uppercase text-gray-500 hover:bg-gray-50"
-                                        >
-                                            Reject
-                                        </button>
-                                    </>
-                                )}
-
-                                {currentStatus === "accepted" && request?.paymentStatus === "paid" && (
-                                    <button
-                                        onClick={() => {
-                                            const confirmComplete = window.confirm(
-                                                "Are you sure you have submitted the referral?"
-                                            );
-
-                                            if (confirmComplete) {
-                                                onComplete();
-                                                setCurrentStatus("completed");
-                                            }
-
-                                            setOpen(false);
-                                        }}
-                                        className="w-full text-left px-4 py-2 text-xs font-bold uppercase text-green-600 hover:bg-gray-50"
-                                    >
-                                        Mark Completed
-                                    </button>
-                                )}
-
-                            </div>
-                        )}
                     </div>
 
                     {sender?.experience?.length > 0 && (
@@ -225,6 +151,7 @@ export default function EmployeeRequestModal({
 
                                     </div>
                                 ))}
+
                             </div>
                         </section>
                     )}
@@ -361,6 +288,67 @@ export default function EmployeeRequestModal({
                     </h3>
                     <div className="border rounded-lg p-3 text-sm mb-2 text-gray-900" >{request.description}</div>
                 </section>
+                <div className="mt-6 flex flex-col gap-3">
+
+                    {/* PENDING */}
+                    {currentStatus === "pending" && (
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => {
+                                    onAccept();
+                                    setCurrentStatus("accepted");
+                                }}
+                                className="flex-1 py-2 rounded-xl bg-black text-white text-sm font-bold uppercase"
+                            >
+                                Accept
+                            </button>
+
+                            <button
+                                onClick={() => {
+                                    onReject();
+                                    setCurrentStatus("rejected");
+                                }}
+                                className="flex-1 py-2 rounded-xl border border-gray-300 text-sm font-bold uppercase"
+                            >
+                                Reject
+                            </button>
+                        </div>
+                    )}
+
+                    {/* ACCEPTED */}
+                    {currentStatus === "accepted" && request?.paymentStatus === "paid" && (
+                        <button
+                            onClick={() => {
+                                const confirmComplete = window.confirm(
+                                    "Are you sure you have submitted the referral?"
+                                );
+
+                                if (confirmComplete) {
+                                    onComplete();
+                                    setCurrentStatus("completed");
+                                }
+                            }}
+                            className="w-full py-2 rounded-xl bg-black text-white text-sm font-bold uppercase"
+                        >
+                            Mark as Completed
+                        </button>
+                    )}
+
+                    {/* COMPLETED */}
+                    {currentStatus === "completed" && (
+                        <div className="text-center text-sm font-bold text-blue-600">
+                            Completed ✔
+                        </div>
+                    )}
+
+                    {/* REJECTED */}
+                    {currentStatus === "rejected" && (
+                        <div className="text-center text-sm font-bold text-red-500">
+                            Rejected
+                        </div>
+                    )}
+
+                </div>
             </div >
         </div >
     );

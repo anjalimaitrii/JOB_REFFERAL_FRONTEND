@@ -579,7 +579,7 @@ const Feed = ({ companyId }: Props) => {
               </div>
             </div>
 
-            {/* Platform tats Small */}
+
             {/* Platform Stats Small */}
             <div className="bg-gradient-to-br from-[#1a1a1a] via-[#333] to-[#444] text-white border-gray-800 shadow-xl rounded-2xl p-6 border">
               <div className="flex items-center gap-3 mb-4">
